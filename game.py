@@ -40,9 +40,7 @@ while game:
             if event.key == pygame.K_RIGHT:
                 bloco.speedx -= 8
             if event.key == pygame.K_UP:
-                bloco.speedy += 8
-            if event.key == pygame.K_DOWN:
-                bloco.speedy -= 8
+                bloco.speedy += 40
 
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -52,12 +50,9 @@ while game:
             if event.key == pygame.K_RIGHT:
                 bloco.speedx += 8
             if event.key == pygame.K_UP:
-                bloco.speedy -= 8
-            if event.key == pygame.K_DOWN:
-                bloco.speedy += 8
+                bloco.speedy -= 40
 
     # ----- Gera saídas
-    player.update()
     bloco.update()
     
     window.blit(background_img, (0,0))
