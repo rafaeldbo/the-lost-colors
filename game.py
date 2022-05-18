@@ -5,33 +5,34 @@ from sprites import Block, Personagem
 
 pygame.init()
 
+WIDTH = 840
+HEIGHT = 560
+
 # ----- Gera tela principal
-window = pygame.display.set_mode((900, 600)) # tamanho da tela
+window = pygame.display.set_mode((WIDTH, HEIGHT)) # tamanho da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
 # ----- Inicia estruturas de dados
 game = True
 clock = pygame.time.Clock()
 FPS = 30
-WEIGHT= 600
 
 player_img = pygame.image.load('assets/img/player.png')
-player_img = pygame.transform.scale(player_img, (150,200))
+player_img = pygame.transform.scale(player_img, (70,105))
 bloco_img = pygame.image.load('assets/img/bloco.png')
 bloco_img = pygame.transform.scale(bloco_img, (70,70))
 background_img = pygame.image.load('assets/img/background.png')
-background_img = pygame.transform.scale(background_img, (900,600))
+background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
 player = Personagem(player_img)
 
-
-
 all_blocks = pygame.sprite.Group()
 for i in range(10):
-    bloco = Block(bloco_img, 35+70*i, WEIGHT)
+    bloco = Block(bloco_img, 35+70*i, HEIGHT)
     all_blocks.add(bloco)
 
-print(pygame.sprite.Group.sprites(all_blocks))
+bloco = Block(bloco_img, 280, HEIGHT - 70)
+all_blocks.add(bloco)
 
 # ===== Loop principal =====
 while game:
