@@ -13,6 +13,7 @@ pygame.display.set_caption('The lost colors') # título da tela
 game = True
 clock = pygame.time.Clock()
 FPS = 30
+WEIGHT= 600
 
 player_img = pygame.image.load('assets/img/player.png')
 player_img = pygame.transform.scale(player_img, (150,200))
@@ -22,7 +23,15 @@ background_img = pygame.image.load('assets/img/background.png')
 background_img = pygame.transform.scale(background_img, (900,600))
 
 player = Personagem(player_img)
-bloco = Block(bloco_img)
+
+
+
+all_blocks = pygame.sprite.Group()
+for i in range(10):
+    bloco = Block(bloco_img, 35+70*i, WEIGHT)
+    all_blocks.add(bloco)
+
+print(pygame.sprite.Group.sprites(all_blocks))
 
 # ===== Loop principal =====
 while game:
@@ -36,28 +45,28 @@ while game:
         if event.type == pygame.KEYDOWN:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                bloco.speedx += 8
+                player.speedx+=8
             if event.key == pygame.K_RIGHT:
-                bloco.speedx -= 8
+                player.speedx-=8
             if event.key == pygame.K_UP:
-                bloco.speedy += 40
+                player.speedy+=40
 
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                bloco.speedx -= 8
+                player.speedx-=8
             if event.key == pygame.K_RIGHT:
-                bloco.speedx += 8
+                player.speedx+=8
             if event.key == pygame.K_UP:
-                bloco.speedy -= 40
+                player.speedy-=40
 
     # ----- Gera saídas
-    bloco.update()
+    all_blocks.update(player)
     
     window.blit(background_img, (0,0))
     window.blit(player.image, player.rect)
-    window.blit(bloco.image, bloco.rect)
+    all_blocks.draw(window)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
 
