@@ -5,7 +5,6 @@ from sprites import Block, Personagem
 
 pygame.init()
 
-gravidade = 10
 WIDTH = 840
 HEIGHT = 560
 
@@ -32,8 +31,7 @@ for i in range(10):
     bloco = Block(bloco_img, 35+70*i, HEIGHT)
     all_blocks.add(bloco)
 
-bloco = Block(bloco_img, 280-35, HEIGHT - 70)
-all_blocks.add(bloco)
+all_blocks.add(Block(bloco_img, 280, HEIGHT - 70))
 
 # ===== Loop principal =====
 while game:
@@ -47,37 +45,49 @@ while game:
         if event.type == pygame.KEYDOWN:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                player.speedx = +8
+                player.speedx-=8
             if event.key == pygame.K_RIGHT:
-                player.speedx = -8
-            if event.key == pygame.K_UP and player.jump:
-                player.jump = False
-                player.speedy = -60
+                player.speedx+=8
+            if event.key == pygame.K_UP:
+                player.jump()
 
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_UP:
+                player.speedy-=40
+            if event.key == pygame.K_LEFT:
+                player.speedx = 0
+            if event.key == pygame.K_RIGHT:
                 player.speedx = 0
 
-    all_blocks.update(player)
-    player.update()
+    for block in all_blocks:
+        block.rect.x -= player.speedx
 
     hits = pygame.sprite.spritecollide(player, all_blocks, False)
+    for hit in hits:
+        if player.rect.bottom >= hit.rect.top:
+            player.j = False
+            player.rect.bottom = hit.rect.top - 1
+        if player.rect.right >= hit.rect.left:
+            player.rect.bottom = hit.rect.top + 1
 
-    for bloco in hits:
-        if player.rect.bottom >= bloco.rect.top:
-            player.rect.bottom = bloco.rect.top
-            player.jump = True
-            player.speedy = 0
+    # if len(hits) > 0:
+    #     constante = 70
+    # else: 
+    #     constante = 0
 
     # ----- Gera saídas
+    all_blocks.update()
+    player.update()
+    
+#    bloco.update(player, constante, (HEIGHT - 70))
     window.blit(background_img, (0,0))
     window.blit(player.image, player.rect)
     all_blocks.draw(window)
+    window.blit(bloco.image, bloco.rect)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
-
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

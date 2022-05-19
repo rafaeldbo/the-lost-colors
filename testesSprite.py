@@ -16,11 +16,15 @@ class Personagem(pygame.sprite.Sprite):
 
         self.speedx = 0
         self.speedy = gravidade
-        self.jump = True
+        self.energy = 0
+        self.j = False
+
+    def jump(self):
+        self.energy = 70 
 
     def update(self):
-        self.speedy += gravidade
-        self.rect.y += self.speedy
+        self.rect.y -= self.energy
+        self.energy -= 5
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
@@ -32,7 +36,6 @@ class Block(pygame.sprite.Sprite):
         self.rect.bottom = posy
         self.speedx = 0
 
-    def update(self,player):
-        self.speedx= player.speedx
+    def update(self):
         # Atualização da posição da nave
         self.rect.x += self.speedx
