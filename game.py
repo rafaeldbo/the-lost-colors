@@ -50,16 +50,15 @@ while game:
                 player.speedx = +8
             if event.key == pygame.K_RIGHT:
                 player.speedx = -8
-            if event.key == pygame.K_UP:
-                player.speedy = -40
+            if event.key == pygame.K_UP and player.jump:
+                player.jump = False
+                player.speedy = -60
 
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.speedx = 0
-            if event.key == pygame.K_UP:
-                player.speedy = gravidade
 
     all_blocks.update(player)
     player.update()
@@ -68,7 +67,9 @@ while game:
 
     for bloco in hits:
         if player.rect.bottom >= bloco.rect.top:
-            player.rect.bottom = bloco.rect.top 
+            player.rect.bottom = bloco.rect.top
+            player.jump = True
+            player.speedy = 0
 
     # ----- Gera saídas
     window.blit(background_img, (0,0))

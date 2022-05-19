@@ -16,8 +16,10 @@ class Personagem(pygame.sprite.Sprite):
 
         self.speedx = 0
         self.speedy = gravidade
+        self.jump = True
 
     def update(self):
+        self.speedy += gravidade
         self.rect.y += self.speedy
 
 class Block(pygame.sprite.Sprite):
