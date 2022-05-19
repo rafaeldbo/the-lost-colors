@@ -28,8 +28,8 @@ class Block(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = img 
         self.rect = self.image.get_rect()
-        self.rect.centerx = posx
-        self.rect.bottom = posy
+        self.rect.left = posx
+        self.rect.top = posy
         self.speedx = 0
 
     def update(self,player):

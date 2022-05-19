@@ -2,6 +2,7 @@
 # ----- Importa e inicia pacotes
 import pygame
 from sprites import Block, Personagem
+from cenarios import fase1
 
 pygame.init()
 
@@ -17,23 +18,23 @@ pygame.display.set_caption('The lost colors') # título da tela
 game = True
 clock = pygame.time.Clock()
 FPS = 30
+tamanho = 70
 
 player_img = pygame.image.load('assets/img/player.png')
 player_img = pygame.transform.scale(player_img, (70,105))
 bloco_img = pygame.image.load('assets/img/bloco.png')
 bloco_img = pygame.transform.scale(bloco_img, (70,70))
-background_img = pygame.image.load('assets/img/background.png')
+background_img = pygame.image.load('assets/img/cidade.png')
 background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
 player = Personagem(player_img)
 
 all_blocks = pygame.sprite.Group()
-for i in range(10):
-    bloco = Block(bloco_img, 35+70*i, HEIGHT)
-    all_blocks.add(bloco)
-
-bloco = Block(bloco_img, 280-35, HEIGHT - 70)
-all_blocks.add(bloco)
+for i, linha in enumerate(fase1):
+    for j, block in enumerate(linha):
+        if block == 1:
+            bloco = Block(bloco_img, tamanho*j, tamanho*i)
+            all_blocks.add(bloco)
 
 # ===== Loop principal =====
 while game:
@@ -66,10 +67,11 @@ while game:
     hits = pygame.sprite.spritecollide(player, all_blocks, False)
 
     for bloco in hits:
-        if player.rect.bottom >= bloco.rect.top:
+        if player.rect.bottom >= bloco.rect.top and player.rect.top < bloco.rect.top:
             player.rect.bottom = bloco.rect.top
             player.jump = True
             player.speedy = 0
+        
 
     # ----- Gera saídas
     window.blit(background_img, (0,0))
