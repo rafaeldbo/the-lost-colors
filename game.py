@@ -5,6 +5,7 @@ from sprites import Block, Personagem
 
 pygame.init()
 
+gravidade = 10
 WIDTH = 840
 HEIGHT = 560
 
@@ -31,7 +32,7 @@ for i in range(10):
     bloco = Block(bloco_img, 35+70*i, HEIGHT)
     all_blocks.add(bloco)
 
-bloco = Block(bloco_img, 280, HEIGHT - 70)
+bloco = Block(bloco_img, 280-35, HEIGHT - 70)
 all_blocks.add(bloco)
 
 # ===== Loop principal =====
@@ -46,25 +47,30 @@ while game:
         if event.type == pygame.KEYDOWN:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                player.speedx+=8
+                player.speedx = +8
             if event.key == pygame.K_RIGHT:
-                player.speedx-=8
+                player.speedx = -8
             if event.key == pygame.K_UP:
-                player.speedy+=40
+                player.speedy = -40
 
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT:
-                player.speedx-=8
-            if event.key == pygame.K_RIGHT:
-                player.speedx+=8
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                player.speedx = 0
             if event.key == pygame.K_UP:
-                player.speedy-=40
+                player.speedy = gravidade
+
+    all_blocks.update(player)
+    player.update()
+
+    hits = pygame.sprite.spritecollide(player, all_blocks, False)
+
+    for bloco in hits:
+        if player.rect.bottom >= bloco.rect.top:
+            player.rect.bottom = bloco.rect.top 
 
     # ----- Gera saídas
-    all_blocks.update(player)
-    
     window.blit(background_img, (0,0))
     window.blit(player.image, player.rect)
     all_blocks.draw(window)
