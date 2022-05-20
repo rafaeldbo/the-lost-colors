@@ -61,17 +61,21 @@ while game:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.speedx = 0
 
-    all_blocks.update(player)
+
     player.update()
 
-    hits = pygame.sprite.spritecollide(player, all_blocks, False)
+    collision = pygame.sprite.spritecollide(player, all_blocks, False)
+    hitsx = []
 
-    for bloco in hits:
-        if player.rect.bottom >= bloco.rect.top and player.rect.top < bloco.rect.top:
+    for bloco in collision:
+        if player.rect.bottom >= bloco.rect.top and player.rect.bottom < bloco.rect.bottom:
             player.rect.bottom = bloco.rect.top
             player.jump = True
             player.speedy = 0
-        
+        if player.rect.top <= bloco.rect.bottom and player.rect.top > bloco.rect.top:
+            player.rect.top = bloco.rect.bottom
+
+    all_blocks.update(player)
 
     # ----- Gera saídas
     window.blit(background_img, (0,0))
