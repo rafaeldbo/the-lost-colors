@@ -1,6 +1,7 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 import pygame
+from requests import delete
 from sprites import Block, Monstrinho, Personagem
 from cenarios import *
 from parameters import *
@@ -49,8 +50,7 @@ for i, linha in enumerate(fase1):
             elif block == 3:
                 monstro = Monstrinho(monstro_img,posx,posy)
                 monstros_varios.add(monstro)
-            
-            
+lifes= 1         
 
 # ===== Loop principal =====
 while game:
@@ -90,10 +90,22 @@ while game:
         if player.rect.top <= bloco.rect.bottom and player.rect.top > bloco.rect.top:
             player.rect.top = bloco.rect.bottom
     
+    collision2 = pygame.sprite.spritecollide(player, monstros_varios, False)
+    for monstro in collision2:
+        if player.rect.bottom >= monstro.rect.top and player.rect.bottom <= monstro.rect.bottom:
+            lifes-=1
+        elif player.rect.top <= monstro.rect.bottom and player.rect.top >= monstro.rect.top:
+            lifes-=1
+        elif player.rect.right >= monstro.rect.left and player.rect.right <= monstro.rect.left:
+            lifes-=1
+        elif player.rect.left >= monstro.rect.right and player.rect.left <= monstro.rect.right:
+            lifes-=1
+        
+    
     collision_group = pygame.sprite.groupcollide(monstros_varios, all_blocks, False, False)
     for monstro, blocos in collision_group.items():
         bloco = blocos[0]
-        
+
         if bloco.rect.right > monstro.rect.right > bloco.rect.left:
             monstro.rect.right = bloco.rect.left
             monstro.speedx = -6
@@ -101,6 +113,10 @@ while game:
         elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +6
+
+    if lifes == 0:
+        delete(player)
+        game=False
 
     all_blocks.update(player)
     monstros_varios.update(player)
