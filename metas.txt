@@ -3,7 +3,8 @@
     (CHECK) Movimentação em Y [Pulo]
     (CHECK) Colisão com o Chão
     (CHECK) Colisão com Tetos 
-    Colisão Lateral
+    (CHECK) Colisão Lateral
+    (CHECK) Implementar inimigo
     Bola de fogo
     Pulo Duplo
     Dash

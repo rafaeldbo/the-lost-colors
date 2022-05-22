@@ -11,8 +11,9 @@ pygame.init()
 # ----- Inicia estruturas de dados
 game = True
 clock = pygame.time.Clock()
-FPS = 60
-
+FPS = 30
+go_front = True
+go_back = True
 # ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # tamanho da tela
 pygame.display.set_caption('The lost colors') # título da tela
@@ -30,7 +31,7 @@ tijolo_img = pygame.image.load('assets/img/bloco4.png')
 tijolo_img = pygame.transform.scale(tijolo_img, (70,70))
 
 monstro_img= pygame.image.load('assets/img/inimigo1.png')
-monstro_img = pygame.transform.scale(monstro_img, (70,70))
+monstro_img = pygame.transform.scale(monstro_img, (50,50))
 
 player = Personagem(player_img)
 monstros_varios = pygame.sprite.Group()
@@ -48,13 +49,32 @@ for i, linha in enumerate(fase1):
                 bloco = Block(tijolo_img, posx, posy)  
                 all_blocks.add(bloco)
             elif block == 3:
-                monstro = Monstrinho(monstro_img,posx,posy)
+                monstro = Monstrinho(monstro_img,posx,posy+20)
                 monstros_varios.add(monstro)
 lifes= 1         
 
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
+
+    collisionx = pygame.sprite.spritecollide(player, all_blocks, False)
+    for bloco in collisionx:
+        if bloco.rect.right > player.rect.right >= bloco.rect.left and bloco.rect.centery < player.rect.bottom:
+            go_front = False
+        if bloco.rect.left < player.rect.left <= bloco.rect.right and bloco.rect.centery < player.rect.bottom:
+            go_back = False
+    
+    pressed_keys = pygame.key.get_pressed()
+
+    if pressed_keys[pygame.K_LEFT] and go_back:
+        player.speedx = -10
+    elif pressed_keys[pygame.K_LEFT] and not go_back:
+        player.speedx = 0
+    if pressed_keys[pygame.K_RIGHT] and go_front:
+        player.speedx = +10
+    elif pressed_keys[pygame.K_RIGHT] and not go_front:
+        player.speedx = 0
+
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
@@ -64,32 +84,29 @@ while game:
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
             
-            if event.key == pygame.K_LEFT:
-                player.speedx = -10
-            if event.key == pygame.K_RIGHT:
-                player.speedx = +10
             if event.key == pygame.K_UP and player.jump:
                 player.jump = False
                 player.speedy = -60
-
+    
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.speedx = 0
 
-
+    print(go_back, go_front)
     player.update()
     collision = pygame.sprite.spritecollide(player, all_blocks, False)
 
     for bloco in collision:
-        if player.rect.bottom >= bloco.rect.top and player.rect.bottom < bloco.rect.bottom:
+        if player.rect.bottom >= bloco.rect.top and player.rect.bottom <= bloco.rect.bottom:
             player.rect.bottom = bloco.rect.top
             player.jump = 2
             player.speedy = 0
-        if player.rect.top <= bloco.rect.bottom and player.rect.top > bloco.rect.top:
+        if player.rect.top <= bloco.rect.bottom and player.rect.top >= bloco.rect.top:
             player.rect.top = bloco.rect.bottom
-    
+        
+        
     collision2 = pygame.sprite.spritecollide(player, monstros_varios, False)
     for monstro in collision2:
         if player.rect.bottom >= monstro.rect.top and player.rect.bottom <= monstro.rect.bottom:
@@ -114,8 +131,7 @@ while game:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +6
 
-    if lifes == 0:
-        delete(player)
+    if lifes == 0 or player.rect.top > HEIGHT:
         game=False
 
     all_blocks.update(player)
@@ -127,6 +143,8 @@ while game:
     monstros_varios.draw(window)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
+    go_front = True
+    go_back = True
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
