@@ -1,7 +1,7 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 import pygame
-from sprites import Block, Personagem
+from sprites import Block, Monstrinho, Personagem
 from cenarios import *
 from parameters import *
 
@@ -28,9 +28,13 @@ chao_img = pygame.transform.scale(chao_img, (70,70))
 tijolo_img = pygame.image.load('assets/img/bloco4.png')
 tijolo_img = pygame.transform.scale(tijolo_img, (70,70))
 
-player = Personagem(player_img)
+monstro_img= pygame.image.load('assets/img/inimigo1.png')
+monstro_img = pygame.transform.scale(monstro_img, (70,70))
 
+player = Personagem(player_img)
+monstros_varios = pygame.sprite.Group()
 all_blocks = pygame.sprite.Group()
+
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
         if block != 0:
@@ -38,9 +42,15 @@ for i, linha in enumerate(fase1):
             posy = tamanho*i - 70
             if block == 1:
                 bloco = Block(chao_img, posx, posy)
+                all_blocks.add(bloco)
             elif block == 2:
                 bloco = Block(tijolo_img, posx, posy)  
-            all_blocks.add(bloco)
+                all_blocks.add(bloco)
+            elif block == 3:
+                monstro = Monstrinho(monstro_img,posx,posy)
+                monstros_varios.add(monstro)
+            
+            
 
 # ===== Loop principal =====
 while game:
@@ -70,9 +80,7 @@ while game:
 
 
     player.update()
-
     collision = pygame.sprite.spritecollide(player, all_blocks, False)
-    hitsx = []
 
     for bloco in collision:
         if player.rect.bottom >= bloco.rect.top and player.rect.bottom < bloco.rect.bottom:
@@ -81,13 +89,26 @@ while game:
             player.speedy = 0
         if player.rect.top <= bloco.rect.bottom and player.rect.top > bloco.rect.top:
             player.rect.top = bloco.rect.bottom
+    
+    collision_group = pygame.sprite.groupcollide(monstros_varios, all_blocks, False, False)
+    for monstro, blocos in collision_group.items():
+        bloco = blocos[0]
+        
+        if bloco.rect.right > monstro.rect.right > bloco.rect.left:
+            monstro.rect.right = bloco.rect.left
+            monstro.speedx = -6
+
+        elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
+            monstro.rect.left = bloco.rect.right
+            monstro.speedx = +6
 
     all_blocks.update(player)
-
+    monstros_varios.update(player)
     # ----- Gera saídas
     window.blit(background_img, (0,0))
     window.blit(player.image, player.rect)
     all_blocks.draw(window)
+    monstros_varios.draw(window)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
 

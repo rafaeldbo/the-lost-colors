@@ -33,6 +33,21 @@ class Block(pygame.sprite.Sprite):
         self.speedx = 0
 
     def update(self,player):
-        self.speedx= player.speedx
+        self.speedx= - player.speedx
         # Atualização da posição da nave
         self.rect.x += self.speedx
+
+class Monstrinho(pygame.sprite.Sprite):
+    def __init__(self, img, posx, posy):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.left = posx
+        self.rect.top = posy
+
+        self.speedx = 6
+
+    def update(self, player):
+        self.rect.x += self.speedx - player.speedx
