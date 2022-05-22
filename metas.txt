@@ -1,0 +1,52 @@
+- Mecânicas
+    (CHECK) Movimentação em X [Andar]
+    (CHECK) Movimentação em Y [Pulo]
+    (CHECK) Colisão com o Chão
+    (CHECK) Colisão com Tetos 
+    Colisão Lateral
+    Bola de fogo
+    Pulo Duplo
+    Dash
+    Vida Extra
+    Menu de Iniciar
+    Tela de Game Over
+    Salvamento
+    Boss Fight [se isso não for adicionado não há necessidade de história] (se sobrar tempo 1) 
+    Adição de Dialogos/História (se sobrar tempo 1)
+    Escalar (se sobrar tempo 2)
+    Pular nas Núvens (se sobrar tempo 3)
+    Nadar (se sobrar tempo 4)
+    
+- Design
+    Matriz da Fase 1
+    Matriz da Fase 2
+    Matriz da Fase 3
+    Sprites do Personagem
+    Imagens dos Blocos
+    Sprites/Imagem da Bola de fogo
+    Sprites dos Inimigos
+    Fundos Diferentes
+    Adição de cores
+    Sprites das Vinhas/Escadas (se sobrar tempo 2)
+    Sprites da Núvem (se sobrar tempo 3)
+
+- Graficos, Animações e Sons
+    (CHECK) Construção do Mapa via Matriz
+    (CHECK) Armazenagem e extração de Matrizes/Cenário em Arquivos CSV	
+    Virada do Personagem
+    Animação do Personagem Parado
+    Animação do Personagem em Movimento
+    Animação do Personagem Pulando
+    Animação da Bola de Fogo
+    Animação Dos Inimigos
+    Efeitos Sonóros
+    Trilha Sonora
+    Animação da Escalada (se sobrar tempo 2)
+    Animação da Núvem (se sobrar tempo 3)
+    Animação da Natação (se sobrar tempo 4)
+
+- Organização
+    Colocar os sprites em função de variáveis globais (Tamanho padrão de um bloco)
+    Classe World (essa classe será responsável por váriaveis globais (como speedx), alteração do fundo e do cenário)
+    Organizar sprites/sons/fontes em dicionários (assets)
+
