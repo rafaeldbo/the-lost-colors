@@ -39,6 +39,11 @@ player = Character(player1_img)
 all_enemys = pygame.sprite.Group()
 all_blocks = pygame.sprite.Group()
 
+nova_bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
+nova_bolinha_img = pygame.transform.scale(nova_bolinha_img, (SIZE, SIZE/2))
+
+all_bolinhas = pygame.sprite.Group()
+
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
         if block != 0:
@@ -71,6 +76,8 @@ while game:
             if event.key == pygame.K_UP and player.jump:
                 player.jump = False
                 player.speedy = -50
+            if event.key == pygame.K_SPACE:
+                player.shoot(nova_bolinha_img, all_bolinhas)
     
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -78,8 +85,10 @@ while game:
                 player.speedx = 0
 
     player.update()
+    all_bolinhas.update()
     all_blocks.update(player)
     all_enemys.update(player)
+
 
     collision_player_blocks = pygame.sprite.spritecollide(player, all_blocks, False)
     for bloco in collision_player_blocks:
@@ -118,6 +127,9 @@ while game:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +6
 
+    collision_enemy_bolinha = pygame.sprite.groupcollide(all_enemys, all_bolinhas, True, True)
+    collision_blocos_bolinha = pygame.sprite.groupcollide(all_blocks, all_bolinhas, False, True)
+
     if player.lifes <= 0 or player.rect.top > HEIGHT:
         game = False
 
@@ -125,6 +137,7 @@ while game:
     window.blit(background_img, (0,0))
     all_blocks.draw(window)
     all_enemys.draw(window)
+    all_bolinhas.draw(window)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo

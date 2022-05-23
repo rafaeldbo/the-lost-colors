@@ -1,3 +1,4 @@
+from turtle import right
 import pygame
 from parameters import *
 
@@ -22,6 +23,8 @@ class Character(pygame.sprite.Sprite):
         self.go_left = True
 
         self.lifes = 1
+
+        self.direction = 'right'
         
     def update(self):
         self.speedy += 0 if self.speedy >= 30 else gravidade
@@ -29,8 +32,14 @@ class Character(pygame.sprite.Sprite):
         
         if self.speedx > 0:
             self.image = self.image_right
+            self.direction = 'right'
         elif self.speedx < 0:
             self.image = self.image_left
+            self.direction= 'left'
+
+    def shoot (self, img, all_bolinhas):
+        nova_bolinha = FireBolinha(img, self.rect.centerx, self.rect.centery, self.direction)
+        all_bolinhas.add(nova_bolinha)
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
@@ -65,3 +74,23 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, player):
         self.rect.x += self.speedx - player.speedx
+
+class FireBolinha (pygame.sprite.Sprite):
+    def __init__(self, img, posx, posy, direction):
+        # Construtor da classe(Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.rect = img.get_rect()
+        self.rect.centerx = posx
+        self.rect.centery = posy
+
+        if direction == 'right':
+            self.speedx = 10
+            self.image = img
+        elif direction == 'left':
+            self.speedx = -10
+            self.image = pygame.transform.flip(img, True, False)
+
+    def update(self):
+
+        self.rect.centerx += self.speedx
