@@ -2,8 +2,9 @@
 # ----- Importa e inicia pacotes
 import pygame
 from sprites import *
-from cenarios import *
+from cenarios import * 
 from parameters import *
+from assets import assets, groups
 
 pygame.init()
 
@@ -16,35 +17,7 @@ FPS = 30
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
-# ----- Importando imagens
-background_img = pygame.image.load('assets/img/cidade.png')
-background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
-
-player1_img = pygame.image.load('assets/img/player.png')
-player1_img = pygame.transform.scale(player1_img, (SIZE, SIZE*1.5))
-
-chao_img = pygame.image.load('assets/img/chao.png')
-chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
-
-parede_img = pygame.image.load('assets/img/parede.png')
-parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
-
-monstro_img = pygame.image.load('assets/img/inimigo1.png')
-monstro_img = pygame.transform.scale(monstro_img, (SIZE*(5/7), SIZE*(5/7)))
-
-espinhos_img = pygame.image.load('assets/img/espinhos.png')
-espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE*0.5))
-
-bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
-bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
-
-diamante_img = pygame.image.load('assets/img/diamante_vermelho')
-diamante_img = pygame.transform.scale(diamante_img, (SIZE, SIZE))
-
-player = Character(player1_img)
-all_enemys = pygame.sprite.Group()
-all_blocks = pygame.sprite.Group()
-all_fireballs = pygame.sprite.Group()
+player = Character(assets['player'])
 
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
@@ -52,19 +25,17 @@ for i, linha in enumerate(fase1):
             posx = SIZE*j - SIZE*3
             posy = SIZE*i - SIZE*1
             if block == 1:
-                bloco = Block(chao_img, posx, posy)
-                all_blocks.add(bloco)
+                bloco = Block(assets['chao'], posx, posy)
+                groups['all_blocks'].add(bloco)
             elif block == 2:
-                bloco = Block(parede_img, posx, posy)  
-                all_blocks.add(bloco)
+                bloco = Block(assets['parede'], posx, posy)  
+                groups['all_blocks'].add(bloco)
             elif block == 3:
-                monstro = Enemy(monstro_img, posx, posy)
-                all_enemys.add(monstro)
+                monstro = Enemy(assets['monstro'], posx, posy)
+                groups['all_enemys'].add(monstro)
             elif block == 4:
-                espinhos = Block(espinhos_img, posx, posy + SIZE/2)
-                all_enemys.add(espinhos)
-            elif block == 5:
-                diamante = diamonds(diamante_img, posx, posy)
+                espinhos = Block(assets['espinhos'], posx, posy + SIZE/2)
+                groups['all_enemys'].add(espinhos)
 
 # ===== Loop principal =====
 while game:
@@ -81,7 +52,7 @@ while game:
                 player.jump = False
                 player.speedy = -50
             if event.key == pygame.K_SPACE:
-                player.shoot(bolinha_img, all_fireballs)
+                player.shoot(assets['bolinha'], groups['all_fireballs'])
     
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -89,12 +60,11 @@ while game:
                 player.speedx = 0
 
     player.update()
-    all_fireballs.update(player)
-    all_blocks.update(player)
-    all_enemys.update(player)
-    diamante.update(player)
+    groups['all_fireballs'].update(player)
+    groups['all_blocks'].update(player)
+    groups['all_enemys'].update(player)
 
-    collision_player_blocks = pygame.sprite.spritecollide(player, all_blocks, False)
+    collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
     for bloco in collision_player_blocks:
 
         if bloco.rect.bottom > player.rect.bottom > bloco.rect.top:
@@ -115,11 +85,11 @@ while game:
     elif pressed_keys[pygame.K_LEFT]:
         player.speedx = -10 if player.go_left else 0
 
-    hits = pygame.sprite.spritecollide(player, all_enemys, False)
+    hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False)
     if len(hits) != 0:
         player.lifes -= 1
     
-    collision_enemy_blocks = pygame.sprite.groupcollide(all_enemys, all_blocks, False, False)
+    collision_enemy_blocks = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_blocks'], False, False)
     for monstro, blocos in collision_enemy_blocks.items():
         bloco = blocos[0]
 
@@ -131,18 +101,17 @@ while game:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +6
 
-    collision_enemy_fireball = pygame.sprite.groupcollide(all_enemys, all_fireballs, True, True)
-    collision_blocos_fireball = pygame.sprite.groupcollide(all_blocks, all_fireballs, False, True)
+    collision_enemy_fireball = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_fireballs'], True, True)
+    collision_blocos_fireball = pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
 
     if player.lifes <= 0 or player.rect.top > HEIGHT:
         game = False
 
     # ----- Gera saídas
-    window.blit(background_img, (0,0))
-    all_blocks.draw(window)
-    all_enemys.draw(window)
-    all_fireballs.draw(window)
-    window.blit(diamante_img, diamante.rect)
+    window.blit(assets['background'], (0,0))
+    groups['all_blocks'].draw(window)
+    groups['all_enemys'].draw(window)
+    groups['all_fireballs'].draw(window)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo
