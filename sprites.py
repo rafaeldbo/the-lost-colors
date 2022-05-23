@@ -93,3 +93,20 @@ class FireBolinha (pygame.sprite.Sprite):
 
     def update(self, player):
         self.rect.centerx += self.speedx - player.speedx
+
+class diamonds (pygame.sprite.Sprite):
+
+    def __init__(self, img, posx, posy):
+        
+        pygame.sprite.Sprite.__init__(self)
+
+        self.rect = img.get_rect()
+        self.rect.left = posx
+        self.rect.top = posy
+
+        self.speedx = 0
+
+    def update(self, player):
+
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx
