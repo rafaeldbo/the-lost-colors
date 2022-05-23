@@ -1,6 +1,6 @@
-gravidade = 6
+gravidade = 8
 
-tamanho = 70
-WIDTH = tamanho*15
-HEIGHT = tamanho*10
+SIZE = 70
+WIDTH = SIZE*15
+HEIGHT = SIZE*10
 

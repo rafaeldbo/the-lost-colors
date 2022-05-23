@@ -1,43 +1,57 @@
 import pygame
+from parameters import *
 
-WIDTH = 840
-HEIGHT = 560
-gravidade = 10
-
-class Personagem(pygame.sprite.Sprite):
+class Character(pygame.sprite.Sprite):
     def __init__(self, img):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
+        self.image_right = img
+        self.image_left = pygame.transform.flip(img, True, False)
+        
         self.rect = self.image.get_rect()
-        self.rect.centerx = 75
+        self.rect.left = 140
         self.rect.bottom = HEIGHT - 70
 
         self.speedx = 0
         self.speedy = gravidade
-        self.jump = True
 
+        self.jump = True
+        self.go_right = True
+        self.go_left = True
+
+        self.lifes = 1
+        
     def update(self):
-        self.speedy += gravidade
+        self.speedy += 0 if self.speedy >= 30 else gravidade
         self.rect.y += self.speedy
+        
+        if self.speedx > 0:
+            self.image = self.image_right
+        elif self.speedx < 0:
+            self.image = self.image_left
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
+
         self.image = img 
         self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy
+
         self.speedx = 0
 
     def update(self,player):
-        self.speedx= - player.speedx
-        # Atualização da posição da nave
+        self.speedx = -player.speedx
         self.rect.x += self.speedx
 
-class Monstrinho(pygame.sprite.Sprite):
+        player.go_right = True
+        player.go_left = True
+
+class Enemy(pygame.sprite.Sprite):
     def __init__(self, img, posx, posy):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -45,7 +59,7 @@ class Monstrinho(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.left = posx
-        self.rect.top = posy
+        self.rect.top = posy + 20
 
         self.speedx = 6
 
