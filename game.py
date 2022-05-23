@@ -38,6 +38,9 @@ espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE*0.5))
 bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
 bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
 
+diamante_img = pygame.image.load('assets/img/diamante_vermelho')
+diamante_img = pygame.transform.scale(diamante_img, (SIZE, SIZE))
+
 player = Character(player1_img)
 all_enemys = pygame.sprite.Group()
 all_blocks = pygame.sprite.Group()
@@ -60,6 +63,8 @@ for i, linha in enumerate(fase1):
             elif block == 4:
                 espinhos = Block(espinhos_img, posx, posy + SIZE/2)
                 all_enemys.add(espinhos)
+            elif block == 5:
+                diamante = diamonds(diamante_img, posx, posy)
 
 # ===== Loop principal =====
 while game:
@@ -87,6 +92,7 @@ while game:
     all_fireballs.update(player)
     all_blocks.update(player)
     all_enemys.update(player)
+    diamante.update(player)
 
     collision_player_blocks = pygame.sprite.spritecollide(player, all_blocks, False)
     for bloco in collision_player_blocks:
@@ -136,6 +142,7 @@ while game:
     all_blocks.draw(window)
     all_enemys.draw(window)
     all_fireballs.draw(window)
+    window.blit(diamante_img, diamante.rect)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo
