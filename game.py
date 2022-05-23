@@ -1,5 +1,6 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
+from itertools import groupby
 import pygame
 from sprites import *
 from cenarios import * 
@@ -36,6 +37,9 @@ for i, linha in enumerate(fase1):
             elif block == 4:
                 espinhos = Block(assets['espinhos'], posx, posy + SIZE/2)
                 groups['all_enemys'].add(espinhos)
+            elif block == 5:
+                diamante = Diamonds(assets['diamante'], posx, posy)
+                groups['diamond'].add(diamante)
 
 # ===== Loop principal =====
 while game:
@@ -43,7 +47,7 @@ while game:
 
     # ----- Trata eventos
     for event in pygame.event.get():
-        if event.type == pygame.QUIT: 
+        if event.type == pygame.QUIT:  
             game = False
 
         # Verifica se apertou alguma tecla.
@@ -63,6 +67,11 @@ while game:
     groups['all_fireballs'].update(player)
     groups['all_blocks'].update(player)
     groups['all_enemys'].update(player)
+    groups['diamond'].update(player)
+
+    collision_player_diamond = pygame.sprite.spritecollide(player, groups['diamond'], True)
+    if len(collision_player_diamond) != 0:
+        player.fireballs = True
 
     collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
     for bloco in collision_player_blocks:
@@ -112,6 +121,7 @@ while game:
     groups['all_blocks'].draw(window)
     groups['all_enemys'].draw(window)
     groups['all_fireballs'].draw(window)
+    groups['diamond'].draw(window)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo

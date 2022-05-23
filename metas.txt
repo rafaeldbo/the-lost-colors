@@ -5,7 +5,10 @@
     (CHECK) Colisão com Tetos 
     (CHECK) Colisão Lateral
     (CHECK) Implementar inimigo
-    Bola de fogo
+    (CHECK)Bola de fogo
+    (CHECK) Diamante
+    Quebrar bloco
+    Poderzinho extra
     Pulo Duplo
     Dash
     Vida Extra
@@ -34,7 +37,7 @@
 - Graficos, Animações e Sons
     (CHECK) Construção do Mapa via Matriz
     (CHECK) Armazenagem e extração de Matrizes/Cenário em Arquivos CSV	
-    Virada do Personagem
+    (CHECK) Virada do Personagem
     Animação do Personagem Parado
     Animação do Personagem em Movimento
     Animação do Personagem Pulando

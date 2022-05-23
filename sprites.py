@@ -21,12 +21,12 @@ class Character(pygame.sprite.Sprite):
         self.jump = True
         self.go_right = True
         self.go_left = True
+        self.direction = 'right'
 
         self.lifes = 1
 
-        self.direction = 'right'
-
         # Só será possível atirar uma vez a cada 500 milissegundos
+        self.fireballs = False
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 500
         
@@ -42,17 +42,18 @@ class Character(pygame.sprite.Sprite):
             self.direction= 'left'
 
     def shoot (self, img, all_bolinhas):
-        # Verifica se pode atirar
-        now = pygame.time.get_ticks()
-        # Verifica quantos ticks se passaram desde o último tiro.
-        elapsed_ticks = now - self.last_shot
+        if self.fireballs:
+            # Verifica se pode atirar
+            now = pygame.time.get_ticks()
+            # Verifica quantos ticks se passaram desde o último tiro.
+            elapsed_ticks = now - self.last_shot
 
-        # Se já pode atirar novamente...
-        if elapsed_ticks > self.shoot_ticks:
-            # Marca o tick da nova imagem.
-            self.last_shot = now
-            nova_bolinha = FireBolinha(img, self.rect.centerx, self.rect.centery, self.direction)
-            all_bolinhas.add(nova_bolinha)
+            # Se já pode atirar novamente...
+            if elapsed_ticks > self.shoot_ticks:
+                # Marca o tick da nova imagem.
+                self.last_shot = now
+                nova_bolinha = FireBolinha(img, self.rect.centerx, self.rect.centery, self.direction)
+                all_bolinhas.add(nova_bolinha)
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
@@ -88,7 +89,7 @@ class Enemy(pygame.sprite.Sprite):
     def update(self, player):
         self.rect.x += self.speedx - player.speedx
 
-class FireBolinha (pygame.sprite.Sprite):
+class FireBolinha(pygame.sprite.Sprite):
     def __init__(self, img, posx, posy, direction):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -105,21 +106,20 @@ class FireBolinha (pygame.sprite.Sprite):
             self.image = pygame.transform.flip(img, True, False)
 
     def update(self, player):
-        self.rect.centerx += self.speedx - player.speedx
+        self.rect.x += self.speedx - player.speedx
 
-class diamonds (pygame.sprite.Sprite):
-
+class Diamonds(pygame.sprite.Sprite):
     def __init__(self, img, posx, posy):
-        
+        # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
 
-        self.rect = img.get_rect()
+        self.image = img
+        self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy
 
         self.speedx = 0
 
     def update(self, player):
-
         self.speedx = -player.speedx
         self.rect.x += self.speedx
