@@ -85,12 +85,11 @@ class FireBolinha (pygame.sprite.Sprite):
         self.rect.centery = posy
 
         if direction == 'right':
-            self.speedx = 10
+            self.speedx = 15
             self.image = img
         elif direction == 'left':
-            self.speedx = -10
+            self.speedx = -15
             self.image = pygame.transform.flip(img, True, False)
 
-    def update(self):
-
-        self.rect.centerx += self.speedx
+    def update(self, player):
+        self.rect.centerx += self.speedx - player.speedx

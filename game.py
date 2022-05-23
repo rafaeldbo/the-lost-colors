@@ -35,14 +35,13 @@ monstro_img = pygame.transform.scale(monstro_img, (SIZE*(5/7), SIZE*(5/7)))
 espinhos_img = pygame.image.load('assets/img/espinhos.png')
 espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE*0.5))
 
+bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
+bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
+
 player = Character(player1_img)
 all_enemys = pygame.sprite.Group()
 all_blocks = pygame.sprite.Group()
-
-nova_bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
-nova_bolinha_img = pygame.transform.scale(nova_bolinha_img, (SIZE, SIZE/2))
-
-all_bolinhas = pygame.sprite.Group()
+all_fireballs = pygame.sprite.Group()
 
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
@@ -59,7 +58,7 @@ for i, linha in enumerate(fase1):
                 monstro = Enemy(monstro_img, posx, posy)
                 all_enemys.add(monstro)
             elif block == 4:
-                espinhos = Block(espinhos_img, posx, posy + SIZE*0.5)
+                espinhos = Block(espinhos_img, posx, posy + SIZE/2)
                 all_enemys.add(espinhos)
 
 # ===== Loop principal =====
@@ -77,7 +76,7 @@ while game:
                 player.jump = False
                 player.speedy = -50
             if event.key == pygame.K_SPACE:
-                player.shoot(nova_bolinha_img, all_bolinhas)
+                player.shoot(bolinha_img, all_fireballs)
     
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -85,10 +84,9 @@ while game:
                 player.speedx = 0
 
     player.update()
-    all_bolinhas.update()
+    all_fireballs.update(player)
     all_blocks.update(player)
     all_enemys.update(player)
-
 
     collision_player_blocks = pygame.sprite.spritecollide(player, all_blocks, False)
     for bloco in collision_player_blocks:
@@ -115,8 +113,8 @@ while game:
     if len(hits) != 0:
         player.lifes -= 1
     
-    collision_enemy_wall = pygame.sprite.groupcollide(all_enemys, all_blocks, False, False)
-    for monstro, blocos in collision_enemy_wall.items():
+    collision_enemy_blocks = pygame.sprite.groupcollide(all_enemys, all_blocks, False, False)
+    for monstro, blocos in collision_enemy_blocks.items():
         bloco = blocos[0]
 
         if bloco.rect.right > monstro.rect.right > bloco.rect.left:
@@ -127,8 +125,8 @@ while game:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +6
 
-    collision_enemy_bolinha = pygame.sprite.groupcollide(all_enemys, all_bolinhas, True, True)
-    collision_blocos_bolinha = pygame.sprite.groupcollide(all_blocks, all_bolinhas, False, True)
+    collision_enemy_fireball = pygame.sprite.groupcollide(all_enemys, all_fireballs, True, True)
+    collision_blocos_fireball = pygame.sprite.groupcollide(all_blocks, all_fireballs, False, True)
 
     if player.lifes <= 0 or player.rect.top > HEIGHT:
         game = False
@@ -137,7 +135,7 @@ while game:
     window.blit(background_img, (0,0))
     all_blocks.draw(window)
     all_enemys.draw(window)
-    all_bolinhas.draw(window)
+    all_fireballs.draw(window)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo
