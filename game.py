@@ -17,10 +17,11 @@ window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
 # ----- Importando imagens
-player_img = pygame.image.load('assets/img/player.png')
-player_img = pygame.transform.scale(player_img, (SIZE, SIZE*1.5))
 background_img = pygame.image.load('assets/img/cidade.png')
 background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
+
+player1_img = pygame.image.load('assets/img/player.png')
+player1_img = pygame.transform.scale(player1_img, (SIZE, SIZE*1.5))
 
 chao_img = pygame.image.load('assets/img/chao.png')
 chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
@@ -28,10 +29,13 @@ chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 parede_img = pygame.image.load('assets/img/parede.png')
 parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
 
-monstro_img= pygame.image.load('assets/img/inimigo1.png')
+monstro_img = pygame.image.load('assets/img/inimigo1.png')
 monstro_img = pygame.transform.scale(monstro_img, (SIZE*(5/7), SIZE*(5/7)))
 
-player = Character(player_img)
+espinhos_img = pygame.image.load('assets/img/espinhos.png')
+espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE*0.5))
+
+player = Character(player1_img)
 all_enemys = pygame.sprite.Group()
 all_blocks = pygame.sprite.Group()
 
@@ -49,6 +53,9 @@ for i, linha in enumerate(fase1):
             elif block == 3:
                 monstro = Enemy(monstro_img, posx, posy)
                 all_enemys.add(monstro)
+            elif block == 4:
+                espinhos = Block(espinhos_img, posx, posy + SIZE*0.5)
+                all_enemys.add(espinhos)
 
 # ===== Loop principal =====
 while game:
@@ -76,6 +83,7 @@ while game:
 
     collision_player_blocks = pygame.sprite.spritecollide(player, all_blocks, False)
     for bloco in collision_player_blocks:
+
         if bloco.rect.bottom > player.rect.bottom > bloco.rect.top:
             player.rect.bottom = bloco.rect.top
             player.jump = True
