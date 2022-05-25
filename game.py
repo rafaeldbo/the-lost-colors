@@ -1,9 +1,9 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 import pygame
-from sprites import *
-from cenarios import * 
 from parameters import *
+from functions import * 
+from sprites import *
 from assets import assets, groups
 
 pygame.init()
@@ -17,43 +17,9 @@ FPS = 30
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
+groups = load_map('fase1', assets, groups)
+
 player = Character(assets['player'])
-
-def fica_no_bloco (player, bloco):
-    minimo = (player.rect.right - player.rect.centerx)/2
-    if player.rect.right > bloco.rect.left and player.rect.left < bloco.rect.left:
-        if (player.rect.right - bloco.rect.left) > minimo:
-            return True
-    elif player.rect.right > bloco.rect.right and player.rect.left < bloco.rect.right:
-        if (bloco.rect.right - player.rect.left) > minimo:
-            return True
-    elif player.rect.centerx > bloco.rect.left:
-        return True
-    return False
-
-for i, linha in enumerate(fase1):
-    for j, block in enumerate(linha):
-        if block != "0":
-            posx = SIZE*j - SIZE*3
-            posy = SIZE*i - SIZE*1
-            if block == "c":
-                bloco = Block(assets['chao'], posx, posy)
-                groups['all_blocks'].add(bloco)
-            elif block == "p":
-                bloco = Block(assets['parede'], posx, posy)  
-                groups['all_blocks'].add(bloco)
-            elif block == "i":
-                monstro = Enemy(assets['monstro'], posx, posy)
-                groups['all_enemys'].add(monstro)
-            elif block == "e":
-                espinhos = Block(assets['espinhos'], posx, posy + SIZE/2)
-                groups['all_enemys'].add(espinhos)
-            elif block == "d":
-                diamante = Diamonds(assets['diamante'], posx, posy)
-                groups['diamond'].add(diamante)
-            elif block == "m":
-                coin = Coin(assets['coin'], posx, posy)
-                groups['coins'].add(coin)
 
 # ===== Loop principal =====
 while game:
@@ -91,17 +57,15 @@ while game:
     collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
     for bloco in collision_player_blocks:
 
-        if bloco.rect.bottom > player.rect.bottom > bloco.rect.top:
-            ficaNoBloco = fica_no_bloco(player,bloco)
-            if ficaNoBloco:
-                player.rect.bottom = bloco.rect.top
+        if bloco.rect.top < player.rect.top < bloco.rect.bottom and colisao_minima(player, bloco): # Colisão com o teto
+            player.rect.top = bloco.rect.bottom
+
+        if bloco.rect.bottom > player.rect.bottom > bloco.rect.top and colisao_minima(player, bloco): # Colisão com o chão
+            player.rect.bottom = bloco.rect.top
             player.jump = True
             player.speedy = 0
 
-        if bloco.rect.top < player.rect.top < bloco.rect.bottom:
-            player.rect.top = bloco.rect.bottom
-
-        if bloco.rect.centery < player.rect.bottom and not lado:
+        if bloco.rect.centery < player.rect.bottom: # Colisão com as laterais
             player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
             player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
 
