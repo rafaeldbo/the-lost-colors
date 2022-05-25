@@ -91,3 +91,16 @@ while game:
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
+
+## função para o boneco não escalar:
+def fica_no_bloco (player, bloco):
+    minimo = (player.rect.right - player.rect.centerx)/2
+    if player.rect.right > bloco.rect.left and player.rect.left < bloco.rect.left:
+        if (player.rect.right - bloco.rect.left) > minimo:
+            return True
+    elif player.rect.right > bloco.rect.right and player.rect.left < bloco.rect.right:
+        if (bloco.rect.right - player.rect.left) > minimo:
+            return True
+    elif player.rect.centerx > bloco.rect.left:
+        return True
+    return False

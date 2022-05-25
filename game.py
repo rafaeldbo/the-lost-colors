@@ -19,6 +19,18 @@ pygame.display.set_caption('The lost colors') # título da tela
 
 player = Character(assets['player'])
 
+def fica_no_bloco (player, bloco):
+    minimo = (player.rect.right - player.rect.centerx)/2
+    if player.rect.right > bloco.rect.left and player.rect.left < bloco.rect.left:
+        if (player.rect.right - bloco.rect.left) > minimo:
+            return True
+    elif player.rect.right > bloco.rect.right and player.rect.left < bloco.rect.right:
+        if (bloco.rect.right - player.rect.left) > minimo:
+            return True
+    elif player.rect.centerx > bloco.rect.left:
+        return True
+    return False
+
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
         if block != "0":
@@ -80,14 +92,16 @@ while game:
     for bloco in collision_player_blocks:
 
         if bloco.rect.bottom > player.rect.bottom > bloco.rect.top:
-            player.rect.bottom = bloco.rect.top
+            ficaNoBloco = fica_no_bloco(player,bloco)
+            if ficaNoBloco:
+                player.rect.bottom = bloco.rect.top
             player.jump = True
             player.speedy = 0
 
         if bloco.rect.top < player.rect.top < bloco.rect.bottom:
             player.rect.top = bloco.rect.bottom
 
-        if bloco.rect.centery < player.rect.bottom:
+        if bloco.rect.centery < player.rect.bottom and not lado:
             player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
             player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
 
