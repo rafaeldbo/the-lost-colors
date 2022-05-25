@@ -1,6 +1,5 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
-from itertools import groupby
 import pygame
 from sprites import *
 from cenarios import * 
@@ -22,24 +21,27 @@ player = Character(assets['player'])
 
 for i, linha in enumerate(fase1):
     for j, block in enumerate(linha):
-        if block != 0:
+        if block != "0":
             posx = SIZE*j - SIZE*3
             posy = SIZE*i - SIZE*1
-            if block == 1:
+            if block == "c":
                 bloco = Block(assets['chao'], posx, posy)
                 groups['all_blocks'].add(bloco)
-            elif block == 2:
+            elif block == "p":
                 bloco = Block(assets['parede'], posx, posy)  
                 groups['all_blocks'].add(bloco)
-            elif block == 3:
+            elif block == "i":
                 monstro = Enemy(assets['monstro'], posx, posy)
                 groups['all_enemys'].add(monstro)
-            elif block == 4:
+            elif block == "e":
                 espinhos = Block(assets['espinhos'], posx, posy + SIZE/2)
                 groups['all_enemys'].add(espinhos)
-            elif block == 5:
+            elif block == "d":
                 diamante = Diamonds(assets['diamante'], posx, posy)
                 groups['diamond'].add(diamante)
+            elif block == "m":
+                coin = Coin(assets['coin'], posx, posy)
+                groups['coins'].add(coin)
 
 # ===== Loop principal =====
 while game:
@@ -54,9 +56,9 @@ while game:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and player.jump:
                 player.jump = False
-                player.speedy = -50
+                player.speedy = -moviment_player_y
             if event.key == pygame.K_SPACE:
-                player.shoot(assets['bolinha'], groups['all_fireballs'])
+                player.shoot(assets['bola de fogo'], groups['all_fireballs'])
     
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -68,8 +70,9 @@ while game:
     groups['all_blocks'].update(player)
     groups['all_enemys'].update(player)
     groups['diamond'].update(player)
+    groups['coins'].update(player)
 
-    collision_player_diamond = pygame.sprite.spritecollide(player, groups['diamond'], True)
+    collision_player_diamond = pygame.sprite.spritecollide(player, groups['diamond'], True, pygame.sprite.collide_mask)
     if len(collision_player_diamond) != 0:
         player.fireballs = True
 
@@ -90,11 +93,11 @@ while game:
 
     pressed_keys = pygame.key.get_pressed()
     if pressed_keys[pygame.K_RIGHT]:
-        player.speedx = +10 if player.go_right else 0
+        player.speedx = +moviment_player_x if player.go_right else 0
     elif pressed_keys[pygame.K_LEFT]:
-        player.speedx = -10 if player.go_left else 0
+        player.speedx = -moviment_player_x if player.go_left else 0
 
-    hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False)
+    hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
     if len(hits) != 0:
         player.lifes -= 1
     
@@ -104,14 +107,18 @@ while game:
 
         if bloco.rect.right > monstro.rect.right > bloco.rect.left:
             monstro.rect.right = bloco.rect.left
-            monstro.speedx = -6
+            monstro.speedx = -moviment_enemy_x
 
         elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
             monstro.rect.left = bloco.rect.right
-            monstro.speedx = +6
+            monstro.speedx = +moviment_enemy_x
 
-    collision_enemy_fireball = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_fireballs'], True, True)
+    collision_enemy_fireball = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
+    player.points += 100*len(collision_enemy_fireball)
     collision_blocos_fireball = pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
+
+    collision_player_coin = pygame.sprite.spritecollide(player, groups['coins'], True, pygame.sprite.collide_mask)
+    player.points += 100*len(collision_player_coin)
 
     if player.lifes <= 0 or player.rect.top > HEIGHT:
         game = False
@@ -122,10 +129,12 @@ while game:
     groups['all_enemys'].draw(window)
     groups['all_fireballs'].draw(window)
     groups['diamond'].draw(window)
+    groups['coins'].draw(window)
     window.blit(player.image, player.rect)
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
-
+    
 # ===== Finalização =====
+print(player.points)
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

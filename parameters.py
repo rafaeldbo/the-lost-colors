@@ -4,3 +4,10 @@ SIZE = 70
 WIDTH = SIZE*15
 HEIGHT = SIZE*10
 
+moviment_player_x = 10
+moviment_player_y = 50
+
+moviment_enemy_x = 5
+
+moviment_fireball_x = 15
+

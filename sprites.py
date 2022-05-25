@@ -1,4 +1,3 @@
-from turtle import right
 import pygame
 from parameters import *
 
@@ -24,6 +23,7 @@ class Character(pygame.sprite.Sprite):
         self.direction = 'right'
 
         self.lifes = 1
+        self.points = 0
 
         # Só será possível atirar uma vez a cada 500 milissegundos
         self.fireballs = False
@@ -31,7 +31,7 @@ class Character(pygame.sprite.Sprite):
         self.shoot_ticks = 500
         
     def update(self):
-        self.speedy += 0 if self.speedy >= 30 else gravidade
+        self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
         self.rect.y += self.speedy
         
         if self.speedx > 0:
@@ -41,7 +41,7 @@ class Character(pygame.sprite.Sprite):
             self.image = self.image_left
             self.direction= 'left'
 
-    def shoot (self, img, all_bolinhas):
+    def shoot (self, img, all_fireballs):
         if self.fireballs:
             # Verifica se pode atirar
             now = pygame.time.get_ticks()
@@ -52,8 +52,8 @@ class Character(pygame.sprite.Sprite):
             if elapsed_ticks > self.shoot_ticks:
                 # Marca o tick da nova imagem.
                 self.last_shot = now
-                nova_bolinha = FireBolinha(img, self.rect.centerx, self.rect.centery, self.direction)
-                all_bolinhas.add(nova_bolinha)
+                fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
+                all_fireballs.add(fireball)
 
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
@@ -81,28 +81,30 @@ class Enemy(pygame.sprite.Sprite):
 
         self.image = img
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
         self.rect.top = posy + 20
 
-        self.speedx = 6
+        self.speedx = moviment_enemy_x
 
     def update(self, player):
         self.rect.x += self.speedx - player.speedx
 
-class FireBolinha(pygame.sprite.Sprite):
+class FireBall(pygame.sprite.Sprite):
     def __init__(self, img, posx, posy, direction):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
 
         self.rect = img.get_rect()
+        self.mask = pygame.mask.from_surface(img)
         self.rect.centerx = posx
         self.rect.centery = posy
 
         if direction == 'right':
-            self.speedx = 15
+            self.speedx = moviment_fireball_x
             self.image = img
         elif direction == 'left':
-            self.speedx = -15
+            self.speedx = -moviment_fireball_x
             self.image = pygame.transform.flip(img, True, False)
 
     def update(self, player):
@@ -115,6 +117,24 @@ class Diamonds(pygame.sprite.Sprite):
 
         self.image = img
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.left = posx
+        self.rect.top = posy
+
+        self.speedx = 0
+
+    def update(self, player):
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, img, posx, posy):
+        # Construtor da classe(Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
         self.rect.top = posy
 
