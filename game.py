@@ -59,6 +59,11 @@ for i, linha in enumerate(fase1):
 while game:
     clock.tick(FPS)
 
+    blocos = []
+    for block in groups['all_blocks']:
+        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.left <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+            blocos.append(block)
+
     # ----- Trata eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  
@@ -88,20 +93,18 @@ while game:
     if len(collision_player_diamond) != 0:
         player.fireballs = True
 
-    collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
+    collision_player_blocks = pygame.sprite.spritecollide(player, blocos, False)
     for bloco in collision_player_blocks:
 
-        if bloco.rect.bottom > player.rect.bottom > bloco.rect.top:
-            ficaNoBloco = fica_no_bloco(player,bloco)
-            if ficaNoBloco:
+        if bloco.rect.bottom > player.rect.bottom > bloco.rect.top and fica_no_bloco(player,bloco):
                 player.rect.bottom = bloco.rect.top
-            player.jump = True
-            player.speedy = 0
+                player.jump = True
+                player.speedy = 0
 
-        if bloco.rect.top < player.rect.top < bloco.rect.bottom:
+        if bloco.rect.top < player.rect.top < bloco.rect.bottom and fica_no_bloco(player,bloco):
             player.rect.top = bloco.rect.bottom
 
-        if bloco.rect.centery < player.rect.bottom and not lado:
+        if bloco.rect.bottom < (player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)):
             player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
             player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
 
