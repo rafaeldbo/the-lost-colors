@@ -7,22 +7,35 @@ from sprites import *
 from assets import *
 
 pygame.init()
-
-# ----- Inicia estruturas de dados
-game = True
+assets = load_assets()
+init= True
+game1= False
+end= False
 clock = pygame.time.Clock()
 FPS = 60
 
-# ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
-assets = load_assets()
+while init:
+    clock.tick(FPS)
+    # ----- Trata eventos
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  
+            init = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                init = False
+                game1= True
+            
+    window.blit(assets['background'], (0,0))
+    pygame.display.flip()
+
 groups = load_map('fase1', assets)
 player = Character(assets['personagem'])
 
 # ===== Loop principal =====
-while game:
+while game1:
     clock.tick(FPS)
 
     if player.in_dash:
@@ -36,7 +49,7 @@ while game:
     # ----- Trata eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  
-            game = False
+            game1 = False
         
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
@@ -44,7 +57,7 @@ while game:
                 player.jump = False
                 player.speedy = -moviment_player_y
             if event.key == pygame.K_SPACE:
-                player.shoot(assets['bola de fogo'], groups['all_fireballs'])
+                player.shoot(assets['bola de fogo'], groups)
             if event.key == pygame.K_z:
                 player.dash()
                     
@@ -118,16 +131,32 @@ while game:
 
     # Verifica se o jogador perdeu o jogo
     if player.lifes <= 0 or player.rect.top > HEIGHT:
-        game = False
+        game1 = False
+        end = True
 
     # ----- Gera saídas
     window.blit(assets['background'], (0,0))
     window.blit(player.image, player.rect)
     groups['all_sprites'].draw(window)
 
-    # ----- Atualiza estado do jogo
-    pygame.display.update()  # Mostra o novo frame para o jogador
-    
+    pygame.display.update()
+
+while end:
+    clock.tick(FPS)
+    # ----- Trata eventos
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  
+            end = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RETURN:
+                game1= True
+            if event.key == pygame.K_ESCAPE:
+                end= False
+    window.blit(assets['background'], (0,0))
+    pygame.display.flip()
+
+
+
 # ===== Finalização =====
 print(player.points)
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
