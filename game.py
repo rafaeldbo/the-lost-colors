@@ -40,11 +40,11 @@ while game:
         
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP and player.jump:
-                player.jump = False
+            if event.key == pygame.K_UP and player.jump != 0:
+                player.jump -= 1
                 player.speedy = -moviment_player_y
             if event.key == pygame.K_SPACE:
-                player.shoot(assets['bola de fogo'], groups['all_fireballs'])
+                player.shoot(assets['bola de fogo'], groups)
             if event.key == pygame.K_z:
                 player.dash()
                     
@@ -59,7 +59,7 @@ while game:
 
     nearby_blocks = []
     for block in groups['all_blocks']:
-        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.left <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
             nearby_blocks.append(block)
     collision_player_blocks = pygame.sprite.spritecollide(player, nearby_blocks, False)
     for bloco in collision_player_blocks:
@@ -69,12 +69,13 @@ while game:
 
         if bloco.rect.bottom > player.rect.bottom > bloco.rect.top and colisao_minima(player, bloco): # Colisão com o chão
             player.rect.bottom = bloco.rect.top
-            player.jump = True
+            player.jump = 2
             player.speedy = 0
 
-        if bloco.rect.bottom < (player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais
+        if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais
             player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
             player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
+            player.speedx = 0
 
     pressed_keys = pygame.key.get_pressed()
     if pressed_keys[pygame.K_RIGHT]:
