@@ -1,50 +1,51 @@
 import pygame
 from parameters import *
-assets= {}
 
-background_img = pygame.image.load('assets/img/cidade.png')
-background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
+def load_assets(**kargs):
+    corrent_colors = "_"
+    if len(kargs) != 0:
+        colors = kargs.get('colors')
+        for color in colors:
+            corrent_colors += color[0]
+    path = f'assets/img/{corrent_colors}/'
 
-player_img = pygame.image.load('assets/img/player.png')
-player_img = pygame.transform.scale(player_img, (SIZE, SIZE*1.5))
+    background_img = pygame.image.load(f'{path}cidade.png')
+    background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
-chao_img = pygame.image.load('assets/img/chao.png')
-chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
+    chao_img = pygame.image.load(f'{path}chao.png')
+    chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
-parede_img = pygame.image.load('assets/img/parede.png')
-parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
+    parede_img = pygame.image.load(f'{path}parede.png')
+    parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
 
-inimigo_img = pygame.image.load('assets/img/inimigo1.png')
-inimigo_img = pygame.transform.scale(inimigo_img, (SIZE*(5/7), SIZE*(5/7)))
+    personagem_img = pygame.image.load(f'{path}personagem.png')
+    personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
 
-espinhos_img = pygame.image.load('assets/img/espinhos.png')
-espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE*0.5))
+    inimigo_img = pygame.image.load(f'{path}inimigoChao.png')
+    inimigo_img = pygame.transform.scale(inimigo_img, (SIZE*(5/7), SIZE*(5/7)))
 
-bolinha_img = pygame.image.load('assets/img/bola_de_fogo.png')
-bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
+    espinhos_img = pygame.image.load(f'{path}espinhos.png')
+    espinhos_img = pygame.transform.scale(espinhos_img, (SIZE, SIZE))
 
-diamante_img = pygame.image.load('assets/img/diamante_vermelho.png')
-diamante_img = pygame.transform.scale(diamante_img, (SIZE, SIZE))
+    moeda_img = pygame.image.load(f'{path}moeda.png')
+    moeda_img = pygame.transform.scale(moeda_img, (SIZE, SIZE))
 
-moeda_img = pygame.image.load('assets/img/coin.png')
-moeda_img = pygame.transform.scale(moeda_img, (SIZE, SIZE))
+    bolinha_img = pygame.image.load(f'{path}bolaDeFogo.png')
+    bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
 
-assets['background'] = background_img
-assets['player'] = player_img
-assets['chao'] = chao_img
-assets['parede'] = parede_img
-assets['monstro'] = inimigo_img
-assets['espinhos'] = espinhos_img
-assets['bola de fogo'] = bolinha_img
-assets['diamante'] = diamante_img
-assets['coin'] = moeda_img
+    diamante_img = pygame.image.load(f'assets/img/diamanteVermelho.png')
+    diamante_img = pygame.transform.scale(diamante_img, (SIZE, SIZE))
 
-groups= {}
+    assets = {
+        'background': background_img,
+        'personagem': personagem_img,
+        'chao': chao_img,
+        'parede': parede_img,
+        'inimigo chao': inimigo_img,
+        'espinhos': espinhos_img,
+        'bola de fogo': bolinha_img,
+        'diamante': diamante_img,
+        'moeda': moeda_img,
+    }
 
-groups['all_enemys'] = pygame.sprite.Group()
-groups['all_blocks'] = pygame.sprite.Group()
-groups['all_fireballs'] = pygame.sprite.Group()
-groups['coins'] = pygame.sprite.Group()
-groups['diamond'] = pygame.sprite.Group()
-
-
+    return assets

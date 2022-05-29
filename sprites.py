@@ -14,7 +14,7 @@ class Character(pygame.sprite.Sprite):
         self.image_dash = img
         
         self.rect = self.image.get_rect()
-        self.rect.left = 140
+        self.rect.left = SIZE*7
         self.rect.bottom = HEIGHT - 70
 
         self.speedx = 0
@@ -26,14 +26,13 @@ class Character(pygame.sprite.Sprite):
         self.direction = 'right'
 
         self.lifes = 1
+        self.colors = []
         self.points = 0
 
         # Só será possível atirar uma vez a cada 500 milissegundos
-        self.fireballs = False
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 500
         # Só será possível atirar uma vez a cada 1000 milissegundos
-        self.dash_power = False
         self.in_dash= False
         self.last_dash = pygame.time.get_ticks()
         self.dash_ticks = 0
@@ -49,22 +48,23 @@ class Character(pygame.sprite.Sprite):
             self.image = self.image_left
             self.direction= 'left'
 
-    def shoot (self, img, all_fireballs):
-        if self.fireballs:
-            # Verifica se pode atirar
-            now = pygame.time.get_ticks()
-            # Verifica quantos ticks se passaram desde o último tiro.
-            elapsed_ticks = now - self.last_shot
+    def update_color(self, assets):
+        self.image_right = assets['personagem']
+        self.image_left = pygame.transform.flip(assets['personagem'], True, False)
 
-            # Se já pode atirar novamente...
+    def shoot (self, img, groups):
+        if "red" in self.colors:
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - self.last_shot
             if elapsed_ticks > self.shoot_ticks:
-                # Marca o tick da nova imagem.
                 self.last_shot = now
                 fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
-                all_fireballs.add(fireball)
+                groups['all_fireballs'].add(fireball)
+                groups['all_sprites'].add(fireball)
+
 
     def dash(self):
-        if self.dash_power: #se é possível dar dash (vinculado a função dos ticka)
+        if "red" in self.colors: #se é possível dar dash (vinculado a função dos ticka)
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
             if elapsed_ticks > self.dash_ticks and not self.in_dash:
@@ -80,11 +80,12 @@ class Character(pygame.sprite.Sprite):
 
         
 class Block(pygame.sprite.Sprite):
-    def __init__(self,img, posx, posy):
+    def __init__(self, assets, posx, posy, nome):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
+        self.nome = nome
 
-        self.image = img 
+        self.image = assets[nome]
         self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy
@@ -97,13 +98,17 @@ class Block(pygame.sprite.Sprite):
 
         player.go_right = True
         player.go_left = True
+    
+    def update_color(self, assets):
+        self.image = assets[self.nome]
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, img, posx, posy):
+    def __init__(self, assets, posx, posy, nome):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
+        self.nome = nome
 
-        self.image = img
+        self.image = assets[nome]
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
@@ -113,6 +118,9 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self, player):
         self.rect.x += self.speedx - player.speedx
+    
+    def update_color(self, assets):
+        self.image = assets[self.nome]
 
 class FireBall(pygame.sprite.Sprite):
     def __init__(self, img, posx, posy, direction):
@@ -132,14 +140,15 @@ class FireBall(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(img, True, False)
 
     def update(self, player):
-        self.rect.x += self.speedx - player.speedx
+        self.rect.x += self.speedx -player.speedx
 
-class Diamonds(pygame.sprite.Sprite):
-    def __init__(self, img, posx, posy):
+class Collectable(pygame.sprite.Sprite):
+    def __init__(self, assets, posx, posy, nome, **kargs):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
+        self.nome = nome
 
-        self.image = img
+        self.image = assets[nome]
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
@@ -147,24 +156,11 @@ class Diamonds(pygame.sprite.Sprite):
 
         self.speedx = 0
 
-    def update(self, player):
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx
-
-class Coin(pygame.sprite.Sprite):
-    def __init__(self, img, posx, posy):
-        # Construtor da classe(Sprite).
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect.left = posx
-        self.rect.top = posy
-
-        self.speedx = 0
+        self.color = kargs.get('diamond')
 
     def update(self, player):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
-
+    
+    def update_color(self, assets):
+        self.image = assets[self.nome]
