@@ -4,7 +4,7 @@ import pygame
 from parameters import *
 from functions import * 
 from sprites import *
-from assets import assets, groups
+from assets import *
 
 pygame.init()
 
@@ -17,18 +17,13 @@ FPS = 30
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
 
-groups = load_map('fase1', assets, groups)
-
-player = Character(assets['player'])
+assets = load_assets()
+groups = load_map('fase1', assets)
+player = Character(assets['personagem'])
 
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
-
-    blocos = []
-    for block in groups['all_blocks']:
-        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.left <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
-            blocos.append(block)
 
     # ----- Trata eventos
     for event in pygame.event.get():
@@ -41,7 +36,7 @@ while game:
                 player.jump = False
                 player.speedy = -moviment_player_y
             if event.key == pygame.K_SPACE:
-                player.shoot(assets['bola de fogo'], groups['all_fireballs'])
+                player.shoot(assets['bola de fogo'], groups)
     
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
@@ -49,17 +44,13 @@ while game:
                 player.speedx = 0
 
     player.update()
-    groups['all_fireballs'].update(player)
-    groups['all_blocks'].update(player)
-    groups['all_enemys'].update(player)
-    groups['diamond'].update(player)
-    groups['coins'].update(player)
+    groups['all_sprites'].update(player)
 
-    collision_player_diamond = pygame.sprite.spritecollide(player, groups['diamond'], True, pygame.sprite.collide_mask)
-    if len(collision_player_diamond) != 0:
-        player.fireballs = True
-
-    collision_player_blocks = pygame.sprite.spritecollide(player, blocos, False)
+    nearby_blocks = []
+    for block in groups['all_blocks']:
+        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.left <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+            nearby_blocks.append(block)
+    collision_player_blocks = pygame.sprite.spritecollide(player, nearby_blocks, False)
     for bloco in collision_player_blocks:
 
         if bloco.rect.top < player.rect.top < bloco.rect.bottom and colisao_minima(player, bloco): # Colisão com o teto
@@ -96,24 +87,31 @@ while game:
             monstro.rect.left = bloco.rect.right
             monstro.speedx = +moviment_enemy_x
 
+    # Colisões da bola de fogo
     collision_enemy_fireball = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
     player.points += 100*len(collision_enemy_fireball)
+
     collision_blocos_fireball = pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
 
-    collision_player_coin = pygame.sprite.spritecollide(player, groups['coins'], True, pygame.sprite.collide_mask)
-    player.points += 100*len(collision_player_coin)
+    # Colisões com as moedas e diamantes (coletáveis)
+    collision_player_collectibles = pygame.sprite.spritecollide(player, groups['collectibles'], True, pygame.sprite.collide_mask)
+    for collected in collision_player_collectibles:
+        player.points += 100
+        if collected.color != None:
+            player.colors.append(collected.color)
+            assets = load_assets(colors=player.colors)
+            player.update_color(assets)
+            for entity in groups['all_sprites']:
+                entity.update_color(assets)
 
+    # Verifica se o jogador perdeu o jogo
     if player.lifes <= 0 or player.rect.top > HEIGHT:
         game = False
 
     # ----- Gera saídas
     window.blit(assets['background'], (0,0))
-    groups['all_blocks'].draw(window)
-    groups['all_enemys'].draw(window)
-    groups['all_fireballs'].draw(window)
-    groups['diamond'].draw(window)
-    groups['coins'].draw(window)
     window.blit(player.image, player.rect)
+    groups['all_sprites'].draw(window)
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
