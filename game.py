@@ -11,7 +11,7 @@ pygame.init()
 # ----- Inicia estruturas de dados
 game = True
 clock = pygame.time.Clock()
-FPS = 30
+FPS = 60
 
 # ----- Gera tela principal
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
@@ -39,6 +39,8 @@ for i, linha in enumerate(fase1):
             if block == "c":
                 bloco = Block(assets['chao'], posx, posy)
                 groups['all_blocks'].add(bloco)
+            #elif block == Block(assets["blocos2"], posx, posy):
+             #   groups['all_blocks2'].add(bloco)
             elif block == "p":
                 bloco = Block(assets['parede'], posx, posy)  
                 groups['all_blocks'].add(bloco)
@@ -59,11 +61,19 @@ for i, linha in enumerate(fase1):
 while game:
     clock.tick(FPS)
 
+    if player.in_dash:
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - player.last_dash
+        if elapsed_ticks >= 100:
+            player.speedx = 0
+            player.in_dash = False
+        
+
     # ----- Trata eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT:  
             game = False
-
+        
         # Verifica se apertou alguma tecla.
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP and player.jump:
@@ -71,11 +81,14 @@ while game:
                 player.speedy = -moviment_player_y
             if event.key == pygame.K_SPACE:
                 player.shoot(assets['bola de fogo'], groups['all_fireballs'])
-    
+            if event.key == pygame.K_z:
+                player.dash()
+                    
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                 player.speedx = 0
+        
 
     player.update()
     groups['all_fireballs'].update(player)
@@ -87,7 +100,7 @@ while game:
     collision_player_diamond = pygame.sprite.spritecollide(player, groups['diamond'], True, pygame.sprite.collide_mask)
     if len(collision_player_diamond) != 0:
         player.fireballs = True
-
+        player.dash_power = True
     collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
     for bloco in collision_player_blocks:
 
@@ -101,7 +114,7 @@ while game:
         if bloco.rect.top < player.rect.top < bloco.rect.bottom:
             player.rect.top = bloco.rect.bottom
 
-        if bloco.rect.centery < player.rect.bottom and not lado:
+        if bloco.rect.centery < player.rect.bottom:
             player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
             player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
 
@@ -110,10 +123,11 @@ while game:
         player.speedx = +moviment_player_x if player.go_right else 0
     elif pressed_keys[pygame.K_LEFT]:
         player.speedx = -moviment_player_x if player.go_left else 0
-
-    hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
-    if len(hits) != 0:
-        player.lifes -= 1
+    
+    if not player.in_dash:
+        hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
+        if len(hits) != 0:
+            player.lifes -= 1
     
     collision_enemy_blocks = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_blocks'], False, False)
     for monstro, blocos in collision_enemy_blocks.items():

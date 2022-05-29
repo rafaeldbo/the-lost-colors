@@ -1,3 +1,5 @@
+from turtle import speed
+from matplotlib import image
 import pygame
 from parameters import *
 
@@ -9,6 +11,7 @@ class Character(pygame.sprite.Sprite):
         self.image = img
         self.image_right = img
         self.image_left = pygame.transform.flip(img, True, False)
+        self.image_dash = img
         
         self.rect = self.image.get_rect()
         self.rect.left = 140
@@ -29,7 +32,12 @@ class Character(pygame.sprite.Sprite):
         self.fireballs = False
         self.last_shot = pygame.time.get_ticks()
         self.shoot_ticks = 500
-        
+        # Só será possível atirar uma vez a cada 1000 milissegundos
+        self.dash_power = False
+        self.in_dash= False
+        self.last_dash = pygame.time.get_ticks()
+        self.dash_ticks = 0
+     
     def update(self):
         self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
         self.rect.y += self.speedy
@@ -55,6 +63,22 @@ class Character(pygame.sprite.Sprite):
                 fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
                 all_fireballs.add(fireball)
 
+    def dash(self):
+        if self.dash_power: #se é possível dar dash (vinculado a função dos ticka)
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - self.last_dash
+            if elapsed_ticks > self.dash_ticks and not self.in_dash:
+                dash_speed = 100 
+                self.last_dash = now
+                if self.direction == 'right':
+                    self.speedx = +dash_speed
+                elif self.direction == 'left':
+                    self.speedx = -dash_speed
+                    self.image = pygame.transform.flip(self.image, True, False) #se for pro lado contrário da img flipe ela
+                self.dash_ticks = 10000
+                self.in_dash = True      
+
+        
 class Block(pygame.sprite.Sprite):
     def __init__(self,img, posx, posy):
         # Construtor da classe(Sprite).
@@ -99,7 +123,7 @@ class FireBall(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(img)
         self.rect.centerx = posx
         self.rect.centery = posy
-
+        
         if direction == 'right':
             self.speedx = moviment_fireball_x
             self.image = img
@@ -143,3 +167,4 @@ class Coin(pygame.sprite.Sprite):
     def update(self, player):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
+
