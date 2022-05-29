@@ -68,14 +68,14 @@ class Character(pygame.sprite.Sprite):
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
             if elapsed_ticks > self.dash_ticks and not self.in_dash:
-                dash_speed = 100 
+                dash_speed = 100
                 self.last_dash = now
                 if self.direction == 'right':
                     self.speedx = +dash_speed
                 elif self.direction == 'left':
                     self.speedx = -dash_speed
                     self.image = pygame.transform.flip(self.image, True, False) #se for pro lado contrário da img flipe ela
-                self.dash_ticks = 10000
+                self.dash_ticks = 5000
                 self.in_dash = True      
 
         
