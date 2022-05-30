@@ -9,16 +9,16 @@ def load_assets(**kargs):
             corrent_colors += color[0]
     path = f'assets/img/{corrent_colors}/'
 
-    background_img = pygame.image.load(f'{path}cidade.png')
+    background_img = pygame.image.load(f'{path}floresta.png')
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
     init_img = pygame.image.load(f'{path}cidade.png')
     init_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
-    chao_img = pygame.image.load(f'{path}chao.png')
+    chao_img = pygame.image.load(f'{path}grama.png')
     chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
-    parede_img = pygame.image.load(f'{path}parede.png')
+    parede_img = pygame.image.load(f'{path}terra.png')
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
 
     personagem_img = pygame.image.load(f'{path}personagem.png')

@@ -1,3 +1,7 @@
+FPS = 30
+second = 1000
+frame = second/FPS
+
 gravidade = 8
 
 SIZE = 70

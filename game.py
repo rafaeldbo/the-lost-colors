@@ -12,7 +12,7 @@ init= True
 game1= False
 end= False
 clock = pygame.time.Clock()
-FPS = 60
+
 
 window = pygame.display.set_mode((WIDTH, HEIGHT)) # SIZE da tela
 pygame.display.set_caption('The lost colors') # título da tela
@@ -41,7 +41,7 @@ while game1:
     if player.in_dash:
         now = pygame.time.get_ticks()
         elapsed_ticks = now - player.last_dash
-        if elapsed_ticks >= 100:
+        if elapsed_ticks >= player.dash_duration:
             player.speedx = 0
             player.in_dash = False
         
@@ -91,9 +91,9 @@ while game1:
             player.speedx = 0
 
     pressed_keys = pygame.key.get_pressed()
-    if pressed_keys[pygame.K_RIGHT]:
+    if pressed_keys[pygame.K_RIGHT] and not player.in_dash:
         player.speedx = +moviment_player_x if player.go_right else 0
-    elif pressed_keys[pygame.K_LEFT]:
+    elif pressed_keys[pygame.K_LEFT] and not player.in_dash:
         player.speedx = -moviment_player_x if player.go_left else 0
     
     if not player.in_dash:

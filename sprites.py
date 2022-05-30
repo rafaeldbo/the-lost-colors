@@ -15,25 +15,28 @@ class Character(pygame.sprite.Sprite):
         self.rect.left = SIZE*7
         self.rect.bottom = HEIGHT - 70
 
+        # Variáveis do Movimento
         self.speedx = 0
         self.speedy = gravidade
-
-        self.jump = 1
         self.go_right = True
         self.go_left = True
         self.direction = 'right'
+        self.jump = 0
 
+        # Variáveis do personagem
         self.lifes = 1
         self.colors = []
         self.points = 0
 
-        # Só será possível atirar uma vez a cada 500 milissegundos
-        self.last_shot = pygame.time.get_ticks()
-        self.shoot_ticks = 500
-        # Só será possível atirar uma vez a cada 1000 milissegundos
+        # Variáveis do Shoot
+        self.last_shoot = pygame.time.get_ticks()
+        self.shoot_delay = 500
+        
+        # Variáveis do Dash
         self.in_dash= False
         self.last_dash = pygame.time.get_ticks()
-        self.dash_ticks = 0
+        self.dash_delay = 5000
+        self.dash_duration = frame*3
      
     def update(self):
         self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
@@ -56,27 +59,24 @@ class Character(pygame.sprite.Sprite):
     def shoot (self, img, groups):
         if "red" in self.colors:
             now = pygame.time.get_ticks()
-            elapsed_ticks = now - self.last_shot
-            if elapsed_ticks > self.shoot_ticks:
+            elapsed_ticks = now - self.last_shoot
+            if elapsed_ticks > self.shoot_delay:
                 self.last_shot = now
                 fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
 
-
     def dash(self):
-        if "red" in self.colors: #se é possível dar dash (vinculado a função dos ticka)
+        if "green" in self.colors:
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
-            if elapsed_ticks > self.dash_ticks and not self.in_dash:
-                dash_speed = 100
+            if elapsed_ticks > self.dash_delay and not self.in_dash:
+                dash_speed = 70
                 self.last_dash = now
                 if self.direction == 'right':
                     self.speedx = +dash_speed
                 elif self.direction == 'left':
                     self.speedx = -dash_speed
-                    self.image = pygame.transform.flip(self.image, True, False) #se for pro lado contrário da img flipe ela
-                self.dash_ticks = 5000
                 self.in_dash = True      
 
         
