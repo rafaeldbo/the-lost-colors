@@ -37,8 +37,8 @@ def load_map(fase, assets):
                 elif block == "e":
                     element = Block(assets, posx, posy, "espinhos")
                     groups['all_enemys'].add(element)
-                elif block == "d":
-                    element = Collectable(assets, posx, posy, "diamante", diamond='red')
+                elif block in ["green", "blue", "red"]:
+                    element = Collectable(assets, posx, posy, f"prisma_{block}", prism=block)
                     groups['collectibles'].add(element)
                 elif block == "m":
                     element = Collectable(assets, posx, posy, "moeda")
