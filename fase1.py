@@ -14,15 +14,7 @@ def fase1_screen(window):
 
     while running:
         clock.tick(FPS)
-
-        if player.in_dash:
-            now = pygame.time.get_ticks()
-            elapsed_ticks = now - player.last_dash
-            if elapsed_ticks >= 100:
-                player.speedx = 0
-                player.in_dash = False
             
-
         # ----- Trata eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
@@ -43,7 +35,13 @@ def fase1_screen(window):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     player.speedx = 0
-            
+        
+        if player.in_dash:
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - player.last_dash
+            if elapsed_ticks >= player.dash_duration:
+                player.speedx = 0
+                player.in_dash = False
 
         player.update()
         groups['all_sprites'].update(player)
@@ -69,9 +67,9 @@ def fase1_screen(window):
                 player.speedx = 0
 
         pressed_keys = pygame.key.get_pressed()
-        if pressed_keys[pygame.K_RIGHT]:
+        if pressed_keys[pygame.K_RIGHT] and not player.in_dash:
             player.speedx = +moviment_player_x if player.go_right else 0
-        elif pressed_keys[pygame.K_LEFT]:
+        elif pressed_keys[pygame.K_LEFT] and not player.in_dash:
             player.speedx = -moviment_player_x if player.go_left else 0
         
         if not player.in_dash:
