@@ -12,6 +12,9 @@ def load_assets(**kargs):
     background_img = pygame.image.load(f'{path}cidade.png')
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
+    init_img = pygame.image.load(f'{path}cidade.png')
+    init_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
+
     chao_img = pygame.image.load(f'{path}chao.png')
     chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
@@ -42,6 +45,7 @@ def load_assets(**kargs):
         'espinhos': espinhos_img,
         'bola de fogo': bolinha_img,
         'moeda': moeda_img,
+        "init" : init_img
     }
 
     return assets

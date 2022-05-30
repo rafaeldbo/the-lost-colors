@@ -104,3 +104,18 @@ def fica_no_bloco (player, bloco):
     elif player.rect.centerx > bloco.rect.left:
         return True
     return False
+
+    for block in groups['all_blocks']:
+        if (block.rect.left >= (player.rect.left - SIZE) or block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+            nearby_blocks.append(block)
+            if (block.rect.centery > player.rect.top and block.rect.centery < player.rect.bottom):
+                if block.rect.right <= player.rect.left:
+                    vmin_esquerda = block.rect.right - player.rect.left
+                if block.rect.left >= player.rect.right:
+                    vmax_direita = block.rect.left - player.rect.right
+
+        pressed_keys = pygame.key.get_pressed()
+    if pressed_keys[pygame.K_RIGHT]:
+        player.speedx = +moviment_player_x if (vmax_direita >= moviment_player_x) else (+vmax_direita)
+    elif pressed_keys[pygame.K_LEFT]:
+        player.speedx = -moviment_player_x if (-moviment_player_x >= vmin_esquerda) else (-vmin_esquerda)
