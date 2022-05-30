@@ -82,7 +82,7 @@ while game1:
 
         if bloco.rect.bottom > player.rect.bottom > bloco.rect.top and colisao_minima(player, bloco): # Colisão com o chão
             player.rect.bottom = bloco.rect.top
-            player.jump = 2
+            player.jump = 2 if "blue" in player.colors else 1
             player.speedy = 0
 
         if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais

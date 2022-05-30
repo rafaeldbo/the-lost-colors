@@ -18,7 +18,7 @@ class Character(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = gravidade
 
-        self.jump = True
+        self.jump = 1
         self.go_right = True
         self.go_left = True
         self.direction = 'right'
