@@ -33,9 +33,6 @@ def load_assets(**kargs):
     bolinha_img = pygame.image.load(f'{path}bolaDeFogo.png')
     bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
 
-    diamante_img = pygame.image.load(f'assets/img/diamanteVermelho.png')
-    diamante_img = pygame.transform.scale(diamante_img, (SIZE, SIZE))
-
     assets = {
         'background': background_img,
         'personagem': personagem_img,
@@ -44,7 +41,6 @@ def load_assets(**kargs):
         'inimigo chao': inimigo_img,
         'espinhos': espinhos_img,
         'bola de fogo': bolinha_img,
-        'diamante': diamante_img,
         'moeda': moeda_img,
     }
 

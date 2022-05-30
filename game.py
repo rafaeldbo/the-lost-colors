@@ -93,7 +93,7 @@ while game:
 
     collision_blocos_fireball = pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
 
-    # Colisões com as moedas e diamantes (coletáveis)
+    # Colisões com as moedas e prisma (coletáveis)
     collision_player_collectibles = pygame.sprite.spritecollide(player, groups['collectibles'], True, pygame.sprite.collide_mask)
     for collected in collision_player_collectibles:
         player.points += 100

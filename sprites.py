@@ -35,11 +35,14 @@ class Character(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         
         if self.speedx > 0:
-            self.image = self.image_right
             self.direction = 'right'
         elif self.speedx < 0:
-            self.image = self.image_left
             self.direction= 'left'
+
+        if self.direction == 'right':
+            self.image = self.image_right
+        elif self.direction == 'left':
+            self.image = self.image_left
 
     def update_color(self, assets):
         self.image_right = assets['personagem']
@@ -54,7 +57,6 @@ class Character(pygame.sprite.Sprite):
                 fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
-
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome):
@@ -125,7 +127,14 @@ class Collectable(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.nome = nome
 
-        self.image = assets[nome]
+        self.color = kargs.get('prism')
+        if self.color != None:
+            img = pygame.image.load(f'assets/img/{nome}.png')
+            self.image = pygame.transform.scale(img, (50, 50))
+            posx += 10
+            posy += 10
+        else:
+            self.image = assets[nome]
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
@@ -133,11 +142,10 @@ class Collectable(pygame.sprite.Sprite):
 
         self.speedx = 0
 
-        self.color = kargs.get('diamond')
-
     def update(self, player):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
     
     def update_color(self, assets):
-        self.image = assets[self.nome]
+        if self.color == None:
+            self.image = assets[self.nome]
