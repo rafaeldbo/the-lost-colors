@@ -143,6 +143,30 @@ class FireBall(pygame.sprite.Sprite):
     def update(self, player):
         self.rect.x += self.speedx -player.speedx
 
+class SmashBlock(pygame.sprite.Sprite):
+    def __init__(self, assets, posx, posy, nome):
+        # Construtor da classe(Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        self.nome = nome
+
+        self.image = assets[nome]
+        self.rect = self.image.get_rect()
+        self.rect.left = posx
+        self.rect.top = posy
+
+        self.speedx = 0
+
+    def update(self,player):
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx
+
+        player.go_right = True
+        player.go_left = True
+    
+    def update_color(self, assets):
+        self.image = assets[self.nome]
+        
+
 class Collectable(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome, **kargs):
         # Construtor da classe(Sprite).

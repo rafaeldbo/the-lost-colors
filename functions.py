@@ -8,6 +8,7 @@ def load_map(fase, assets):
     for linha in fase_lines:
         linha = linha.strip()
         linha = linha.split(';')
+        linha = "".join(linha).split(',')
         for i, block in enumerate(linha):
             linha[i] = block
         matriz_fase.append(linha)
@@ -18,6 +19,7 @@ def load_map(fase, assets):
         'all_fireballs': pygame.sprite.Group(),
         'collectibles': pygame.sprite.Group(),
         'all_sprites': pygame.sprite.Group(),
+        'all_smashblocks': pygame.sprite.Group()
     }
 
     for i, linha in enumerate(matriz_fase):
@@ -43,7 +45,11 @@ def load_map(fase, assets):
                 elif block == "m":
                     element = Collectable(assets, posx, posy, "moeda")
                     groups['collectibles'].add(element)
+                elif block == "s":
+                    element = SmashBlock (assets, posx, posy, "smash_blocks")
+                    groups["all_smashblocks"].add(element)
                 groups['all_sprites'].add(element)
+
     return groups
 
 def colisao_minima(player, bloco):

@@ -45,7 +45,8 @@ def load_assets(**kargs):
         'espinhos': espinhos_img,
         'bola de fogo': bolinha_img,
         'moeda': moeda_img,
-        "init" : init_img
+        "init" : init_img,
+        "smash_blocks" : parede_img
     }
 
     return assets

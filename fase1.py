@@ -65,6 +65,25 @@ def fase1_screen(window):
                 player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
                 player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
                 player.speedx = 0
+                
+        for block in groups['all_smashblocks']:
+            if (block.rect.left >= (player.rect.left - SIZE) or block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+                nearby_blocks.append(block)
+        collision_player_blocks = pygame.sprite.spritecollide(player, nearby_blocks, False)
+        for bloco in collision_player_blocks:
+
+            if bloco.rect.top < player.rect.top < bloco.rect.bottom and colisao_minima(player, bloco): # Colisão com o teto
+                player.rect.top = bloco.rect.bottom
+
+            if bloco.rect.bottom > player.rect.bottom > bloco.rect.top and colisao_minima(player, bloco): # Colisão com o chão
+                player.rect.bottom = bloco.rect.top
+                player.jump = 2 if "blue" in player.colors else 1
+                player.speedy = 0
+
+            if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais
+                player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
+                player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
+                player.speedx = 0
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_RIGHT] and not player.in_dash:
@@ -78,6 +97,9 @@ def fase1_screen(window):
                 player.lifes -= 1
         
         collision_enemy_blocks = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_blocks'], False, False)
+        
+        collision_smashblocks_fireball= pygame.sprite.groupcollide(groups["all_smashblocks"], groups['all_fireballs'], True, False)
+
         for monstro, blocos in collision_enemy_blocks.items():
             bloco = blocos[0]
 

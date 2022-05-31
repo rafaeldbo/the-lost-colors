@@ -7,7 +7,7 @@ gravidade = 8
 SIZE = 70
 WIDTH = SIZE*15
 HEIGHT = SIZE*10
-FPS = 60
+FPS = 30
 
 moviment_player_x = 10
 moviment_player_y = 50
