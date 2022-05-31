@@ -1,7 +1,13 @@
 import pygame
 from parameters import *
 
-def load_assets(**kargs):
+assets_base = {
+    'fase1': ['floresta', 'grama', 'terra'],
+    'fase2': ['cidade', 'piso', 'parede'],
+    'fase3': ['laboratorio', 'piso', 'parede'],
+}
+
+def load_assets(fase, **kargs):
     corrent_colors = "_"
     if len(kargs) != 0:
         colors = kargs.get('colors')
@@ -9,17 +15,17 @@ def load_assets(**kargs):
             corrent_colors += color[0]
     path = f'assets/img/{corrent_colors}/'
 
-    background_img = pygame.image.load(f'{path}floresta.png')
+    background_img = pygame.image.load(f'{path}{assets_base[fase][0]}.png')
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
-    init_img = pygame.image.load(f'{path}cidade.png')
-    init_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
-
-    chao_img = pygame.image.load(f'{path}grama.png')
+    chao_img = pygame.image.load(f'{path}{assets_base[fase][1]}.png')
     chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
-    parede_img = pygame.image.load(f'{path}terra.png')
+    parede_img = pygame.image.load(f'{path}{assets_base[fase][2]}.png')
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
+    
+    caixa_img = pygame.image.load(f'{path}caixa.png')
+    caixa_img = pygame.transform.scale(caixa_img, (SIZE,SIZE))
 
     personagem_img = pygame.image.load(f'{path}personagem.png')
     personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
@@ -45,8 +51,12 @@ def load_assets(**kargs):
         'espinhos': espinhos_img,
         'bola de fogo': bolinha_img,
         'moeda': moeda_img,
+<<<<<<< HEAD
+        "caixa" : caixa_img,
+=======
         "init" : init_img,
         "smash_blocks" : parede_img
+>>>>>>> 889af025794a99fa4cc281d253f26dbdcd6c3ea5
     }
 
     return assets

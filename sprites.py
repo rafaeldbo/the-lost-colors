@@ -27,6 +27,7 @@ class Character(pygame.sprite.Sprite):
         self.lifes = 1
         self.colors = []
         self.points = 0
+        self.invencible = False
 
         # Variáveis do Shoot
         self.last_shoot = pygame.time.get_ticks()
@@ -61,7 +62,7 @@ class Character(pygame.sprite.Sprite):
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_shoot
             if elapsed_ticks > self.shoot_delay:
-                self.last_shot = now
+                self.last_shoot = now
                 fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
@@ -88,6 +89,7 @@ class Block(pygame.sprite.Sprite):
 
         self.image = assets[nome]
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
         self.rect.top = posy
 
