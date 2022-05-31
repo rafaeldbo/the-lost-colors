@@ -51,12 +51,7 @@ def load_assets(fase, **kargs):
         'espinhos': espinhos_img,
         'bola de fogo': bolinha_img,
         'moeda': moeda_img,
-<<<<<<< HEAD
         "caixa" : caixa_img,
-=======
-        "init" : init_img,
-        "smash_blocks" : parede_img
->>>>>>> 889af025794a99fa4cc281d253f26dbdcd6c3ea5
     }
 
     return assets

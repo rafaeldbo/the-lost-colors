@@ -10,10 +10,6 @@ gravidade = 8
 SIZE = 70
 WIDTH = SIZE*15
 HEIGHT = SIZE*10
-<<<<<<< HEAD
-=======
-FPS = 30
->>>>>>> 889af025794a99fa4cc281d253f26dbdcd6c3ea5
 
 moviment_player_x = 10
 moviment_player_y = 50
