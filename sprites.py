@@ -42,6 +42,10 @@ class Character(pygame.sprite.Sprite):
     def update(self):
         self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
         self.rect.y += self.speedy
+
+        if self.rect.y < 0:
+            self.rect.y == 0
+            self.speedy = 0
         
         if self.speedx > 0:
             self.direction = 'right'
@@ -106,7 +110,7 @@ class Block(pygame.sprite.Sprite):
         self.image = assets[self.nome]
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome):
+    def __init__(self, assets, posx, posy, nome, moviment):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         self.nome = nome
@@ -117,10 +121,21 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.left = posx
         self.rect.top = posy + 20
 
-        self.speedx = moviment_enemy_x
+        self.direction = moviment
+        self.speed = moviment_enemy
 
     def update(self, player):
-        self.rect.x += self.speedx - player.speedx
+        if self.direction == "horizontal":
+            self.rect.x += self.speed
+        if self.direction == "vertical":
+            self.rect.y += self.speed
+            if self.rect.y < 0:
+                self.rect.y = 0
+                self.speed = -self.speed
+            if self.rect.y > HEIGHT:
+                self.rect.y = HEIGHT
+                self.speed = -self.speed
+        self.rect.x -= player.speedx 
     
     def update_color(self, assets):
         self.image = assets[self.nome]

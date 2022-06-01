@@ -84,14 +84,21 @@ def fase1_screen(window):
         collision_enemy_blocks = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_blocks'], False, False)
         for monstro, blocos in collision_enemy_blocks.items():
             bloco = blocos[0]
-
-            if bloco.rect.right > monstro.rect.right > bloco.rect.left:
-                monstro.rect.right = bloco.rect.left
-                monstro.speedx = -moviment_enemy_x
-
-            elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
-                monstro.rect.left = bloco.rect.right
-                monstro.speedx = +moviment_enemy_x
+            if monstro.direction == "horizontal":
+                if bloco.rect.right > monstro.rect.right > bloco.rect.left:
+                    monstro.rect.right = bloco.rect.left
+                    monstro.speed = -monstro.speed
+                elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
+                    monstro.rect.left = bloco.rect.right
+                    monstro.speed = -monstro.speed
+            
+            if monstro.direction == "vertical":
+                if bloco.rect.top < monstro.rect.top < bloco.rect.bottom:
+                    monstro.rect.top = bloco.rect.bottom 
+                    monstro.speed = -monstro.speed          
+                elif bloco.rect.bottom > monstro.rect.bottom > bloco.rect.top:
+                    monstro.rect.bottom = bloco.rect.top 
+                    monstro.speed = -monstro.speed
 
         # Colisões da bola de fogo
         collision_breakables_fireball = pygame.sprite.groupcollide(groups['breakables'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)

@@ -37,7 +37,7 @@ def load_map(fase, assets, inicio, fim, player):
         for i, block in enumerate(coluna):
             if block != "0":
                 posx = SIZE*j - SIZE*3
-                posy = SIZE*i - SIZE*1
+                posy = SIZE*i
 
                 if block == "c":
                     element = Block(assets, posx, posy, "chao")
@@ -47,8 +47,13 @@ def load_map(fase, assets, inicio, fim, player):
                     element = Block(assets, posx, posy, "parede")
                     groups['all_blocks'].add(element)
 
-                elif block == "i":
-                    element = Enemy(assets, posx, posy, "inimigo chao")
+                elif block == "i1":
+                    element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
+                    groups['all_enemys'].add(element)
+                    groups['breakables'].add(element)
+
+                elif block == "i2":
+                    element = Enemy(assets, posx, posy, "inimigo chao","vertical")
                     groups['all_enemys'].add(element)
                     groups['breakables'].add(element)
 
