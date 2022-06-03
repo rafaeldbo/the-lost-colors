@@ -1,17 +1,28 @@
 from parameters import *
 from sprites import *
 
-def load_map(fase, assets):
+def load_map(fase, assets, inicio, fim, player):
     with open(f'assets/{fase}.csv', 'r') as arquivo:
         fase_lines = arquivo.readlines()
     separator = fase_lines[1][1]
     matriz_fase = []
+
+    colunas = {}
+
     for linha in fase_lines:
         linha = linha.strip()
         linha = linha.split(separator)
+        #for i, block in enumerate(linha):
+        #    linha[i] = block
         for i, block in enumerate(linha):
-            linha[i] = block
-        matriz_fase.append(linha)
+            if i not in colunas.keys():
+                colunas[i] = [block]
+            elif i in colunas.keys():
+                colunas[i].append(block)
+    for j in range(inicio,fim):
+        coluna = colunas[j]
+        matriz_fase.append(coluna)
+
 
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os blocos que possuem colisão
@@ -22,8 +33,8 @@ def load_map(fase, assets):
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
-    for i, linha in enumerate(matriz_fase):
-        for j, block in enumerate(linha):
+    for j, coluna in enumerate(matriz_fase):
+        for i, block in enumerate(coluna):
             if block != "0":
                 posx = SIZE*j - SIZE*3
                 posy = SIZE*i
@@ -59,7 +70,7 @@ def load_map(fase, assets):
                     element = Collectable(assets, posx, posy, "moeda")
                     groups['collectibles'].add(element)
 
-                elif block in ["green", "blue", "red"]:
+                elif block in ["green", "blue", "red"] and block not in player.colors:
                     element = Collectable(assets, posx, posy, f"prisma_{block}", prism=block)
                     groups['collectibles'].add(element)
 
@@ -68,7 +79,7 @@ def load_map(fase, assets):
     return groups
 
 def colisao_minima(player, bloco):
-    minimo = SIZE/4
+    minimo = SIZE/6
     if player.rect.right > bloco.rect.left > player.rect.left:
         if (player.rect.right - bloco.rect.left) > minimo:
             return True

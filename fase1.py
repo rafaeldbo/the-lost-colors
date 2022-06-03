@@ -5,13 +5,14 @@ from sprites import *
 from assets import *
 
 def fase1_screen(window):
+    
     running = True
-
     assets = load_assets('fase1')
-    groups = load_map('fase1', assets)
     player = Character(assets['personagem'])
+    groups = load_map('fase1', assets, 0, 89, player)
 
     while running:
+        FPS = 30
         clock.tick(FPS)
             
         # ----- Trata eventos
@@ -38,11 +39,13 @@ def fase1_screen(window):
                     player.speedx = 0
         
         if player.in_dash: # Função que controla o tempo de Dash
+            FPS = player.FPS_dash
             now = pygame.time.get_ticks()
             elapsed_ticks = now - player.last_dash
             if elapsed_ticks >= player.dash_duration:
                 player.speedx = 0
                 player.in_dash = False
+                FPS = 30
 
         player.update()
         groups['all_sprites'].update(player)
@@ -111,13 +114,17 @@ def fase1_screen(window):
                 player.colors.append(collected.color)
                 assets = load_assets('fase1', colors=player.colors)
                 player.update_color(assets)
+                if collected.color == 'green':
+                    inicio = 67
+                    fim = 180
+                    groups = load_map('fase1', assets, inicio, fim, player)
                 for entity in groups['all_sprites']:
                     entity.update_color(assets)
 
         # Verifica se o jogador perdeu o jogo
         if player.lifes <= 0 or player.rect.top > HEIGHT:
-            state = "END"
-            running = False
+            groups = load_map('fase1', assets, inicio, fim, player)
+            player.rect.bottom = HEIGHT - 70
 
         # ----- Gera saídas
         window.blit(assets['background'], (0,0))
