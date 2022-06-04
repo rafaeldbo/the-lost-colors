@@ -1,7 +1,7 @@
 import pygame
 from parameters import *
 
-telaFinal = pygame.image.load('assets/img/estrelas.png')
+telaFinal = pygame.image.load('assets/img/gameover.png')
 telaFinal = pygame.transform.scale(telaFinal, (WIDTH, HEIGHT))
 
 def end_screen(window):

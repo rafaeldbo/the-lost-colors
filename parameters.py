@@ -18,3 +18,4 @@ moviment_enemy = 5
 
 moviment_fireball_x = 15
 
+fase = "fase2"

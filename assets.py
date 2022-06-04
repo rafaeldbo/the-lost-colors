@@ -3,8 +3,7 @@ from parameters import *
 
 assets_base = {
     'fase1': ['floresta', 'grama', 'terra'],
-    'fase2': ['cidade', 'piso', 'parede'],
-    'fase3': ['laboratorio', 'piso', 'parede'],
+    'fase2': ['laboratorio', 'piso', 'parede'],
 }
 
 def load_assets(fase, **kargs):
