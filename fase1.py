@@ -10,9 +10,9 @@ def fase1_screen(window):
     assets = load_assets('fase1')
     player = Character(assets['personagem'])
     groups = load_map('fase1', assets, 0, 89, player)
+    FPS = 30
 
     while running:
-        FPS = 30
         clock.tick(FPS)
             
         # ----- Trata eventos
@@ -39,20 +39,18 @@ def fase1_screen(window):
                     player.speedx = 0
         
         if player.in_dash: # Função que controla o tempo de Dash
-            FPS = player.FPS_dash
             now = pygame.time.get_ticks()
             elapsed_ticks = now - player.last_dash
             if elapsed_ticks >= player.dash_duration:
                 player.speedx = 0
                 player.in_dash = False
-                FPS = 30
 
         player.update()
         groups['all_sprites'].update(player)
 
         nearby_blocks = []
         for block in groups['all_blocks']:
-            if (block.rect.left >= (player.rect.left - SIZE) or block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) or (block.rect.bottom <= player.rect.bottom + SIZE)):
+            if (block.rect.left >= (player.rect.left - SIZE) and block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) and (block.rect.bottom <= player.rect.bottom + SIZE)):
                 nearby_blocks.append(block)
         collision_player_blocks = pygame.sprite.spritecollide(player, nearby_blocks, False)
         for bloco in collision_player_blocks:
@@ -65,10 +63,12 @@ def fase1_screen(window):
                 player.jump = 2 if "blue" in player.colors else 1
                 player.speedy = 0
 
-            if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais
+            if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top - (SIZE/8)): # Colisão com as laterais
                 player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
                 player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
-                player.speedx = 0
+                #player.speedx = player.rect.right - bloco.rect.left
+                #groups['all_sprites'].update(player)
+                #player.speedx = 0
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_RIGHT] and not player.in_dash:
@@ -123,6 +123,7 @@ def fase1_screen(window):
 
         # Verifica se o jogador perdeu o jogo
         if player.lifes <= 0 or player.rect.top > HEIGHT:
+            player.lifes = 1
             groups = load_map('fase1', assets, inicio, fim, player)
             player.rect.bottom = HEIGHT - 70
 

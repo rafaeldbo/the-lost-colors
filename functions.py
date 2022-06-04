@@ -79,7 +79,7 @@ def load_map(fase, assets, inicio, fim, player):
     return groups
 
 def colisao_minima(player, bloco):
-    minimo = SIZE/6
+    minimo = SIZE/4
     if player.rect.right > bloco.rect.left > player.rect.left:
         if (player.rect.right - bloco.rect.left) > minimo:
             return True

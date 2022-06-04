@@ -34,9 +34,10 @@ class Character(pygame.sprite.Sprite):
         self.shoot_delay = 500
         
         # Variáveis do Dash
+        self.FPS_dash = 150
         self.in_dash= False
         self.last_dash = pygame.time.get_ticks()
-        self.dash_delay = 5000
+        self.dash_delay = 4000
         self.dash_duration = frame*3
      
     def update(self):
@@ -76,12 +77,11 @@ class Character(pygame.sprite.Sprite):
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
             if elapsed_ticks > self.dash_delay and not self.in_dash:
-                dash_speed = 70
                 self.last_dash = now
                 if self.direction == 'right':
-                    self.speedx = +dash_speed
+                    self.speedx = +70
                 elif self.direction == 'left':
-                    self.speedx = -dash_speed
+                    self.speedx = -70
                 self.in_dash = True      
 
         
