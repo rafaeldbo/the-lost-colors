@@ -2,7 +2,7 @@ import pygame
 from config import *
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, img, colors):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
@@ -24,7 +24,7 @@ class Character(pygame.sprite.Sprite):
 
         # Variáveis do personagem
         self.lifes = 3
-        self.colors = list(COLORS)
+        self.colors = colors
         self.points = 0
         self.invencible = False
 
