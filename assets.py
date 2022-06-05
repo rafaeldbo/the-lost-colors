@@ -7,6 +7,7 @@ def load_assets(fase, corrent_colors):
         for color in corrent_colors:
             colors_path += color[0]
     path = f'assets/img/{colors_path}/'
+    path_font = f'assets/font/'
 
     background_img = pygame.image.load(f"{path}{FASES[fase]['assets'][0]}.png")
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
@@ -35,6 +36,8 @@ def load_assets(fase, corrent_colors):
     foguinho_img = pygame.image.load(f'{path}bolaDeFogo.png')
     foguinho_img = pygame.transform.scale(foguinho_img, (SIZE, SIZE/2))
 
+    score_font = pygame.font.Font((f'{path_font}PressStart2P.ttf'), 28)
+
     bandeira_anim = []
     for i in range(4):
         img = pygame.image.load(f'assets/img/bandeira/{i}.png')
@@ -51,7 +54,8 @@ def load_assets(fase, corrent_colors):
         'bola de fogo': foguinho_img,
         'moeda': moeda_img,
         "caixa" : caixa_img,
-        "bandeira": bandeira_anim
+        "bandeira": bandeira_anim,
+        "score_font" : score_font
     }
 
     return assets

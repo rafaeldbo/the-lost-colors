@@ -78,9 +78,9 @@ class Character(pygame.sprite.Sprite):
             if elapsed_ticks > self.dash_delay and not self.in_dash:
                 self.last_dash = now
                 if self.direction == 'right':
-                    self.speedx = +70
+                    self.speedx = +65
                 elif self.direction == 'left':
-                    self.speedx = -70
+                    self.speedx = -65
                 self.in_dash = True      
 
 class Button(pygame.sprite.Sprite):

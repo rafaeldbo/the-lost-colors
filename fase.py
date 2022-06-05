@@ -57,11 +57,7 @@ def fase_screen(window, fase):
         groups['all_sprites'].update(player)
 
         # Colisões entre o player e os blocos
-        nearby_blocks = []
-        for block in groups['all_blocks']:
-            if (block.rect.left >= (player.rect.left - SIZE) and block.rect.right <= (player.rect.right + SIZE)) and (block.rect.top >= (player.rect.top - SIZE) and (block.rect.bottom <= player.rect.bottom + SIZE)):
-                nearby_blocks.append(block)
-        collision_player_blocks = pygame.sprite.spritecollide(player, nearby_blocks, False)
+        collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
         for bloco in collision_player_blocks:
 
             if bloco.rect.top < player.rect.top < bloco.rect.bottom and colisao_minima(player, bloco): # Colisão com o teto
@@ -72,12 +68,17 @@ def fase_screen(window, fase):
                 player.jump = 2 if "blue" in player.colors else 1
                 player.speedy = 0
 
-            if bloco.rect.bottom < ( player.rect.bottom + (SIZE/8)) and bloco.rect.bottom > (player.rect.top - (SIZE/8)): # Colisão com as laterais
+            if bloco.rect.top < (player.rect.bottom - (SIZE/8)) and bloco.rect.bottom > (player.rect.top + (SIZE/8)): # Colisão com as laterais
                 player.go_right = not (bloco.rect.right > player.rect.right > bloco.rect.left)
                 player.go_left = not (bloco.rect.left < player.rect.left < bloco.rect.right)
-                # player.speedx = player.rect.right - bloco.rect.left
-                # groups['all_sprites'].update(player)
-                # player.speedx = 0
+                if bloco.rect.left < player.rect.right and bloco.rect.left >= player.rect.left:
+                    player.speedx = -(player.rect.right - bloco.rect.left)
+                elif bloco.rect.right > player.rect.left and bloco.rect.right <= player.rect.right:
+                    player.speedx = bloco.rect.right - player.rect.left
+                if player.in_dash:
+                    player.in_dash = False
+                groups['all_sprites'].update(player)
+                player.speedx = 0
         
         # Movimenta na horizontal
         pressed_keys = pygame.key.get_pressed()
@@ -136,6 +137,17 @@ def fase_screen(window, fase):
                 for entity in groups['all_sprites']:
                     entity.update_color(assets)
 
+                   # Desenhando o score
+        font = pygame.font.SysFont(None, 48)
+        text_surface1 = assets['score_font'].render("{:08d}".format(player.points), True, (255, 255, 0))
+        text_rect1 = text_surface1.get_rect()
+        text_rect1.midtop = (WIDTH / 2,  10)
+
+                # Desenhando as vidas
+        text_surface2 = assets['score_font'].render(chr(9829) * player.lifes, True, (255, 0, 0))
+        text_rect2 = text_surface2.get_rect()
+        text_rect2.bottomleft = (10, HEIGHT - 10)
+
         # Colisão com a bandeira (Verifica se o jogador ganhou o jogo)
         collision_player_flag = pygame.sprite.spritecollide(player, groups['flag'], False, pygame.sprite.collide_mask)
         if len(collision_player_flag) != 0:
@@ -154,6 +166,8 @@ def fase_screen(window, fase):
         window.blit(assets['background'], (0,0))
         window.blit(player.image, player.rect)
         groups['all_sprites'].draw(window)
+        window.blit(text_surface1, text_rect1)
+        window.blit(text_surface2, text_rect2)
 
        # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()
