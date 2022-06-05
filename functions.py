@@ -33,7 +33,7 @@ def load_map(fase, assets, checkpoint, current_colors):
     for j, coluna in enumerate(matriz_fase):
         for i, value in enumerate(coluna):
             if value != "0":
-                posx = SIZE*j - SIZE*3
+                posx = SIZE*j - checkpoint['parede']
                 posy = SIZE*i
 
                 if value == "c":

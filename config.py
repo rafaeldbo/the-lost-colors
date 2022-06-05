@@ -23,11 +23,12 @@ moviment_enemy = 5
 moviment_fireball = 15
 
 # Fases
-COLORS = []
+COLORS = ['green', 'blue']
 
 FASES = {
     'FASE1': {
         'assets': ['floresta', 'grama', 'terra'],
+        'required colors': [],
         'pontuação': 0,
         'pontuação total': 0,
         'inimigos mortos': 0,
@@ -35,13 +36,14 @@ FASES = {
         'moedas coletadas': 0,
         'moedas totais': 0,
         'checkpoints': [
-            {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE},
-            {'inicio': 67, 'fim': 180, 'chao': HEIGHT - SIZE},
-            {'inicio': 194, 'fim': 344, 'chao': HEIGHT - 4*SIZE},
+            {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
+            {'inicio': 67, 'fim': 237, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
+            {'inicio': 199, 'fim': 348, 'chao': HEIGHT - SIZE, 'parede': SIZE*19},
         ]
     },
     'FASE2': {
         'assets': ['laboratorio', 'piso', 'parede'],
+        'required colors': ['green', 'blue'],
         'pontuação': 0,
         'pontuação total': 0,
         'inimigos mortos': 0,
@@ -49,8 +51,8 @@ FASES = {
         'moedas coletadas': 0,
         'moedas totais': 0,
         'checkpoints': [
-            {'inicio': 0, 'fim': 100, 'chao': HEIGHT - 2*SIZE},
-            #{'inicio': 0, 'fim': 0},
+            {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
+            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
         ]
     }
 }
