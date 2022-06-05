@@ -1,77 +1,78 @@
-from parameters import *
+from config import *
 from sprites import *
 
-def load_map(fase, assets, inicio, fim, player):
+def load_map(fase, assets, checkpoint, current_colors):
     with open(f'assets/{fase}.csv', 'r') as arquivo:
         fase_lines = arquivo.readlines()
     separator = fase_lines[1][1]
     matriz_fase = []
-
     colunas = {}
-
     for linha in fase_lines:
         linha = linha.strip()
         linha = linha.split(separator)
-        #for i, block in enumerate(linha):
-        #    linha[i] = block
-        for i, block in enumerate(linha):
+        for i, value in enumerate(linha):
             if i not in colunas.keys():
-                colunas[i] = [block]
+                colunas[i] = [value]
             elif i in colunas.keys():
-                colunas[i].append(block)
-    for j in range(inicio,fim):
+                colunas[i].append(value)
+
+    for j in range(checkpoint['inicio'], checkpoint['fim']):
         coluna = colunas[j]
         matriz_fase.append(coluna)
-
 
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os blocos que possuem colisão
         'all_enemys': pygame.sprite.Group(), # Todas as entidades que causam dano
         'all_fireballs': pygame.sprite.Group(), # Bolas de fogo (destruem entidades)
         'collectibles': pygame.sprite.Group(), # Todas as entidades Coletaveis
+        'flag': pygame.sprite.Group(), # Bandeira
         'breakables': pygame.sprite.Group(), # Todas as entidades quebraveis com Bola de Fogo
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
     for j, coluna in enumerate(matriz_fase):
-        for i, block in enumerate(coluna):
-            if block != "0":
+        for i, value in enumerate(coluna):
+            if value != "0":
                 posx = SIZE*j - SIZE*3
                 posy = SIZE*i
 
-                if block == "c":
+                if value == "c":
                     element = Block(assets, posx, posy, "chao")
                     groups['all_blocks'].add(element)
 
-                elif block == "p":
+                elif value == "p":
                     element = Block(assets, posx, posy, "parede")
                     groups['all_blocks'].add(element)
 
-                elif block == "i1":
+                elif value == "i1":
                     element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
                     groups['all_enemys'].add(element)
                     groups['breakables'].add(element)
 
-                elif block == "i2":
+                elif value == "i2":
                     element = Enemy(assets, posx, posy, "inimigo chao","vertical")
                     groups['all_enemys'].add(element)
                     groups['breakables'].add(element)
 
-                elif block == "e":
+                elif value == "e":
                     element = Block(assets, posx, posy, "espinhos")
                     groups['all_enemys'].add(element)
                 
-                elif block == "q":
+                elif value == "q":
                     element = Block(assets, posx, posy, "caixa")
                     groups['all_blocks'].add(element)
                     groups['breakables'].add(element)
                 
-                elif block == "m":
+                elif value == "m":
                     element = Collectable(assets, posx, posy, "moeda")
                     groups['collectibles'].add(element)
+                
+                elif value == "b":
+                    element = Flag(assets, posx, posy, "bandeira")
+                    groups['flag'].add(element)
 
-                elif block in ["green", "blue", "red"] and block not in player.colors:
-                    element = Collectable(assets, posx, posy, f"prisma_{block}", prism=block)
+                elif value in ["green", "blue", "red"] and value not in current_colors:
+                    element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value)
                     groups['collectibles'].add(element)
 
                 groups['all_sprites'].add(element)

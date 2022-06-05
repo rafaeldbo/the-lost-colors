@@ -1,27 +1,20 @@
 import pygame
-from parameters import *
+from config import *
 
-assets_base = {
-    'fase1': ['floresta', 'grama', 'terra'],
-    'fase2': ['cidade', 'piso', 'parede'],
-    'fase3': ['laboratorio', 'piso', 'parede'],
-}
+def load_assets(fase, corrent_colors):
+    colors_path = "_"
+    if len(corrent_colors) != 0:
+        for color in corrent_colors:
+            colors_path += color[0]
+    path = f'assets/img/{colors_path}/'
 
-def load_assets(fase, **kargs):
-    corrent_colors = "_"
-    if len(kargs) != 0:
-        colors = kargs.get('colors')
-        for color in colors:
-            corrent_colors += color[0]
-    path = f'assets/img/{corrent_colors}/'
-
-    background_img = pygame.image.load(f'{path}{assets_base[fase][0]}.png')
+    background_img = pygame.image.load(f"{path}{FASES[fase]['assets'][0]}.png")
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
-    chao_img = pygame.image.load(f'{path}{assets_base[fase][1]}.png')
+    chao_img = pygame.image.load(f"{path}{FASES[fase]['assets'][1]}.png")
     chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
-    parede_img = pygame.image.load(f'{path}{assets_base[fase][2]}.png')
+    parede_img = pygame.image.load(f"{path}{FASES[fase]['assets'][2]}.png")
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
     
     caixa_img = pygame.image.load(f'{path}caixa.png')
@@ -39,8 +32,14 @@ def load_assets(fase, **kargs):
     moeda_img = pygame.image.load(f'{path}moeda.png')
     moeda_img = pygame.transform.scale(moeda_img, (SIZE, SIZE))
 
-    bolinha_img = pygame.image.load(f'{path}bolaDeFogo.png')
-    bolinha_img = pygame.transform.scale(bolinha_img, (SIZE, SIZE/2))
+    foguinho_img = pygame.image.load(f'{path}bolaDeFogo.png')
+    foguinho_img = pygame.transform.scale(foguinho_img, (SIZE, SIZE/2))
+
+    bandeira_anim = []
+    for i in range(4):
+        img = pygame.image.load(f'assets/img/bandeira/{i}.png')
+        img = pygame.transform.scale(img, (SIZE, 2*SIZE))
+        bandeira_anim.append(img)
 
     assets = {
         'background': background_img,
@@ -49,9 +48,10 @@ def load_assets(fase, **kargs):
         'parede': parede_img,
         'inimigo chao': inimigo_img,
         'espinhos': espinhos_img,
-        'bola de fogo': bolinha_img,
+        'bola de fogo': foguinho_img,
         'moeda': moeda_img,
         "caixa" : caixa_img,
+        "bandeira": bandeira_anim
     }
 
     return assets

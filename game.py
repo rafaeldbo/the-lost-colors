@@ -1,9 +1,9 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 import pygame
-from parameters import *
+from config import *
 from init import init_screen
-from fase1 import fase1_screen
+from fase import fase_screen
 from end import end_screen
 
 pygame.init()
@@ -17,10 +17,10 @@ state = 'INIT'
 while state != 'QUIT':
     if state == 'INIT':
         state= init_screen(window)
-    if state == 'FASE1':
-        state = fase1_screen(window)
-    if state == 'END':
-        state = end_screen(window)
+    if 'FASE' in state:
+        state = fase_screen(window, state)
+    if state in ['WIN', 'LOSE']:
+        state = end_screen(window, state)
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
