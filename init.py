@@ -1,15 +1,21 @@
+# ===== Inicialização =====
+# ----- Importa e inicia pacotes
 import pygame
-from parameters import *
+from sympy import sec
+from config import *
+from sprites import Button
 
 def init_screen(window):
     running = True
 
     telaInicial = pygame.image.load('assets/img/menu1.png')
-    time_frame = [200, 500, 100, 50, 200, 600, 7000]
+    time_frame = [0.2*second, 0.5*second, 0.2*second, 0.1*second, 0.05*second, 0.6*second, 10*second]
     last_frame_time = 0
     frame = 0
-    button_floresta = pygame.Rect(305, 350, 210, 210)
-    button_lab = pygame.Rect(537, 350, 210, 210)
+    buttons = [
+        Button((305, 350, 210, 210), 'FASE1'), # fase floresta
+        Button((537, 350, 210, 210), 'FASE2'), # fase lab
+    ]
 
     while running:
         clock.tick(FPS)
@@ -21,18 +27,16 @@ def init_screen(window):
                 running = False
 
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    state = 'FASE1'
-                    running = False
                 if event.key == pygame.K_ESCAPE:
                     state = 'QUIT'
                     running = False
             
             if event.type == pygame.MOUSEBUTTONDOWN:
-                mouseX, mouseY = pygame.mouse.get_pos()
-                if button_floresta.right >= mouseX >= button_floresta.left and button_floresta.bottom >= mouseY >= button_floresta.top:
-                    state = 'FASE1'
-                    running = False
+                mousePos = pygame.mouse.get_pos()
+                for button in buttons:
+                    if button.rect.collidepoint(mousePos):
+                        state = button.value
+                        running = False
 
         now = pygame.time.get_ticks()
         elapsed_ticks = now - last_frame_time
@@ -45,7 +49,7 @@ def init_screen(window):
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaInicial, (0,0))
 
-        # Depois de desenhar tudo, inverte o display.
+        # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()
 
     return state

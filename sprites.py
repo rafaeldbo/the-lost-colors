@@ -1,5 +1,5 @@
 import pygame
-from parameters import *
+from config import *
 
 class Character(pygame.sprite.Sprite):
     def __init__(self, img):
@@ -9,7 +9,6 @@ class Character(pygame.sprite.Sprite):
         self.image = img
         self.image_right = img
         self.image_left = pygame.transform.flip(img, True, False)
-        self.image_dash = img
         
         self.rect = self.image.get_rect()
         self.rect.left = SIZE*7
@@ -24,8 +23,8 @@ class Character(pygame.sprite.Sprite):
         self.jump = 0
 
         # Variáveis do personagem
-        self.lifes = 1
-        self.colors = []
+        self.lifes = 3
+        self.colors = list(COLORS)
         self.points = 0
         self.invencible = False
 
@@ -44,11 +43,11 @@ class Character(pygame.sprite.Sprite):
         self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
         self.rect.y += self.speedy
 
-        if self.rect.y < 0:
+        if self.rect.y < 0: # Colisão com o teto do jogo
             self.rect.y == 0
             self.speedy = 0
         
-        if self.speedx > 0:
+        if self.speedx > 0: # Define a direção do personagem
             self.direction = 'right'
         elif self.speedx < 0:
             self.direction= 'left'
@@ -84,6 +83,13 @@ class Character(pygame.sprite.Sprite):
                     self.speedx = -70
                 self.in_dash = True      
 
+class Button(pygame.sprite.Sprite):
+    def __init__(self, rect, value):
+        # Construtor da classe(Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.rect = pygame.Rect(rect)
+        self.value = value
         
 class Block(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome):
@@ -151,10 +157,10 @@ class FireBall(pygame.sprite.Sprite):
         self.rect.centery = posy
         
         if direction == 'right':
-            self.speedx = moviment_fireball_x
+            self.speedx = moviment_fireball
             self.image = img
         elif direction == 'left':
-            self.speedx = -moviment_fireball_x
+            self.speedx = -moviment_fireball
             self.image = pygame.transform.flip(img, True, False)
 
     def update(self, player):
@@ -188,3 +194,34 @@ class Collectable(pygame.sprite.Sprite):
     def update_color(self, assets):
         if self.color == None:
             self.image = assets[self.nome]
+    
+class Flag(pygame.sprite.Sprite):
+    def __init__(self, assets, posx, posy, nome):
+        # Construtor da classe mãe (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        self.nome = nome
+
+        self.flag_anim = assets[nome]
+        self.image = self.flag_anim[0]
+        self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
+        self.rect.left = posx
+        self.rect.top = posy
+
+        self.last_update = pygame.time.get_ticks()
+        self.frame_ticks = second/4
+        self.frame = 0 
+
+    def update(self, player):
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx    
+
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.last_update
+        if elapsed_ticks > self.frame_ticks:
+            self.last_update = now
+            self.frame = self.frame+1 if self.frame < len(self.flag_anim)-1 else 0
+            self.image = self.flag_anim[self.frame]
+    
+    def update_color(self, assets):
+        pass
