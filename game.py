@@ -18,7 +18,7 @@ while state != 'QUIT':
     if state == 'INIT':
         state= init_screen(window)
     if 'FASE' in state:
-        state = fase_screen(window, state)
+        GAME, state = fase_screen(window, state)
     if state in ['WIN', 'LOSE']:
         state = end_screen(window, state)
 

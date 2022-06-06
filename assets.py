@@ -9,13 +9,13 @@ def load_assets(fase, corrent_colors):
     path = f'assets/img/{colors_path}/'
     path_font = f'assets/font/'
 
-    background_img = pygame.image.load(f"{path}{FASES[fase]['assets'][0]}.png")
+    background_img = pygame.image.load(f"{path}{GAME[fase]['assets'][0]}.png")
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
-    chao_img = pygame.image.load(f"{path}{FASES[fase]['assets'][1]}.png")
+    chao_img = pygame.image.load(f"{path}{GAME[fase]['assets'][1]}.png")
     chao_img = pygame.transform.scale(chao_img, (SIZE,SIZE))
 
-    parede_img = pygame.image.load(f"{path}{FASES[fase]['assets'][2]}.png")
+    parede_img = pygame.image.load(f"{path}{GAME[fase]['assets'][2]}.png")
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
     
     caixa_img = pygame.image.load(f'{path}caixa.png')

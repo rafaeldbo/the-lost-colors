@@ -23,9 +23,9 @@ moviment_enemy = 5
 moviment_fireball = 15
 
 # Fases
-COLORS = ['green', 'blue']
 
-FASES = {
+GAME = {
+    'colors': ['green', 'blue'],
     'FASE1': {
         'assets': ['floresta', 'grama', 'terra'],
         'required colors': [],
@@ -52,7 +52,7 @@ FASES = {
         'moedas totais': 0,
         'checkpoints': [
             {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
-            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
+            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3},
         ]
     }
 }

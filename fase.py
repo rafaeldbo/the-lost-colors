@@ -7,15 +7,15 @@ from sprites import *
 from assets import *
 
 def fase_screen(window, fase):
-    init_colors = FASES[fase]['required colors']
-    if list(set(init_colors + COLORS)) == list(set(COLORS)):
+    init_colors = list(GAME[fase]['required colors'])
+    if list(set(init_colors + GAME['colors'])) == list(set(GAME['colors'])):
         running = True
 
         checkpoint = 0
 
         assets = load_assets(fase, init_colors)
         player = Character(assets['personagem'], init_colors)
-        groups = load_map(fase, assets, FASES[fase]['checkpoints'][checkpoint], init_colors)
+        groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
 
         while running:
             clock.tick(FPS)
@@ -93,8 +93,8 @@ def fase_screen(window, fase):
             hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
             if (len(hits) != 0 and not player.invencible) or player.rect.top > HEIGHT:
                 player.lifes -= 1
-                groups = load_map(fase, assets, FASES[fase]['checkpoints'][checkpoint], player.colors)
-                player.rect.bottom = FASES[fase]['checkpoints'][checkpoint]['chao']
+                groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
+                player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             
             # Colisões dos inimigos
             collision_enemy_blocks = pygame.sprite.groupcollide(groups['all_enemys'], groups['all_blocks'], False, False)
@@ -130,12 +130,12 @@ def fase_screen(window, fase):
 
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint += 1
-                    groups = load_map(fase, assets, FASES[fase]['checkpoints'][checkpoint], player.colors)
+                    groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
 
                     # Atualiza as cores do jogo
                     assets = load_assets(fase, player.colors)
                     player.update_color(assets)
-                    player.rect.bottom = FASES[fase]['checkpoints'][checkpoint]['chao']
+                    player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
                     for entity in groups['all_sprites']:
                         entity.update_color(assets)
 
@@ -153,9 +153,8 @@ def fase_screen(window, fase):
             # Colisão com a bandeira (Verifica se o jogador ganhou o jogo)
             collision_player_flag = pygame.sprite.spritecollide(player, groups['flag'], False, pygame.sprite.collide_mask)
             if len(collision_player_flag) != 0:
-                colors = COLORS
-                colors = player.colors
-                FASES['FASE1']['pontuação'] = player.points
+                GAME['colors'] = player.colors
+                GAME['FASE1']['pontuação'] = player.points
                 state = 'WIN'
                 running = False
 
@@ -174,6 +173,6 @@ def fase_screen(window, fase):
         # Depois de desenhar tudo, atualiza o display.
             pygame.display.update()
 
-        return state
+        return GAME, state
     else:
-        return 'INIT'
+        return GAME, 'INIT'

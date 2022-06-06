@@ -39,43 +39,50 @@ def load_map(fase, assets, checkpoint, current_colors):
                 if value == "c":
                     element = Block(assets, posx, posy, "chao")
                     groups['all_blocks'].add(element)
+                    groups['all_sprites'].add(element)
 
                 elif value == "p":
                     element = Block(assets, posx, posy, "parede")
                     groups['all_blocks'].add(element)
+                    groups['all_sprites'].add(element)
 
                 elif value == "i1":
                     element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
                     groups['all_enemys'].add(element)
                     groups['breakables'].add(element)
+                    groups['all_sprites'].add(element)
 
                 elif value == "i2":
                     element = Enemy(assets, posx, posy, "inimigo chao","vertical")
                     groups['all_enemys'].add(element)
                     groups['breakables'].add(element)
+                    groups['all_sprites'].add(element)
 
                 elif value == "e":
                     element = Block(assets, posx, posy, "espinhos")
                     groups['all_enemys'].add(element)
+                    groups['all_sprites'].add(element)
                 
                 elif value == "q":
                     element = Block(assets, posx, posy, "caixa")
                     groups['all_blocks'].add(element)
                     groups['breakables'].add(element)
+                    groups['all_sprites'].add(element)
                 
                 elif value == "m":
                     element = Collectable(assets, posx, posy, "moeda")
                     groups['collectibles'].add(element)
+                    groups['all_sprites'].add(element)
                 
                 elif value == "b":
                     element = Flag(assets, posx, posy, "bandeira")
                     groups['flag'].add(element)
+                    groups['all_sprites'].add(element)
 
                 elif value in ["green", "blue", "red"] and value not in current_colors:
                     element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value)
                     groups['collectibles'].add(element)
-
-                groups['all_sprites'].add(element)
+                    groups['all_sprites'].add(element)
 
     return groups
 
