@@ -14,7 +14,7 @@ def fase_screen(window, fase):
         checkpoint = 0
 
         assets = load_assets(fase, init_colors)
-        player = Character(assets['personagem'], init_colors)
+        player = Character(assets, init_colors)
         groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
 
         while running:
@@ -33,7 +33,7 @@ def fase_screen(window, fase):
                         player.speedy = -moviment_player_y
 
                     if event.key == pygame.K_SPACE: # Atirar bola de fogo
-                        player.shoot(assets['bola de fogo'], groups)
+                        player.shoot(assets, groups)
 
                     if event.key == pygame.K_z: # Dar dash
                         player.dash()

@@ -2,17 +2,24 @@ import pygame
 from config import *
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, img, colors):
+    def __init__(self, assets, colors):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = img
-        self.image_right = img
-        self.image_left = pygame.transform.flip(img, True, False)
-        
+        self.stopped_image = assets['personagem']
+        self.moviment_anim = assets['movimento personagem']
+        self.image = self.stopped_image
+
         self.rect = self.image.get_rect()
         self.rect.left = SIZE*7
-        self.rect.bottom = HEIGHT - 70
+        self.rect.bottom = HEIGHT - SIZE*2
+        self.mask = pygame.mask.from_surface(self.image)
+
+        # Variáveis da animação do movimento
+        self.last_update = pygame.time.get_ticks()
+        self.frame_ticks = second/4
+        self.frame = 0 
+        self.last_frame_image = self.stopped_image
 
         # Variáveis do Movimento
         self.speedx = 0
@@ -20,6 +27,7 @@ class Character(pygame.sprite.Sprite):
         self.go_right = True
         self.go_left = True
         self.direction = 'right'
+        self.in_moviment = True
         self.jump = 0
 
         # Variáveis do personagem
@@ -46,19 +54,33 @@ class Character(pygame.sprite.Sprite):
             self.rect.y == 0
             self.speedy = 0
         
+        self.in_moviment = (self.speedx != 0)
         if self.speedx > 0: # Define a direção do personagem
             self.direction = 'right'
         elif self.speedx < 0:
-            self.direction= 'left'
+            self.direction = 'left'
+        
+        frame_image = self.last_frame_image
+        if self.in_moviment:
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - self.last_update
+            if elapsed_ticks > self.frame_ticks:
+                self.last_update = now
+                frame_image = self.moviment_anim[self.frame]
+                self.frame = self.frame+1 if self.frame < len(self.moviment_anim)-1 else 0
+        else:
+            frame_image = self.stopped_image
+        self.last_frame_image = frame_image
 
         if self.direction == 'right':
-            self.image = self.image_right
+            self.image = frame_image
         elif self.direction == 'left':
-            self.image = self.image_left
+            self.image = pygame.transform.flip(frame_image, True, False)
+        self.mask = pygame.mask.from_surface(self.image)
 
     def update_color(self, assets):
-        self.image_right = assets['personagem']
-        self.image_left = pygame.transform.flip(assets['personagem'], True, False)
+        self.stopped_image = assets['personagem']
+        self.moviment_anim = assets['movimento personagem']
 
     def shoot (self, img, groups):
         if "red" in self.colors:
@@ -146,21 +168,22 @@ class Enemy(pygame.sprite.Sprite):
         self.image = assets[self.nome]
 
 class FireBall(pygame.sprite.Sprite):
-    def __init__(self, img, posx, posy, direction):
+    def __init__(self, assets, posx, posy, direction):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
 
-        self.rect = img.get_rect()
-        self.mask = pygame.mask.from_surface(img)
+        image = assets['bola de fogo']
+        self.rect = image.get_rect()
+        self.mask = pygame.mask.from_surface(image)
         self.rect.centerx = posx
         self.rect.centery = posy
         
         if direction == 'right':
             self.speedx = moviment_fireball
-            self.image = img
+            self.image = image
         elif direction == 'left':
             self.speedx = -moviment_fireball
-            self.image = pygame.transform.flip(img, True, False)
+            self.image = pygame.transform.flip(image, True, False)
 
     def update(self, player):
         self.rect.x += self.speedx -player.speedx        
