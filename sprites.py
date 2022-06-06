@@ -89,7 +89,7 @@ class Character(pygame.sprite.Sprite):
             elapsed_ticks = now - self.last_shoot
             if elapsed_ticks > self.shoot_delay:
                 self.last_shoot = now
-                fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
+                fireball = FireBall(img, self.rect.centerx, self.rect.bottom, self.direction)
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
 
@@ -177,8 +177,8 @@ class FireBall(pygame.sprite.Sprite):
         image = assets['bola de fogo']
         self.rect = image.get_rect()
         self.mask = pygame.mask.from_surface(image)
-        self.rect.centerx = posx
-        self.rect.centery = posy
+        self.rect.centerx = posx 
+        self.rect.centery = posy - SIZE
         
         if direction == 'right':
             self.speedx = moviment_fireball
