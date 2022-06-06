@@ -33,7 +33,6 @@ class Character(pygame.sprite.Sprite):
         self.shoot_delay = 500
         
         # Variáveis do Dash
-        self.FPS_dash = 150
         self.in_dash= False
         self.last_dash = pygame.time.get_ticks()
         self.dash_delay = 4000
