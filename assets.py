@@ -17,12 +17,17 @@ def load_assets(fase, corrent_colors):
 
     parede_img = pygame.image.load(f"{path}{GAME[fase]['assets'][2]}.png")
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
+
+    personagem_img = pygame.image.load(f'{path}/personagem/parado.png')
+    personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
+    movimento_anim = []
+    for i in range(2):
+        img = pygame.image.load(f'{path}/personagem/{i}.png')
+        img = pygame.transform.scale(img, (SIZE, 1.5*SIZE))
+        movimento_anim.append(img)
     
     caixa_img = pygame.image.load(f'{path}caixa.png')
     caixa_img = pygame.transform.scale(caixa_img, (SIZE,SIZE))
-
-    personagem_img = pygame.image.load(f'{path}personagem.png')
-    personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
 
     inimigo_img = pygame.image.load(f'{path}inimigoChao.png')
     inimigo_img = pygame.transform.scale(inimigo_img, (SIZE*(5/7), SIZE*(5/7)))
@@ -47,6 +52,7 @@ def load_assets(fase, corrent_colors):
     assets = {
         'background': background_img,
         'personagem': personagem_img,
+        'movimento personagem': movimento_anim,
         'chao': chao_img,
         'parede': parede_img,
         'inimigo chao': inimigo_img,

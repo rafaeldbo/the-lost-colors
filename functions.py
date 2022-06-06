@@ -16,14 +16,14 @@ def matriz_em_coluna(fase):
             elif i in colunas.keys():
                 colunas[i].append(value)
     
-    matriz_geral = []
+    matriz_fase = []
     for j in colunas.keys():
         coluna = colunas[j]
-        matriz_geral.append(coluna)
+        matriz_fase.append(coluna)
 
-    return matriz_geral
+    return matriz_fase
     
-def load_map(matriz_geral, assets, checkpoint, current_colors, player_coins):
+def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
 
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os blocos que possuem colisão
@@ -35,7 +35,9 @@ def load_map(matriz_geral, assets, checkpoint, current_colors, player_coins):
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
-    for j, coluna in enumerate(matriz_geral):
+    collected = kargs.get('collected') if kargs.get('collected') != None else []
+
+    for j, coluna in enumerate(matriz_fase):
 
         if j in range(checkpoint['inicio'], checkpoint['fim']):
             for i, value in enumerate(coluna):
@@ -77,8 +79,8 @@ def load_map(matriz_geral, assets, checkpoint, current_colors, player_coins):
                         groups['all_sprites'].add(element)
                 
                     elif value == "m":
-                        element = Collectable(assets, posx, posy, "moeda", coin = [i,j])
-                        if element.index not in player_coins:
+                        element = Collectable(assets, posx, posy, "moeda", index=[i,j])
+                        if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
                 

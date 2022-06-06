@@ -14,9 +14,9 @@ def fase_screen(window, fase):
         checkpoint = 0
 
         assets = load_assets(fase, init_colors)
-        player = Character(assets['personagem'], init_colors)
-        matriz_geral = matriz_em_coluna(fase)
-        groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], init_colors, player.coins)
+        player = Character(assets, init_colors)
+        matriz_fase = matriz_em_coluna(fase)
+        groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
         pygame.mixer.music.set_volume(0.2)
@@ -40,7 +40,7 @@ def fase_screen(window, fase):
                             assets['pulo som'].play()
 
                     if event.key == pygame.K_SPACE: # Atirar bola de fogo
-                        player.shoot(assets['bola de fogo'], groups)
+                        player.shoot(assets, groups)
 
                     if event.key == pygame.K_z: # Dar dash
                         player.dash(assets)
@@ -100,7 +100,7 @@ def fase_screen(window, fase):
             hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
             if (len(hits) != 0 and not player.invencible) or player.rect.top > HEIGHT:
                 player.lifes -= 1
-                groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, player.coins)
+                groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.coins)
                 player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             
             # Colisões dos inimigos
@@ -140,7 +140,7 @@ def fase_screen(window, fase):
 
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint += 1
-                    groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, player.coins)
+                    groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.coins)
 
                     # Atualiza as cores do jogo
                     assets = load_assets(fase, player.colors)

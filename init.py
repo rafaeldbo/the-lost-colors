@@ -16,10 +16,6 @@ def init_screen(window):
         Button((305, 350, 210, 210), 'FASE1'), # fase floresta
         Button((537, 350, 210, 210), 'FASE2'), # fase lab
     ]
-
-    pygame.mixer.music.load('assets/sounds/Menu.mp3')
-    pygame.mixer.music.set_volume(0.4)
-    pygame.mixer.music.play(loops=-1)
     
     while running:
         clock.tick(FPS)

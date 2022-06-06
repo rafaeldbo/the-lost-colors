@@ -16,7 +16,7 @@ HEIGHT = SIZE*10
 
 # Movimentos
 moviment_player_x = 12
-moviment_player_y = 50
+moviment_player_y = 55
 
 moviment_enemy = 5
 

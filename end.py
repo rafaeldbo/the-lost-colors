@@ -18,7 +18,7 @@ def end_screen(window, screen):
         Button((415, 560, 210, 55), 'INIT'), # menu
     ]
 
-    pygame.mixer.music.load('assets/Menu.mp3')
+    pygame.mixer.music.load('assets/sounds/Menu.mp3')
     pygame.mixer.music.set_volume(0.4)
     pygame.mixer.music.play(loops=-1)
 
