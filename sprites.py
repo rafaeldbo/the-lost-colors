@@ -70,11 +70,12 @@ class Character(pygame.sprite.Sprite):
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
 
-    def dash(self):
+    def dash(self, assets):
         if "green" in self.colors:
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
             if elapsed_ticks > self.dash_delay and not self.in_dash:
+                assets['dash som'].play()
                 self.last_dash = now
                 if self.direction == 'right':
                     self.speedx = +65

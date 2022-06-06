@@ -12,10 +12,15 @@ def end_screen(window, screen):
     elif screen == 'LOSE':
         telaFinal = pygame.image.load('assets/img/gameover.png')
     telaFinal = pygame.transform.scale(telaFinal, (WIDTH, HEIGHT))
+    
 
     buttons = [
         Button((415, 560, 210, 55), 'INIT'), # menu
     ]
+
+    pygame.mixer.music.load('assets/Menu.mp3')
+    pygame.mixer.music.set_volume(0.4)
+    pygame.mixer.music.play(loops=-1)
 
     while running:
         clock.tick(FPS)
