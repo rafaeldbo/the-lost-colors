@@ -26,6 +26,7 @@ class Character(pygame.sprite.Sprite):
         self.lifes = 3
         self.colors = colors
         self.points = 0
+        self.coins = []
         self.invencible = False
 
         # Variáveis do Shoot
@@ -173,6 +174,8 @@ class Collectable(pygame.sprite.Sprite):
         self.nome = nome
 
         self.color = kargs.get('prism')
+        self.index = kargs.get('coin')
+        
         if self.color != None:
             img = pygame.image.load(f'assets/img/{nome}.png')
             self.image = pygame.transform.scale(img, (50, 50))

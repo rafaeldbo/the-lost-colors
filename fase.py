@@ -15,7 +15,8 @@ def fase_screen(window, fase):
 
         assets = load_assets(fase, init_colors)
         player = Character(assets['personagem'], init_colors)
-        groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
+        matriz_geral = matriz_em_coluna(fase)
+        groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], init_colors, player.coins)
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
         pygame.mixer.music.set_volume(0.2)
@@ -99,7 +100,7 @@ def fase_screen(window, fase):
             hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
             if (len(hits) != 0 and not player.invencible) or player.rect.top > HEIGHT:
                 player.lifes -= 1
-                groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
+                groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, player.coins)
                 player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             
             # Colisões dos inimigos
@@ -139,7 +140,7 @@ def fase_screen(window, fase):
 
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint += 1
-                    groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
+                    groups = load_map(matriz_geral, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, player.coins)
 
                     # Atualiza as cores do jogo
                     assets = load_assets(fase, player.colors)
@@ -147,6 +148,9 @@ def fase_screen(window, fase):
                     player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
                     for entity in groups['all_sprites']:
                         entity.update_color(assets)
+                
+                else:
+                    player.coins.append(collected.index)
 
             # Desenhando o score
             text_surface1 = assets['score_font'].render("{:08d}".format(player.points), True, (255, 255, 0))
