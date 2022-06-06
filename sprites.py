@@ -34,6 +34,7 @@ class Character(pygame.sprite.Sprite):
         self.lifes = 3
         self.colors = colors
         self.points = 0
+        self.coins = []
         self.invencible = False
 
         # Variáveis do Shoot
@@ -92,11 +93,12 @@ class Character(pygame.sprite.Sprite):
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
 
-    def dash(self):
+    def dash(self, assets):
         if "green" in self.colors:
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
             if elapsed_ticks > self.dash_delay and not self.in_dash:
+                assets['dash som'].play()
                 self.last_dash = now
                 if self.direction == 'right':
                     self.speedx = +65
@@ -195,6 +197,8 @@ class Collectable(pygame.sprite.Sprite):
         self.nome = nome
 
         self.color = kargs.get('prism')
+        self.index = kargs.get('index')
+        
         if self.color != None:
             img = pygame.image.load(f'assets/img/{nome}.png')
             self.image = pygame.transform.scale(img, (50, 50))

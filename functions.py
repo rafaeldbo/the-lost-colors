@@ -1,12 +1,12 @@
 from config import *
 from sprites import *
 
-def load_map(fase, assets, checkpoint, current_colors):
+def matriz_em_coluna(fase):
     with open(f'assets/{fase}.csv', 'r') as arquivo:
         fase_lines = arquivo.readlines()
     separator = fase_lines[1][1]
-    matriz_fase = []
     colunas = {}
+
     for linha in fase_lines:
         linha = linha.strip()
         linha = linha.split(separator)
@@ -15,10 +15,15 @@ def load_map(fase, assets, checkpoint, current_colors):
                 colunas[i] = [value]
             elif i in colunas.keys():
                 colunas[i].append(value)
-
-    for j in range(checkpoint['inicio'], checkpoint['fim']):
+    
+    matriz_fase = []
+    for j in colunas.keys():
         coluna = colunas[j]
         matriz_fase.append(coluna)
+
+    return matriz_fase
+    
+def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
 
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os blocos que possuem colisão
@@ -30,59 +35,64 @@ def load_map(fase, assets, checkpoint, current_colors):
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
+    collected = kargs.get('collected') if kargs.get('collected') != None else []
+
     for j, coluna in enumerate(matriz_fase):
-        for i, value in enumerate(coluna):
-            if value != "0":
-                posx = SIZE*j - checkpoint['parede']
-                posy = SIZE*i
 
-                if value == "c":
-                    element = Block(assets, posx, posy, "chao")
-                    groups['all_blocks'].add(element)
-                    groups['all_sprites'].add(element)
+        if j in range(checkpoint['inicio'], checkpoint['fim']):
+            for i, value in enumerate(coluna):
+                if value != "0":
+                    posx = SIZE*j - checkpoint['parede'] - checkpoint['inicio']*SIZE
+                    posy = SIZE*i
 
-                elif value == "p":
-                    element = Block(assets, posx, posy, "parede")
-                    groups['all_blocks'].add(element)
-                    groups['all_sprites'].add(element)
+                    if value == "c":
+                        element = Block(assets, posx, posy, "chao")
+                        groups['all_blocks'].add(element)
+                        groups['all_sprites'].add(element)
 
-                elif value == "i1":
-                    element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
-                    groups['all_enemys'].add(element)
-                    groups['breakables'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "p":
+                        element = Block(assets, posx, posy, "parede")
+                        groups['all_blocks'].add(element)
+                        groups['all_sprites'].add(element)
 
-                elif value == "i2":
-                    element = Enemy(assets, posx, posy, "inimigo chao","vertical")
-                    groups['all_enemys'].add(element)
-                    groups['breakables'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "i1":
+                        element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
+                        groups['all_enemys'].add(element)
+                        groups['breakables'].add(element)
+                        groups['all_sprites'].add(element)
 
-                elif value == "e":
-                    element = Block(assets, posx, posy, "espinhos")
-                    groups['all_enemys'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "i2":
+                        element = Enemy(assets, posx, posy, "inimigo chao","vertical")
+                        groups['all_enemys'].add(element)
+                        groups['breakables'].add(element)
+                        groups['all_sprites'].add(element)
+
+                    elif value == "e":
+                        element = Block(assets, posx, posy, "espinhos")
+                        groups['all_enemys'].add(element)
+                        groups['all_sprites'].add(element)
                 
-                elif value == "q":
-                    element = Block(assets, posx, posy, "caixa")
-                    groups['all_blocks'].add(element)
-                    groups['breakables'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "q":
+                        element = Block(assets, posx, posy, "caixa")
+                        groups['all_blocks'].add(element)
+                        groups['breakables'].add(element)
+                        groups['all_sprites'].add(element)
                 
-                elif value == "m":
-                    element = Collectable(assets, posx, posy, "moeda")
-                    groups['collectibles'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "m":
+                        element = Collectable(assets, posx, posy, "moeda", index=[i,j])
+                        if element.index not in collected:
+                            groups['collectibles'].add(element)
+                            groups['all_sprites'].add(element)
                 
-                elif value == "b":
-                    element = Flag(assets, posx, posy, "bandeira")
-                    groups['flag'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value == "b":
+                        element = Flag(assets, posx, posy, "bandeira")
+                        groups['flag'].add(element)
+                        groups['all_sprites'].add(element)
 
-                elif value in ["green", "blue", "red"] and value not in current_colors:
-                    element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value)
-                    groups['collectibles'].add(element)
-                    groups['all_sprites'].add(element)
+                    elif value in ["green", "blue", "red"] and value not in current_colors:
+                        element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value)
+                        groups['collectibles'].add(element)
+                        groups['all_sprites'].add(element)
 
     return groups
 
@@ -94,6 +104,6 @@ def colisao_minima(player, bloco):
     elif player.rect.right > bloco.rect.right > player.rect.left:
         if (bloco.rect.right - player.rect.left) > minimo:
             return True
-    elif player.rect.centerx > bloco.rect.left:
+    elif player.rect.centerx > bloco.rect.left and player.rect.centerx < bloco.rect.right:
         return True
     return False

@@ -15,7 +15,12 @@ def fase_screen(window, fase):
 
         assets = load_assets(fase, init_colors)
         player = Character(assets, init_colors)
-        groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
+        matriz_fase = matriz_em_coluna(fase)
+        groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
+
+        pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
+        pygame.mixer.music.set_volume(0.2)
+        pygame.mixer.music.play(loops=-1)
 
         while running:
             clock.tick(FPS)
@@ -31,12 +36,14 @@ def fase_screen(window, fase):
                     if (event.key == pygame.K_UP) and (player.jump != 0) and (player.speedy >= 0): # Pulo
                         player.jump -= 1
                         player.speedy = -moviment_player_y
+                        if player.jump == 0:
+                            assets['pulo som'].play()
 
                     if event.key == pygame.K_SPACE: # Atirar bola de fogo
                         player.shoot(assets, groups)
 
                     if event.key == pygame.K_z: # Dar dash
-                        player.dash()
+                        player.dash(assets)
                             
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP: # Para os movimentos
@@ -93,7 +100,7 @@ def fase_screen(window, fase):
             hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
             if (len(hits) != 0 and not player.invencible) or player.rect.top > HEIGHT:
                 player.lifes -= 1
-                groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
+                groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.coins)
                 player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             
             # Colisões dos inimigos
@@ -117,20 +124,23 @@ def fase_screen(window, fase):
                         monstro.speed = -monstro.speed
 
             # Colisões da bola de fogo
-            collision_breakables_fireball = pygame.sprite.groupcollide(groups['breakables'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
-            player.points += 100*len(collision_breakables_fireball)
+            collision_breakables_fireballs = pygame.sprite.groupcollide(groups['breakables'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
+            for colision in collision_breakables_fireballs:
+                assets['explode som'].play()
             pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
+
 
             # Colisões com as moedas e prismas (coletáveis)
             collision_player_collectibles = pygame.sprite.spritecollide(player, groups['collectibles'], True, pygame.sprite.collide_mask)
             for collected in collision_player_collectibles:
                 player.points += 100
+                assets["moeda som"].play()
                 if collected.color != None: # Verifica se é um diamante
                     player.colors.append(collected.color) # Coleta a cor
 
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint += 1
-                    groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors)
+                    groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.coins)
 
                     # Atualiza as cores do jogo
                     assets = load_assets(fase, player.colors)
@@ -138,14 +148,16 @@ def fase_screen(window, fase):
                     player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
                     for entity in groups['all_sprites']:
                         entity.update_color(assets)
+                
+                else:
+                    player.coins.append(collected.index)
 
-                    # Desenhando o score
-            font = pygame.font.SysFont(None, 48)
+            # Desenhando o score
             text_surface1 = assets['score_font'].render("{:08d}".format(player.points), True, (255, 255, 0))
             text_rect1 = text_surface1.get_rect()
             text_rect1.midtop = (WIDTH / 2,  10)
 
-                    # Desenhando as vidas
+            # Desenhando as vidas
             text_surface2 = assets['score_font'].render(chr(9829) * player.lifes, True, (255, 0, 0))
             text_rect2 = text_surface2.get_rect()
             text_rect2.bottomleft = (10, HEIGHT - 10)

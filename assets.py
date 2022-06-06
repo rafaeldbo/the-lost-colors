@@ -2,12 +2,12 @@ import pygame
 from config import *
 
 def load_assets(fase, corrent_colors):
+
     colors_path = "_"
     if len(corrent_colors) != 0:
         for color in corrent_colors:
             colors_path += color[0]
     path = f'assets/img/{colors_path}/'
-    path_font = f'assets/font/'
 
     background_img = pygame.image.load(f"{path}{GAME[fase]['assets'][0]}.png")
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
@@ -18,11 +18,11 @@ def load_assets(fase, corrent_colors):
     parede_img = pygame.image.load(f"{path}{GAME[fase]['assets'][2]}.png")
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
 
-    personagem_img = pygame.image.load(f'{path}/personagem/parado.png').convert_alpha()
+    personagem_img = pygame.image.load(f'{path}/personagem/parado.png')
     personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
     movimento_anim = []
     for i in range(2):
-        img = pygame.image.load(f'{path}/personagem/{i}.png').convert_alpha()
+        img = pygame.image.load(f'{path}/personagem/{i}.png')
         img = pygame.transform.scale(img, (SIZE, 1.5*SIZE))
         movimento_anim.append(img)
     
@@ -41,7 +41,7 @@ def load_assets(fase, corrent_colors):
     foguinho_img = pygame.image.load(f'{path}bolaDeFogo.png')
     foguinho_img = pygame.transform.scale(foguinho_img, (SIZE, SIZE/2))
 
-    score_font = pygame.font.Font((f'{path_font}PressStart2P.ttf'), 28)
+    score_font = pygame.font.Font((f'assets/font/base.ttf'), 28)
 
     bandeira_anim = []
     for i in range(4):
@@ -61,7 +61,11 @@ def load_assets(fase, corrent_colors):
         'moeda': moeda_img,
         "caixa" : caixa_img,
         "bandeira": bandeira_anim,
-        "score_font" : score_font
+        "score_font" : score_font,
+        'moeda som': pygame.mixer.Sound('assets/sounds/Coin.ogg'),
+        "dash som": pygame.mixer.Sound('assets/sounds/Dash.ogg'),
+        'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),
+        "pulo som": pygame.mixer.Sound('assets/sounds/Jump.ogg'),
     }
 
     return assets

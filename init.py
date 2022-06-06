@@ -7,7 +7,7 @@ from sprites import Button
 
 def init_screen(window):
     running = True
-
+    
     telaInicial = pygame.image.load('assets/img/menu1.png')
     time_frame = [0.2*second, 0.5*second, 0.2*second, 0.1*second, 0.05*second, 0.6*second, 10*second]
     last_frame_time = 0
@@ -16,7 +16,7 @@ def init_screen(window):
         Button((305, 350, 210, 210), 'FASE1'), # fase floresta
         Button((537, 350, 210, 210), 'FASE2'), # fase lab
     ]
-
+    
     while running:
         clock.tick(FPS)
 
