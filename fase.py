@@ -160,15 +160,33 @@ def fase_screen(window, fase):
             # Desenhando as vidas
             text_surface2 = assets['score_font'].render(chr(9829) * player.lifes, True, (255, 0, 0))
             text_rect2 = text_surface2.get_rect()
-            text_rect2.bottomleft = (10, HEIGHT - 10)
+            text_rect2.bottomleft = (22, HEIGHT - 10)
+
+            #Desenhando barra do Dash:
+            preto = (0, 0, 0)
+            inicio_ret = 10
+            retangulo_ex = (inicio_ret, HEIGHT-70, 106, 25)
+            
+            branco = (255, 255, 255)
+            inicio = inicio_ret + 3
+            retangulo_in = (inicio, HEIGHT-67, 100, 19)
+
+            cor_dash = (255, 255, 0)
+            now = pygame.time.get_ticks()
+            if now - player.last_dash < 4000:
+                largura = (now - player.last_dash)*(100/player.dash_delay)
+            else:
+                largura = 100
+            vertices_dash = (inicio, HEIGHT-67, largura, 19)
 
             # Colisão com a bandeira (Verifica se o jogador ganhou o jogo)
             collision_player_flag = pygame.sprite.spritecollide(player, groups['flag'], False, pygame.sprite.collide_mask)
+
             if len(collision_player_flag) != 0:
-                GAME['colors'] = player.colors
-                GAME['FASE1']['pontuação'] = player.points
-                state = 'WIN'
-                running = False
+                    GAME['colors'] = player.colors
+                    GAME['FASE1']['pontuação'] = player.points
+                    state = 'WIN'
+                    running = False
 
             # Verifica se o jogador perdeu o jogo
             if player.lifes <= 0:
@@ -181,6 +199,11 @@ def fase_screen(window, fase):
             groups['all_sprites'].draw(window)
             window.blit(text_surface1, text_rect1)
             window.blit(text_surface2, text_rect2)
+
+            if 'green' in player.colors:
+                window.fill(preto, retangulo_ex)
+                window.fill(branco, retangulo_in)
+                window.fill(cor_dash, vertices_dash)
 
         # Depois de desenhar tudo, atualiza o display.
             pygame.display.update()
