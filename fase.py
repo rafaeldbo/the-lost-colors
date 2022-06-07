@@ -19,7 +19,10 @@ def fase_screen(window, fase):
         groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
-        pygame.mixer.music.set_volume(0.2)
+        if fase =="fase1":
+            pygame.mixer.music.set_volume(0.1)
+        else:
+            pygame.mixer.music.set_volume(0.6)
         pygame.mixer.music.play(loops=-1)
 
         while running:
@@ -100,6 +103,7 @@ def fase_screen(window, fase):
             hits = pygame.sprite.spritecollide(player, groups['all_enemys'], False, pygame.sprite.collide_mask)
             if (len(hits) != 0 and not player.invencible) or player.rect.top > HEIGHT:
                 player.lifes -= 1
+                assets["hit som"].play()
                 groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.coins)
                 player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             

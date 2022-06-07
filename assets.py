@@ -65,6 +65,7 @@ def load_assets(fase, corrent_colors):
         'moeda som': pygame.mixer.Sound('assets/sounds/Coin.ogg'),
         "dash som": pygame.mixer.Sound('assets/sounds/Dash.ogg'),
         'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),
+        "hit som": pygame.mixer.Sound('assets/sounds/Hit.ogg'),
         "pulo som": pygame.mixer.Sound('assets/sounds/Jump.ogg'),
     }
 

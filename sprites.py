@@ -178,7 +178,7 @@ class FireBall(pygame.sprite.Sprite):
         self.rect = image.get_rect()
         self.mask = pygame.mask.from_surface(image)
         self.rect.centerx = posx 
-        self.rect.centery = posy - SIZE
+        self.rect.centery = posy - 60
         
         if direction == 'right':
             self.speedx = moviment_fireball
