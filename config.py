@@ -30,15 +30,13 @@ GAME = {
         'assets': ['floresta', 'grama', 'terra'],
         'required colors': [],
         'pontuação': 0,
-        'pontuação total': 0,
-        'inimigos mortos': 0,
-        'inimigos totais': 0,
-        'moedas coletadas': 0,
-        'moedas totais': 0,
+        'pontuação total': 9300,
         'checkpoints': [
-            {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
-            {'inicio': 67, 'fim': 237, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
-            {'inicio': 199, 'fim': 348, 'chao': HEIGHT - SIZE, 'parede': SIZE*19},
+            {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começo da fase
+            {'inicio': 67, 'fim': 237, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # diamante verde
+            {'inicio': 67, 'fim': 237, 'chao': HEIGHT - SIZE*6, 'parede': SIZE*89}, # bandeira 1
+            {'inicio': 199, 'fim': 348, 'chao': HEIGHT - SIZE, 'parede': SIZE*19}, # diamante azul
+            {'inicio': 199, 'fim': 348, 'chao': HEIGHT - SIZE*6, 'parede': SIZE*133}, # final da fase
         ]
     },
     'FASE2': {
@@ -46,13 +44,11 @@ GAME = {
         'required colors': ['green', 'blue'],
         'pontuação': 0,
         'pontuação total': 0,
-        'inimigos mortos': 0,
-        'inimigos totais': 0,
-        'moedas coletadas': 0,
-        'moedas totais': 0,
         'checkpoints': [
-            {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3},
-            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3},
+            {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começa da fase
+            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3}, # diamante vermelho
+            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*7, 'parede': SIZE*72}, # bandeira 1
+            {'inicio': 51, 'fim': 253, 'chao': HEIGHT - SIZE*8, 'parede': SIZE*194}, # final da fase
         ]
     }
 }
