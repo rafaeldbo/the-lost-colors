@@ -7,7 +7,7 @@ from sprites import *
 from assets import *
 from pause import pause_screen
 
-def fase_screen(window, fase):
+def fase_screen(window, fase, GAME):
     init_colors = list(GAME[fase]['required colors'])
     if list(set(init_colors + GAME['colors'])) == list(set(GAME['colors'])):
         running = True
@@ -178,6 +178,7 @@ def fase_screen(window, fase):
                 running = False
 
             elif player.lifes <= 0: # Verifica se o jogador perdeu o jogo
+                GAME['FASE1']['pontuação'] = player.points
                 state = 'LOSE'
                 running = False
                 
@@ -191,6 +192,6 @@ def fase_screen(window, fase):
         # Depois de desenhar tudo, atualiza o display.
             pygame.display.update()
 
-        return GAME, state
+        return GAME, state, fase
     else:
-        return GAME, 'INIT'
+        return GAME, 'INIT', fase

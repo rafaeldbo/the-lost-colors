@@ -3,16 +3,26 @@
 import pygame
 from config import *
 from sprites import Button
+from assets import *
 
-def end_screen(window, screen):
+def end_screen(window, screen, fase, GAME):
     running = True
     
     if screen == 'WIN':
         telaFinal = pygame.image.load('assets/img/parabens.png')
     elif screen == 'LOSE':
         telaFinal = pygame.image.load('assets/img/gameover.png')
+
     telaFinal = pygame.transform.scale(telaFinal, (WIDTH, HEIGHT))
-    
+
+    # Desenhando o score
+    pontos = GAME[fase]['pontuação']
+    corrent_colors = GAME[fase]['required colors']
+    assets = load_assets(fase, corrent_colors)
+
+    score = assets['score_font'].render(f"score:{pontos:04d}", True, (255, 255, 255))
+    score_rect = score.get_rect()
+    score_rect.midtop = (WIDTH / 2,  HEIGHT/2 + 50)
 
     buttons = [
         Button((415, 560, 210, 55), 'INIT'), # menu
@@ -44,6 +54,7 @@ def end_screen(window, screen):
 
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaFinal, (0,0))
+        window.blit(score, score_rect) # score
 
         # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()
