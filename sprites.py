@@ -216,7 +216,7 @@ class Collectable(pygame.sprite.Sprite):
             self.image = assets[self.name]
     
 class Flag(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome, index):
+    def __init__(self, assets, posx, posy, nome):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         self.name = nome
@@ -228,8 +228,6 @@ class Flag(pygame.sprite.Sprite):
         self.rect.left = posx
         self.rect.top = posy
 
-        self.index = index
-        print(index)
         self.last_update = pygame.time.get_ticks()
         self.frame_ticks = second/4
         self.frame = 0 

@@ -121,8 +121,10 @@ def fase_screen(window, fase):
 
             # Colisões da bola de fogo
             collision_breakables_fireballs = pygame.sprite.groupcollide(groups['breakables'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
-            for colision in collision_breakables_fireballs:
+            for element in collision_breakables_fireballs:
                 assets['explode som'].play()
+                explosao = Explosion(element.rect.centerx, element.rect.centery, assets)
+                groups['all_sprites'].add(explosao)
             pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
 
 

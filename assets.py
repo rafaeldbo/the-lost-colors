@@ -55,7 +55,7 @@ def load_assets(fase, corrent_colors):
     for i in range(9):
         # Os arquivos de animação são numerados de 00 a 08
         img = pygame.image.load(f'assets/img/explosao/{i}.png')
-        img = pygame.transform.scale(img, (32, 32))
+        img = pygame.transform.scale(img, (70, 70))
         explosion_anim.append(img)
 
     assets = {
