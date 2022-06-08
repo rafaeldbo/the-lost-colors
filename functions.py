@@ -1,7 +1,7 @@
 from config import *
 from sprites import *
 
-def matriz_em_coluna(fase):
+def load_matriz(fase):
     with open(f'assets/{fase}.csv', 'r') as arquivo:
         fase_lines = arquivo.readlines()
     separator = fase_lines[1][1]
@@ -26,21 +26,21 @@ def matriz_em_coluna(fase):
 def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
 
     groups = {
-        'all_blocks': pygame.sprite.Group(), # Todos os blocos que possuem colisão
-        'all_enemys': pygame.sprite.Group(), # Todas as entidades que causam dano
-        'all_fireballs': pygame.sprite.Group(), # Bolas de fogo (destruem entidades)
-        'collectibles': pygame.sprite.Group(), # Todas as entidades Coletaveis
-        'flag': pygame.sprite.Group(), # Bandeira
-        'breakables': pygame.sprite.Group(), # Todas as entidades quebraveis com Bola de Fogo
+        'all_blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
+        'all_monsters': pygame.sprite.Group(), # Todas os Monstros (possuem movimento)
+        'all_fireballs': pygame.sprite.Group(), # Tadas as Bolas de fogo (destruem entidades)
+        'collectibles': pygame.sprite.Group(), # Todas as Entidades Coletaveis
+        'breakables': pygame.sprite.Group(), # Todas as Entidades Quebraveis com Bola de Fogo
+        'damagers': pygame.sprite.Group(), # Todas as Entidade que causam Dano
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
     collected = kargs.get('collected') if kargs.get('collected') != None else []
 
     for j, coluna in enumerate(matriz_fase):
-
         if j in range(checkpoint['inicio'], checkpoint['fim']):
             for i, value in enumerate(coluna):
+                
                 if value != "0":
                     posx = SIZE*j - checkpoint['parede'] - checkpoint['inicio']*SIZE
                     posy = SIZE*i
@@ -56,20 +56,22 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
                         groups['all_sprites'].add(element)
 
                     elif value == "i1":
-                        element = Enemy(assets, posx, posy, "inimigo chao","horizontal")
-                        groups['all_enemys'].add(element)
+                        element = Enemy(assets, posx, posy, "inimigo chao", "horizontal")
+                        groups['all_monsters'].add(element)
+                        groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif value == "i2":
-                        element = Enemy(assets, posx, posy, "inimigo chao","vertical")
-                        groups['all_enemys'].add(element)
+                        element = Enemy(assets, posx, posy, "inimigo chao", "vertical")
+                        groups['all_monsters'].add(element)
+                        groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif value == "e":
                         element = Block(assets, posx, posy, "espinhos")
-                        groups['all_enemys'].add(element)
+                        groups['damagers'].add(element)
                         groups['all_sprites'].add(element)
                 
                     elif value == "q":
@@ -85,14 +87,19 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
                             groups['all_sprites'].add(element)
                 
                     elif value == "b":
-                        element = Flag(assets, posx, posy, "bandeira")
-                        groups['flag'].add(element)
+                        element = Flag(assets, posx, posy, "bandeira animada")
                         groups['all_sprites'].add(element)
 
+                        element = Collectable(assets, posx, posy, "bandeira", index=[i,j])
+                        if element.index not in collected:
+                            groups['collectibles'].add(element)
+                            groups['all_sprites'].add(element)
+
                     elif value in ["green", "blue", "red"] and value not in current_colors:
-                        element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value)
-                        groups['collectibles'].add(element)
-                        groups['all_sprites'].add(element)
+                        element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value, index=[i,j])
+                        if element.index not in collected:
+                            groups['collectibles'].add(element)
+                            groups['all_sprites'].add(element)
 
     return groups
 
@@ -107,3 +114,30 @@ def colisao_minima(player, bloco):
     elif player.rect.centerx > bloco.rect.left and player.rect.centerx < bloco.rect.right:
         return True
     return False
+
+
+def draw_infos(window, assets, player):
+    colors = {'black': (0,0,0), 'white': (255,255,255), 'yellow': (255,255,0), 'red': (255,0,0)}
+
+    # Desenhando o score
+    score = assets['score_font'].render(f"{player.points:08d}", True, colors['yellow'])
+    score_rect = score.get_rect()
+    score_rect.midtop = (WIDTH / 2,  10)
+
+    # Desenhando as vidas
+    lifes = assets['score_font'].render(chr(9829) * player.lifes, True, colors['red'])
+    lifes_rect = lifes.get_rect()
+    lifes_rect.bottomleft = (22, HEIGHT - 10)
+    
+    window.blit(score, score_rect) # score
+    window.blit(lifes, lifes_rect) # vidas
+
+    if 'green' in player.colors:
+        border = 3
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - player.last_dash
+        width = (elapsed_ticks)*(100/player.dash_delay) if elapsed_ticks < player.dash_delay else 100
+
+        window.fill(colors['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
+        window.fill(colors['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
+        window.fill(colors['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)

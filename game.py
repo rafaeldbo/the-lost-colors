@@ -10,7 +10,7 @@ pygame.init()
 pygame.mixer.init()
 
 pygame.mixer.music.load('assets/sounds/Menu.mp3')
-pygame.mixer.music.set_volume(0.4)
+pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(loops=-1)
 
 # ----- Gera tela principal

@@ -9,11 +9,11 @@ class Character(pygame.sprite.Sprite):
         self.stopped_image = assets['personagem']
         self.moviment_anim = assets['movimento personagem']
         self.image = self.stopped_image
+        self.mask = pygame.mask.from_surface(self.image)
 
         self.rect = self.image.get_rect()
         self.rect.left = SIZE*7
         self.rect.bottom = HEIGHT - SIZE*2
-        self.mask = pygame.mask.from_surface(self.image)
 
         # Variáveis da animação do movimento
         self.last_update = pygame.time.get_ticks()
@@ -24,8 +24,6 @@ class Character(pygame.sprite.Sprite):
         # Variáveis do Movimento
         self.speedx = 0
         self.speedy = gravidade
-        self.go_right = True
-        self.go_left = True
         self.direction = 'right'
         self.in_moviment = True
         self.jump = 0
@@ -34,9 +32,7 @@ class Character(pygame.sprite.Sprite):
         self.lifes = 3
         self.colors = colors
         self.points = 0
-        self.coins = []
-        self.flags = []
-        self.invencible = False
+        self.collected = []
 
         # Variáveis do Shoot
         self.last_shoot = pygame.time.get_ticks()
@@ -119,11 +115,11 @@ class Block(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
-        self.nome = nome
+        self.name = nome
 
         self.image = assets[nome]
-        self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy
 
@@ -132,22 +128,19 @@ class Block(pygame.sprite.Sprite):
     def update(self,player):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
-
-        player.go_right = True
-        player.go_left = True
     
     def update_color(self, assets):
-        self.image = assets[self.nome]
+        self.image = assets[self.name]
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome, moviment):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        self.nome = nome
+        self.name = nome
 
         self.image = assets[nome]
-        self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy + 20
 
@@ -159,16 +152,16 @@ class Enemy(pygame.sprite.Sprite):
             self.rect.x += self.speed
         if self.direction == "vertical":
             self.rect.y += self.speed
-            if self.rect.y < 0:
-                self.rect.y = 0
+            if self.rect.top < 0:
+                self.rect.top = 0
                 self.speed = -self.speed
-            if self.rect.y > HEIGHT:
-                self.rect.y = HEIGHT
+            if self.rect.bottom > HEIGHT:
+                self.rect.bottom = HEIGHT
                 self.speed = -self.speed
         self.rect.x -= player.speedx 
     
     def update_color(self, assets):
-        self.image = assets[self.nome]
+        self.image = assets[self.name]
 
 class FireBall(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, direction):
@@ -176,10 +169,10 @@ class FireBall(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         image = assets['bola de fogo']
-        self.rect = image.get_rect()
         self.mask = pygame.mask.from_surface(image)
+        self.rect = image.get_rect()
         self.rect.centerx = posx 
-        self.rect.centery = posy - SIZE
+        self.rect.centery = posy - 60
         
         if direction == 'right':
             self.speedx = moviment_fireball
@@ -195,22 +188,22 @@ class Collectable(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome, **kargs):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
-        self.nome = nome
+        self.name = nome
 
-        self.color = kargs.get('prism')
         self.index = kargs.get('index')
+        self.color = kargs.get('prism')
         
-        if self.color != None:
+        if 'prisma' in nome:
             img = pygame.image.load(f'assets/img/{nome}.png')
             self.image = pygame.transform.scale(img, (50, 50))
-            posx += 10
-            posy += 10
+            # diamantes são um pouco menores que o normal
         else:
             self.image = assets[nome]
-        self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
-        self.rect.left = posx
-        self.rect.top = posy
+
+        self.rect = self.image.get_rect()
+        self.rect.left = posx if self.color == None else posx+10
+        self.rect.top = posy if self.color == None else posy+10
 
         self.speedx = 0
 
@@ -219,19 +212,19 @@ class Collectable(pygame.sprite.Sprite):
         self.rect.x += self.speedx
     
     def update_color(self, assets):
-        if self.color == None:
-            self.image = assets[self.nome]
+        if self.name == 'moeda':
+            self.image = assets[self.name]
     
 class Flag(pygame.sprite.Sprite):
     def __init__(self, assets, posx, posy, nome, index):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
-        self.nome = nome
+        self.name = nome
 
         self.flag_anim = assets[nome]
         self.image = self.flag_anim[0]
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-       # self.mask = pygame.mask.from_surface(self.image)
         self.rect.left = posx
         self.rect.top = posy
 

@@ -48,6 +48,8 @@ def load_assets(fase, corrent_colors):
         img = pygame.image.load(f'assets/img/bandeira/{i}.png')
         img = pygame.transform.scale(img, (SIZE, 2*SIZE))
         bandeira_anim.append(img)
+    bandeira_img = pygame.image.load(f'assets/img/bandeira.png')
+    bandeira_img = pygame.transform.scale(bandeira_img, (SIZE, 2*SIZE))
 
     explosion_anim = []
     for i in range(9):
@@ -67,11 +69,15 @@ def load_assets(fase, corrent_colors):
         'bola de fogo': foguinho_img,
         'moeda': moeda_img,
         "caixa" : caixa_img,
-        "bandeira": bandeira_anim,
+        "bandeira animada": bandeira_anim,
+        "bandeira": bandeira_img,
+
         "score_font" : score_font,
+
         'moeda som': pygame.mixer.Sound('assets/sounds/Coin.ogg'),
         "dash som": pygame.mixer.Sound('assets/sounds/Dash.ogg'),
         'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),
+        "hit som": pygame.mixer.Sound('assets/sounds/Hit.ogg'),
         "pulo som": pygame.mixer.Sound('assets/sounds/Jump.ogg'),
         "explosao": explosion_anim
     }
