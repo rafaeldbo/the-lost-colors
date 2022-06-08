@@ -30,6 +30,7 @@ GAME = {
         'assets': ['floresta', 'grama', 'terra'],
         'required colors': [],
         'pontuação': 0,
+        'melhor pontuação': 0,
         'pontuação total': 9300,
         'checkpoints': [
             {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começo da fase
@@ -43,6 +44,7 @@ GAME = {
         'assets': ['laboratorio', 'piso', 'parede'],
         'required colors': ['green', 'blue'],
         'pontuação': 0,
+        'melhor pontuação': 0,
         'pontuação total': 0,
         'checkpoints': [
             {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começa da fase

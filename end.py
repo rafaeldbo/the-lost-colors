@@ -7,9 +7,19 @@ from assets import *
 
 def end_screen(window, screen, fase, GAME):
     running = True
-    
+    corrent_colors = GAME[fase]['required colors']
+    assets = load_assets(fase, corrent_colors)
+    cor = (255, 255, 255)
+
     if screen == 'WIN':
         telaFinal = pygame.image.load('assets/img/parabens.png')
+
+        melhor_pontuacao = GAME[fase]['melhor pontuação']
+        cor = (255, 255, 0)
+        melhor_score = assets['score_font'].render(f"melhor score:{melhor_pontuacao:04d}", True, cor)
+        melhor_score_rect = melhor_score.get_rect()
+        melhor_score_rect.midtop = (WIDTH / 2,  HEIGHT/2 + 90)
+
     elif screen == 'LOSE':
         telaFinal = pygame.image.load('assets/img/gameover.png')
 
@@ -17,10 +27,8 @@ def end_screen(window, screen, fase, GAME):
 
     # Desenhando o score
     pontos = GAME[fase]['pontuação']
-    corrent_colors = GAME[fase]['required colors']
-    assets = load_assets(fase, corrent_colors)
 
-    score = assets['score_font'].render(f"score:{pontos:04d}", True, (255, 255, 255))
+    score = assets['score_font'].render(f"score:{pontos:04d}", True, cor)
     score_rect = score.get_rect()
     score_rect.midtop = (WIDTH / 2,  HEIGHT/2 + 50)
 
@@ -55,6 +63,9 @@ def end_screen(window, screen, fase, GAME):
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaFinal, (0,0))
         window.blit(score, score_rect) # score
+
+        if screen == 'WIN':
+            window.blit(melhor_score, melhor_score_rect)
 
         # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()

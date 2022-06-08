@@ -173,12 +173,13 @@ def fase_screen(window, fase, GAME):
 
             if checkpoint == len(GAME[fase]['checkpoints'])-1: # verifica se o jogador ganhou o jogo
                 GAME['colors'] = player.colors
-                GAME['FASE1']['pontuação'] = player.points
+                GAME[fase]['pontuação'] = player.points
+                GAME[fase]['melhor pontuação'] = player.points
                 state = 'WIN'
                 running = False
 
             elif player.lifes <= 0: # Verifica se o jogador perdeu o jogo
-                GAME['FASE1']['pontuação'] = player.points
+                GAME[fase]['pontuação'] = player.points
                 state = 'LOSE'
                 running = False
                 
