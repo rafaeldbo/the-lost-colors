@@ -4,16 +4,15 @@ import pygame
 from config import *
 from sprites import Button
 
-def init_screen(window):
+def pause_screen(window, fase):
     running = True
     
-    telaInicial = pygame.image.load('assets/img/menu1.png')
-    time_frame = [0.2*second, 0.5*second, 0.2*second, 0.1*second, 0.05*second, 0.6*second, 10*second]
-    last_frame_time = 0
-    frame = 0
+    telaPause = pygame.image.load('assets/img/pause.png')
+
     buttons = [
-        Button((305, 350, 210, 210), 'FASE1'), # fase floresta
-        Button((537, 350, 210, 210), 'FASE2'), # fase lab
+        Button((370, 220, 300, 70), 'CONTINUE'), # continuar
+        Button((370, 300, 300, 70), 'INIT'), # sair
+        Button((370, 380, 300, 70), fase), # recomeçar
     ]
     
     while running:
@@ -24,6 +23,10 @@ def init_screen(window):
             if event.type == pygame.QUIT:  
                 state = 'QUIT'
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    state = 'CONTINUE'
+                    running = False
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mousePos = pygame.mouse.get_pos()
@@ -32,16 +35,8 @@ def init_screen(window):
                         state = button.value
                         running = False
 
-        now = pygame.time.get_ticks()
-        elapsed_ticks = now - last_frame_time
-        if elapsed_ticks > time_frame[frame]:
-            frame = frame+1 if frame < len(time_frame)-1 else 0
-            last_frame_time = now
-            frame_image = 1 if frame%2 != 0 else 2
-            telaInicial = pygame.image.load(f'assets/img/menu{frame_image}.png')
-
         # A cada loop, redesenha o fundo e os sprites
-        window.blit(telaInicial, (0,0))
+        window.blit(telaPause, (0,0))
 
         # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()

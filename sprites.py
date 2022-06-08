@@ -104,10 +104,11 @@ class Character(pygame.sprite.Sprite):
                 self.in_dash = True      
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, rect, value):
+    def __init__(self, rect, value, **kargs):
         # Construtor da classe(Sprite).
         pygame.sprite.Sprite.__init__(self)
 
+        self.image = kargs.get('image')
         self.rect = pygame.Rect(rect)
         self.value = value
         

@@ -47,8 +47,8 @@ GAME = {
         'checkpoints': [
             {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começa da fase
             {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3}, # diamante vermelho
-            {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*7, 'parede': SIZE*72}, # bandeira 1
-            {'inicio': 51, 'fim': 253, 'chao': HEIGHT - SIZE*8, 'parede': SIZE*194}, # final da fase
+            {'inicio': 115, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*10}, # bandeira 1
+            {'inicio': 115, 'fim': 255, 'chao': HEIGHT - SIZE*8, 'parede': SIZE*196}, # final da fase
         ]
     }
 }

@@ -40,6 +40,9 @@ def load_assets(fase, corrent_colors):
 
     foguinho_img = pygame.image.load(f'{path}bolaDeFogo.png')
     foguinho_img = pygame.transform.scale(foguinho_img, (SIZE, SIZE/2))
+    
+    botao_img = pygame.image.load(f'assets/img/botao.png')
+    botao_img = pygame.transform.scale(botao_img, (40, 40))
 
     score_font = pygame.font.Font((f'assets/font/base.ttf'), 28)
 
@@ -71,6 +74,8 @@ def load_assets(fase, corrent_colors):
         "caixa" : caixa_img,
         "bandeira animada": bandeira_anim,
         "bandeira": bandeira_img,
+        "explosao": explosion_anim,
+        "botao": botao_img,
 
         "score_font" : score_font,
 
@@ -79,7 +84,6 @@ def load_assets(fase, corrent_colors):
         'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),
         "hit som": pygame.mixer.Sound('assets/sounds/Hit.ogg'),
         "pulo som": pygame.mixer.Sound('assets/sounds/Jump.ogg'),
-        "explosao": explosion_anim
     }
 
     return assets
