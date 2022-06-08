@@ -6,7 +6,8 @@ from sprites import Button
 
 def init_screen(window):
     running = True
-    
+    state = 'INIT'
+
     telaInicial = pygame.image.load('assets/img/menu1.png')
     time_frame = [0.2*second, 0.5*second, 0.2*second, 0.1*second, 0.05*second, 0.6*second, 10*second]
     last_frame_time = 0
@@ -24,21 +25,24 @@ def init_screen(window):
             if event.type == pygame.QUIT:  
                 state = 'QUIT'
                 running = False
+            if event.type == pygame.KEYDOWN and state != 'INIT':
+                running = False
             
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mousePos = pygame.mouse.get_pos()
                 for button in buttons:
                     if button.rect.collidepoint(mousePos):
                         state = button.value
-                        running = False
+                        telaInicial = pygame.image.load('assets/img/instrucoes.png')
 
-        now = pygame.time.get_ticks()
-        elapsed_ticks = now - last_frame_time
-        if elapsed_ticks > time_frame[frame]:
-            frame = frame+1 if frame < len(time_frame)-1 else 0
-            last_frame_time = now
-            frame_image = 1 if frame%2 != 0 else 2
-            telaInicial = pygame.image.load(f'assets/img/menu{frame_image}.png')
+        if state == 'INIT':
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - last_frame_time
+            if elapsed_ticks > time_frame[frame]:
+                frame = frame+1 if frame < len(time_frame)-1 else 0
+                last_frame_time = now
+                frame_image = 1 if frame%2 != 0 else 2
+                telaInicial = pygame.image.load(f'assets/img/menu{frame_image}.png')
 
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaInicial, (0,0))
