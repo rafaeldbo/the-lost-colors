@@ -17,7 +17,7 @@ def end_screen(window, DATA, screen, fase):
 
         score_color = COLORS['yellow']
         best_score = DATA[fase]['melhor pontuacao']
-        best_score = assets['score_font'].render(f"melhor pontuação:{best_score:04d}", True, )
+        best_score = assets['score_font'].render(f"melhor pontuação:{best_score:04d}", True, score_color)
         best_score_rect = best_score.get_rect()
         best_score_rect.midtop = (WIDTH/2,  HEIGHT/2 + 90)
 

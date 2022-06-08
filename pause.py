@@ -34,6 +34,10 @@ def pause_screen(window, fase):
                     if button.rect.collidepoint(mousePos):
                         state = button.value
                         running = False
+                        if state == 'INIT':
+                            pygame.mixer.music.load('assets/sounds/Menu.mp3')
+                            pygame.mixer.music.set_volume(0.4)
+                            pygame.mixer.music.play(loops=-1)
 
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaPause, (0,0))
