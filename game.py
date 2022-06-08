@@ -23,10 +23,10 @@ while state != 'QUIT':
     if state == 'INIT':
         state = init_screen(window)
     if 'FASE' in state:
-        GAME, state, fase = fase_screen(window, state, GAME)
+        DATA, state, fase = fase_screen(window, DATA, state)
     if state in ['WIN', 'LOSE']:
-        state = end_screen(window, state, fase, GAME)
+        state = end_screen(window, DATA, state, fase)
 
-save(GAME)
+save(DATA)
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

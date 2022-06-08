@@ -118,15 +118,13 @@ def colisao_minima(player, bloco):
 
 
 def draw_infos(window, assets, player):
-    colors = {'black': (0,0,0), 'white': (255,255,255), 'yellow': (255,255,0), 'red': (255,0,0)}
-
     # Desenhando o score
-    score = assets['score_font'].render(f"{player.points:08d}", True, colors['yellow'])
+    score = assets['score_font'].render(f"{player.points:08d}", True, COLORS['yellow'])
     score_rect = score.get_rect()
     score_rect.midtop = (WIDTH / 2,  10)
 
     # Desenhando as vidas
-    lifes = assets['score_font'].render(chr(9829) * player.lifes, True, colors['red'])
+    lifes = assets['score_font'].render(chr(9829) * player.lifes, True, COLORS['red'])
     lifes_rect = lifes.get_rect()
     lifes_rect.bottomleft = (22, HEIGHT - 10)
     
@@ -139,11 +137,11 @@ def draw_infos(window, assets, player):
         elapsed_ticks = now - player.last_dash
         width = (elapsed_ticks)*(100/player.dash_delay) if elapsed_ticks < player.dash_delay else 100
 
-        window.fill(colors['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
-        window.fill(colors['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
-        window.fill(colors['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)
+        window.fill(COLORS['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
+        window.fill(COLORS['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
+        window.fill(COLORS['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)
     
-def save(GAME):
-    data = json.dumps(GAME)
+def save(DATA):
+    data = json.dumps(DATA)
     with io.open('assets/save.json', "w", encoding='utf8"') as file:
         file.write(data)

@@ -7,9 +7,9 @@ from sprites import *
 from assets import *
 from pause import pause_screen
 
-def fase_screen(window, fase, GAME):
+def fase_screen(window, DATA, fase):
     init_colors = list(GAME[fase]['required colors'])
-    if list(set(init_colors + GAME['colors'])) == list(set(GAME['colors'])):
+    if list(set(init_colors + DATA['colors'])) == list(set(DATA['colors'])):
         running = True
 
         checkpoint = 0
@@ -172,14 +172,15 @@ def fase_screen(window, fase, GAME):
                     player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
 
             if checkpoint == len(GAME[fase]['checkpoints'])-1: # verifica se o jogador ganhou o jogo
-                GAME['colors'] = player.colors
-                GAME[fase]['pontuacao'] = player.points
-                GAME[fase]['melhor pontuacao'] = player.points
+                DATA['colors'] = player.colors
+                DATA[fase]['pontuacao'] = player.points
+                if player.points > DATA[fase]['melhor pontuacao']:
+                    DATA[fase]['melhor pontuacao'] = player.points
                 state = 'WIN'
                 running = False
 
             elif player.lifes <= 0: # Verifica se o jogador perdeu o jogo
-                GAME[fase]['pontuacao'] = player.points
+                DATA[fase]['pontuacao'] = player.points
                 state = 'LOSE'
                 running = False
                 
@@ -193,6 +194,6 @@ def fase_screen(window, fase, GAME):
         # Depois de desenhar tudo, atualiza o display.
             pygame.display.update()
 
-        return GAME, state, fase
+        return DATA, state, fase
     else:
-        return GAME, 'INIT', fase
+        return DATA, 'INIT', fase

@@ -14,6 +14,9 @@ SIZE = 70
 WIDTH = SIZE*15
 HEIGHT = SIZE*10
 
+# Cores
+COLORS = {'black': (0,0,0), 'white': (255,255,255), 'yellow': (255,255,0), 'red': (255,0,0)}
+
 # Movimentos
 moviment_player_x = 12
 moviment_player_y = 55
@@ -22,19 +25,11 @@ moviment_enemy = 5
 
 moviment_fireball = 15
 
-# Fases
-with io.open('assets/save.json', "r", encoding='utf8"') as file:
-    data = file.read()
-GAME = json.loads(data)
-
-"""
+# Dados das Fases
 GAME = {
-    'colors': ['green', 'blue'],
     'FASE1': {
         'assets': ['floresta', 'grama', 'terra'],
         'required colors': [],
-        'pontuacao': 0,
-        'melhor pontuacao': 0,
         'pontuacao total': 9300,
         'checkpoints': [
             {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começo da fase
@@ -47,9 +42,7 @@ GAME = {
     'FASE2': {
         'assets': ['laboratorio', 'piso', 'parede'],
         'required colors': ['green', 'blue'],
-        'pontuacao': 0,
-        'melhor pontuacao': 0,
-        'pontuacao total': 6900,
+        'pontuacao total': 7100,
         'checkpoints': [
             {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começa da fase
             {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3}, # diamante vermelho
@@ -58,5 +51,22 @@ GAME = {
         ]
     }
 }
-"""
+
+# Dados do jogador
+DATA = {
+    'colors': ['green', 'blue'],
+    'FASE1': {
+        'pontuacao': 0,
+        'melhor pontuacao': 0,
+    },
+    'FASE2': {
+        'pontuacao': 0,
+        'melhor pontuacao': 0,
+    }
+}
+
+with io.open('assets/save.json', "r", encoding='utf8"') as file:
+    data = file.read()
+DATA = json.loads(data)
+
 

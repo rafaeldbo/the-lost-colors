@@ -5,20 +5,21 @@ from config import *
 from sprites import Button
 from assets import *
 
-def end_screen(window, screen, fase, GAME):
+def end_screen(window, DATA, screen, fase):
     running = True
-    corrent_colors = GAME[fase]['required colors']
-    assets = load_assets(fase, corrent_colors)
-    cor = (255, 255, 255)
+
+    assets = load_assets(fase, GAME[fase]['required colors'])
+    score_color = COLORS['white']
+    points = DATA[fase]['pontuacao']
 
     if screen == 'WIN':
         telaFinal = pygame.image.load('assets/img/parabens.png')
 
-        melhor_pontuacao = GAME[fase]['melhor pontuacao']
-        cor = (255, 255, 0)
-        melhor_score = assets['score_font'].render(f"melhor score:{melhor_pontuacao:04d}", True, cor)
-        melhor_score_rect = melhor_score.get_rect()
-        melhor_score_rect.midtop = (WIDTH / 2,  HEIGHT/2 + 90)
+        score_color = COLORS['yellow']
+        best_score = DATA[fase]['melhor pontuacao']
+        best_score = assets['score_font'].render(f"melhor pontuação:{best_score:04d}", True, )
+        best_score_rect = best_score.get_rect()
+        best_score_rect.midtop = (WIDTH/2,  HEIGHT/2 + 90)
 
     elif screen == 'LOSE':
         telaFinal = pygame.image.load('assets/img/gameover.png')
@@ -26,11 +27,9 @@ def end_screen(window, screen, fase, GAME):
     telaFinal = pygame.transform.scale(telaFinal, (WIDTH, HEIGHT))
 
     # Desenhando o score
-    pontos = GAME[fase]['pontuacao']
-
-    score = assets['score_font'].render(f"score:{pontos:04d}", True, cor)
+    score = assets['score_font'].render(f"pontuação:{points:04d}", True, score_color)
     score_rect = score.get_rect()
-    score_rect.midtop = (WIDTH / 2,  HEIGHT/2 + 50)
+    score_rect.midtop = (WIDTH/2,  HEIGHT/2 + 50)
 
     buttons = [
         Button((415, 560, 210, 55), 'INIT'), # menu
@@ -63,9 +62,8 @@ def end_screen(window, screen, fase, GAME):
         # A cada loop, redesenha o fundo e os sprites
         window.blit(telaFinal, (0,0))
         window.blit(score, score_rect) # score
-
         if screen == 'WIN':
-            window.blit(melhor_score, melhor_score_rect)
+            window.blit(best_score, best_score_rect)
 
         # Depois de desenhar tudo, atualiza o display.
         pygame.display.update()
