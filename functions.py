@@ -1,3 +1,4 @@
+import json, io
 from config import *
 from sprites import *
 
@@ -141,3 +142,8 @@ def draw_infos(window, assets, player):
         window.fill(colors['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
         window.fill(colors['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
         window.fill(colors['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)
+    
+def save(GAME):
+    data = json.dumps(GAME)
+    with io.open('assets/save.json', "w", encoding='utf8"') as file:
+        file.write(data)

@@ -14,7 +14,7 @@ def end_screen(window, screen, fase, GAME):
     if screen == 'WIN':
         telaFinal = pygame.image.load('assets/img/parabens.png')
 
-        melhor_pontuacao = GAME[fase]['melhor pontuação']
+        melhor_pontuacao = GAME[fase]['melhor pontuacao']
         cor = (255, 255, 0)
         melhor_score = assets['score_font'].render(f"melhor score:{melhor_pontuacao:04d}", True, cor)
         melhor_score_rect = melhor_score.get_rect()
@@ -26,7 +26,7 @@ def end_screen(window, screen, fase, GAME):
     telaFinal = pygame.transform.scale(telaFinal, (WIDTH, HEIGHT))
 
     # Desenhando o score
-    pontos = GAME[fase]['pontuação']
+    pontos = GAME[fase]['pontuacao']
 
     score = assets['score_font'].render(f"score:{pontos:04d}", True, cor)
     score_rect = score.get_rect()

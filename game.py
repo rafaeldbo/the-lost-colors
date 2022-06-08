@@ -2,6 +2,7 @@
 # ----- Importa e inicia pacotes
 import pygame
 from config import *
+from functions import save
 from init import init_screen
 from fase import fase_screen
 from end import end_screen
@@ -26,5 +27,6 @@ while state != 'QUIT':
     if state in ['WIN', 'LOSE']:
         state = end_screen(window, state, fase, GAME)
 
+save(GAME)
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados

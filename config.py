@@ -1,4 +1,4 @@
-import pygame
+import pygame, io, json
 
 # Tempo
 clock = pygame.time.Clock()
@@ -23,15 +23,19 @@ moviment_enemy = 5
 moviment_fireball = 15
 
 # Fases
+with io.open('assets/save.json', "r", encoding='utf8"') as file:
+    data = file.read()
+GAME = json.loads(data)
 
+"""
 GAME = {
     'colors': ['green', 'blue'],
     'FASE1': {
         'assets': ['floresta', 'grama', 'terra'],
         'required colors': [],
-        'pontuação': 0,
-        'melhor pontuação': 0,
-        'pontuação total': 9300,
+        'pontuacao': 0,
+        'melhor pontuacao': 0,
+        'pontuacao total': 9300,
         'checkpoints': [
             {'inicio': 0, 'fim': 89, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começo da fase
             {'inicio': 67, 'fim': 237, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # diamante verde
@@ -43,9 +47,9 @@ GAME = {
     'FASE2': {
         'assets': ['laboratorio', 'piso', 'parede'],
         'required colors': ['green', 'blue'],
-        'pontuação': 0,
-        'melhor pontuação': 0,
-        'pontuação total': 0,
+        'pontuacao': 0,
+        'melhor pontuacao': 0,
+        'pontuacao total': 6900,
         'checkpoints': [
             {'inicio': 0, 'fim': 70, 'chao': HEIGHT - SIZE, 'parede': SIZE*3}, # começa da fase
             {'inicio': 51, 'fim': 247, 'chao': HEIGHT - SIZE*2, 'parede': SIZE*3}, # diamante vermelho
@@ -54,4 +58,5 @@ GAME = {
         ]
     }
 }
+"""
 
