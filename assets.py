@@ -49,6 +49,13 @@ def load_assets(fase, corrent_colors):
         img = pygame.transform.scale(img, (SIZE, 2*SIZE))
         bandeira_anim.append(img)
 
+    explosion_anim = []
+    for i in range(9):
+        # Os arquivos de animação são numerados de 00 a 08
+        img = pygame.image.load(f'assets/img/explosao/{i}.png')
+        img = pygame.transform.scale(img, (32, 32))
+        explosion_anim.append(img)
+
     assets = {
         'background': background_img,
         'personagem': personagem_img,
@@ -66,6 +73,7 @@ def load_assets(fase, corrent_colors):
         "dash som": pygame.mixer.Sound('assets/sounds/Dash.ogg'),
         'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),
         "pulo som": pygame.mixer.Sound('assets/sounds/Jump.ogg'),
+        "explosao": explosion_anim
     }
 
     return assets
