@@ -30,10 +30,9 @@ def end_screen(window, screen):
             if event.type == pygame.QUIT:  
                 state = 'QUIT'
                 running = False
-
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    state = 'QUIT'
+                if event.key == pygame.K_RETURN:
+                    state = 'INIT'
                     running = False
                                 
             if event.type == pygame.MOUSEBUTTONDOWN:

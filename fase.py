@@ -5,6 +5,7 @@ from config import *
 from functions import * 
 from sprites import *
 from assets import *
+from pause import pause_screen
 
 def fase_screen(window, fase):
     init_colors = list(GAME[fase]['required colors'])
@@ -17,6 +18,7 @@ def fase_screen(window, fase):
         assets = load_assets(fase, init_colors) # Carrega os arquivos iniciais
         groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors) # Gera o mapa no primeiro checkpoint
         player = Character(assets, init_colors) # Cria o Personagem
+        pause_button = Button((15, 15, 40, 40), 'PAUSE', image=assets['botao']) # botão de pause
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
         pygame.mixer.music.set_volume(0.3)
@@ -43,11 +45,21 @@ def fase_screen(window, fase):
 
                     if event.key == pygame.K_z: # Dar dash
                         player.dash(assets)
+
+                    if event.key == pygame.K_ESCAPE: # Pause
+                        state = pause_screen(window, fase)
+                        running = (state == 'CONTINUE')
                             
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP: 
                     if event.key in [pygame.K_LEFT, pygame.K_RIGHT]: # Para os movimentos
                         player.speedx = 0
+                
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    mousePos = pygame.mouse.get_pos()
+                    if pause_button.rect.collidepoint(mousePos):
+                        state = pause_screen(window, fase)
+                        running = (state == 'CONTINUE')
 
             # Controle do Dash
             if player.in_dash:
@@ -135,6 +147,8 @@ def fase_screen(window, fase):
 
                 if collected.name == 'moeda': # Verifica se é uma moeda
                     player.points += 100
+                    if player.points%2000 == 0 and player.lifes < 3:
+                        player.lifes += 1
                     assets["moeda som"].play()
 
                 elif 'prisma' in collected.name: # Verifica se é um diamante
@@ -172,6 +186,7 @@ def fase_screen(window, fase):
             window.blit(player.image, player.rect)
             groups['all_sprites'].draw(window)
             draw_infos(window, assets, player)
+            window.blit(pause_button.image, pause_button.rect)
 
         # Depois de desenhar tudo, atualiza o display.
             pygame.display.update()
