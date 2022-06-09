@@ -1,14 +1,21 @@
 import pygame
 from config import *
 
+"""
+Toda vez que o jogador pega um prisma, os assets são atualizados para que as imagens fiquem com as cores refertes aquele
+prisma. As imagens de cada prisma estão organizadas em uma pasta cujo nome é composto pelas cores dos prismas coletados
+"""
+# Função que carrega os arquivos do jogo (imagens, sons e fontes)
 def load_assets(fase, corrent_colors):
 
+    # Gera o novo diretório para acessas as imagens referente aos cores dos prismas coletados
     colors_path = "_"
     if len(corrent_colors) != 0:
         for color in corrent_colors:
             colors_path += color[0]
     path = f'assets/img/{colors_path}/'
 
+    # Carrega o fundo, o chão e as paredes dependendo da fase atual
     background_img = pygame.image.load(f"{path}{GAME[fase]['assets'][0]}.png")
     background_img = pygame.transform.scale(background_img, (WIDTH,HEIGHT))
 
@@ -18,13 +25,14 @@ def load_assets(fase, corrent_colors):
     parede_img = pygame.image.load(f"{path}{GAME[fase]['assets'][2]}.png")
     parede_img = pygame.transform.scale(parede_img, (SIZE, SIZE))
 
+    # Carrega e organiza as imagens da animação do personagem
     personagem_img = pygame.image.load(f'{path}/personagem/parado.png')
     personagem_img = pygame.transform.scale(personagem_img, (SIZE, SIZE*1.5))
-    movimento_anim = []
+    personagem_anim = []
     for i in range(2):
         img = pygame.image.load(f'{path}/personagem/{i}.png')
         img = pygame.transform.scale(img, (SIZE, 1.5*SIZE))
-        movimento_anim.append(img)
+        personagem_anim.append(img)
     
     caixa_img = pygame.image.load(f'{path}caixa.png')
     caixa_img = pygame.transform.scale(caixa_img, (SIZE,SIZE))
@@ -43,9 +51,11 @@ def load_assets(fase, corrent_colors):
     
     botao_img = pygame.image.load(f'assets/img/botao.png')
     botao_img = pygame.transform.scale(botao_img, (40, 40))
-
+    
+    # carrega a fonte de texto usada no jogo
     score_font = pygame.font.Font((f'assets/font/base.ttf'), 28)
 
+    # Carrega e organiza as imagens da animação da bandeira
     bandeira_anim = []
     for i in range(4):
         img = pygame.image.load(f'assets/img/bandeira/{i}.png')
@@ -54,6 +64,7 @@ def load_assets(fase, corrent_colors):
     bandeira_img = pygame.image.load(f'assets/img/bandeira.png')
     bandeira_img = pygame.transform.scale(bandeira_img, (SIZE, 2*SIZE))
 
+    # Carrega e organiza as imagens da animação da explosão
     explosion_anim = []
     for i in range(9):
         # Os arquivos de animação são numerados de 00 a 08
@@ -61,10 +72,11 @@ def load_assets(fase, corrent_colors):
         img = pygame.transform.scale(img, (70, 70))
         explosion_anim.append(img)
 
+    # gera o dicionário de assets
     assets = {
         'background': background_img,
         'personagem': personagem_img,
-        'movimento personagem': movimento_anim,
+        'movimento personagem': personagem_anim,
         'chao': chao_img,
         'parede': parede_img,
         'inimigo chao': inimigo_img,
@@ -79,6 +91,7 @@ def load_assets(fase, corrent_colors):
 
         "score_font" : score_font,
 
+        # carrega os efeitos sonoros do jogo
         'moeda som': pygame.mixer.Sound('assets/sounds/Coin.ogg'),
         "dash som": pygame.mixer.Sound('assets/sounds/Dash.ogg'),
         'explode som': pygame.mixer.Sound('assets/sounds/Explode.ogg'),

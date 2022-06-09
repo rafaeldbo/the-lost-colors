@@ -9,7 +9,7 @@ from pause import pause_screen
 
 def fase_screen(window, DATA, fase):
     init_colors = list(GAME[fase]['required colors'])
-    if list(set(init_colors + DATA['colors'])) == list(set(DATA['colors'])):
+    if list(set(init_colors + DATA['cores'])) == list(set(DATA['cores'])):
         running = True
 
         checkpoint = 0
@@ -172,7 +172,7 @@ def fase_screen(window, DATA, fase):
                     player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
 
             if checkpoint == len(GAME[fase]['checkpoints'])-1: # verifica se o jogador ganhou o jogo
-                DATA['colors'] = player.colors
+                DATA['cores'] = player.colors
                 DATA[fase]['pontuacao'] = player.points
                 if player.points > DATA[fase]['melhor pontuacao']:
                     DATA[fase]['melhor pontuacao'] = player.points

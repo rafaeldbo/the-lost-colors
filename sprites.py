@@ -191,17 +191,17 @@ class Collectable(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.name = nome
 
-        self.index = kargs.get('index')
-        self.color = kargs.get('prism')
+        self.index = kargs.get('index') # Coleta o index do coletável
+        self.color = kargs.get('prism') # coleta a cor (caso for um prisma)
         
-        if 'prisma' in nome:
+        if 'prisma' in nome: # Se for um prisma, define a imagem de acordo com a cor
             img = pygame.image.load(f'assets/img/{nome}.png')
             self.image = pygame.transform.scale(img, (50, 50))
             # diamantes são um pouco menores que o normal
         else:
-            self.image = assets[nome]
-        self.mask = pygame.mask.from_surface(self.image)
-
+            self.image = assets[nome] # Define a imagem
+        self.mask = pygame.mask.from_surface(self.image) # Cria a mascara de colisão
+        # posiciona o sprite
         self.rect = self.image.get_rect()
         self.rect.left = posx if self.color == None else posx+10
         self.rect.top = posy if self.color == None else posy+10
@@ -209,11 +209,12 @@ class Collectable(pygame.sprite.Sprite):
         self.speedx = 0
 
     def update(self, player):
+        # Movimenta o sprite junto com o cenário
         self.speedx = -player.speedx
         self.rect.x += self.speedx
     
     def update_color(self, assets):
-        if self.name == 'moeda':
+        if self.name == 'moeda': # Se for moeda, atualiza a cor
             self.image = assets[self.name]
     
 class Flag(pygame.sprite.Sprite):
@@ -222,79 +223,75 @@ class Flag(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.name = nome
 
-        self.flag_anim = assets[nome]
-        self.image = self.flag_anim[0]
-        self.mask = pygame.mask.from_surface(self.image)
+        self.flag_anim = assets[nome] # Extrai as imagens da animação
+        self.image = self.flag_anim[0] # Seleciona a primeira imagem da animação para começar
+        # Posiciona o sprite
         self.rect = self.image.get_rect()
         self.rect.left = posx
         self.rect.top = posy
 
+        # Variáveis usadas na animação
         self.last_update = pygame.time.get_ticks()
         self.frame_ticks = second/4
         self.frame = 0 
 
     def update(self, player):
+        # Movimenta o sprite junto com o cenário
         self.speedx = -player.speedx
         self.rect.x += self.speedx    
 
+        # Realiza a animação
         now = pygame.time.get_ticks()
         elapsed_ticks = now - self.last_update
-        if elapsed_ticks > self.frame_ticks:
+        if elapsed_ticks > self.frame_ticks: # Espera o tempo mínimo entre um frame e outro
             self.last_update = now
             self.frame = self.frame+1 if self.frame < len(self.flag_anim)-1 else 0
-            self.image = self.flag_anim[self.frame]
+            self.image = self.flag_anim[self.frame] # Altera a imagem exibida
     
     def update_color(self, assets):
-        pass
+        pass # Essa classe não muda de cor
 
+# Classe da animação da explosão
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, posx, posy, assets):
-        
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
 
-        # Armazena a animação de explosão
-        self.explosion_anim = assets['explosao']
-
-        # Inicia o processo de animação colocando a primeira imagem na tela.
-        self.frame = 0  # Armazena o índice atual na animação
-        self.image = self.explosion_anim[self.frame]  # Pega a primeira imagem
+        self.explosion_anim = assets['explosao'] # Extrai as imagens da animação
+        self.image = self.explosion_anim[0] # Seleciona a primeira imagem da animação para começar
+        # Posiciona o centro da sprite
         self.rect = self.image.get_rect()
-        self.rect.centerx = posx  # Posiciona o centro da imagem
+        self.rect.centerx = posx  
         self.rect.centery = posy
 
-        # Guarda o tick da primeira imagem, ou seja, o momento em que a imagem foi mostrada
+        # Variáveis usadas na animação
         self.last_update = pygame.time.get_ticks()
-
-        # Controle de ticks de animação: troca de imagem a cada self.frame_ticks milissegundos.
-        # Quando pygame.time.get_ticks() - self.last_update > self.frame_ticks a
-        # próxima imagem da animação será mostrada
         self.frame_ticks = 50
+        self.frame = 0 
 
     def update(self, player):
-        # Verifica o tick atual.
+        # Movimenta o sprite junto com o cenário
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx    
+
+        # Realiza a animação
         now = pygame.time.get_ticks()
-        # Verifica quantos ticks se passaram desde a ultima mudança de frame.
         elapsed_ticks = now - self.last_update
-
-        # Se já está na hora de mudar de imagem...
-        if elapsed_ticks > self.frame_ticks:
-            # Marca o tick da nova imagem.
+        if elapsed_ticks > self.frame_ticks: # Espera o tempo mínimo entre um frame e outro
             self.last_update = now
-
-            # Avança um quadro.
             self.frame += 1
 
             # Verifica se já chegou no final da animação.
             if self.frame == len(self.explosion_anim):
-                # Se sim, tchau explosão!
-                self.kill()
+                self.kill() # Termina a animação
             else:
-                # Se ainda não chegou ao fim da explosão, troca de imagem.
+                # Continua a animação
                 centerx = self.rect.centerx
                 centery = self.rect.centery
-                self.image = self.explosion_anim[self.frame]
+                self.image = self.explosion_anim[self.frame]  # Altera a imagem exibida
                 self.rect = self.image.get_rect()
                 self.rect.centerx = centerx - player.speedx
                 self.rect.centery = centery
 
+    def update_color(self, assets):
+        pass # Essa classe não muda de cor
