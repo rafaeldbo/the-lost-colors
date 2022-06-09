@@ -2,7 +2,7 @@
 
 ## Contexto: 
 
-Em The Lost Colors, um cientista roubou e aprisionou as cores do mundo em prismas, você deve pegar os 3 prismas referentes as cores primárias da luz (RGB), cada cor dará ao player um novo poder. Os poderes são: dash (prisma verde), pulo-duplo (prisma azul) e habilidade de atirar bolas de fogo (prisma vermelho). Os prismas funcionam como check-points, assim como as bandeiras inseridas no meio da fase, quando o player perde uma vida ele retorna para check-point mais próximo. Para vencer a fase você deve chegar a última bandeira. 
+Em The Lost Colors, um cientista roubou e aprisionou as cores do mundo em prismas, você deve pegar os 3 prismas referentes as cores primárias da luz (RGB), cada cor dará ao player um novo poder. Os poderes são: dash (prisma verde), pulo-duplo (prisma azul) e habilidade de atirar bolas de fogo (prisma vermelho). Os prismas funcionam como check-points, assim como as bandeiras inseridas no meio da fase, quando o player perde uma vida ele retorna para o último check-point coletado. Para vencer a fase você deve chegar a última bandeira. 
 
 ## Vídeo de Desmonstração:
 - https://youtu.be/YhKGRmhBoVc
@@ -12,7 +12,7 @@ Em The Lost Colors, um cientista roubou e aprisionou as cores do mundo em prisma
 
 ## Observação:
 
-Para fins de facilitar o acesso e correção das duas fases do jogo, as cores requeridas para entrar na fase do laborátorio foram adicionadas ao **save.json**. Sem elas, só seria possível entrar nessa fase após completar a primeira. Caso precise, esvasie a lista **"cores"** do arquivo **save.json**
+Para fins de facilitar o acesso e correção das duas fases do jogo, as cores requeridas para entrar na fase do laborátorio foram adicionadas ao **save.json**. Sem elas, só seria possível entrar nessa fase após completar a primeira. Caso precise, esvazie a lista **"cores"** do arquivo **save.json**.
 
 ## Créditos: 
 
