@@ -2,10 +2,14 @@ import json, io
 from config import *
 from sprites import *
 
+# Carrega a matriz da fase
 def load_matriz(fase):
+    # Lê o arquivo da matriz
     with open(f'assets/{fase}.csv', 'r') as arquivo:
         fase_lines = arquivo.readlines()
     separator = fase_lines[1][1]
+
+    # Cria uma nova matriz transformando as colunas em linhas e linhas em colunas
     colunas = {}
 
     for linha in fase_lines:
@@ -22,10 +26,29 @@ def load_matriz(fase):
         coluna = colunas[j]
         matriz_fase.append(coluna)
 
+    # Retorna a matriz gerada
     return matriz_fase
+
+
+"""
+    Explicação dos checkpoints:
+
+    Os checkpoints foram criados para deixar o jogo mais 'leve'.
     
+    Como o player não varia sua posição em x mas sim os objetos, era preciso
+    muito processamento para mover todos os objetos da fase.
+        
+    A fase foi dividida em trechos mais curtos, cada checkpoint tem um valor
+    da coluna onde o trecho que vai ser carregado inicia 
+    e um valor da coluna onde o trecho termina. 
+    Assim o trecho anterior deixa de existir e apenas os objetos do novo trecho
+    precisam ser movidos.       
+    
+"""
+# Carrega o trecho da matriz referente ao último checkpoint
 def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
 
+    # Cria os grupos
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
         'all_monsters': pygame.sprite.Group(), # Todas os Monstros (possuem movimento)
@@ -36,11 +59,16 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
 
+    # Verifica se o player já coletou algum prisma, moeda ou bandeira
     collected = kargs.get('collected') if kargs.get('collected') != None else []
 
+    # Lê a matriz gerada pela load_matriz
     for j, coluna in enumerate(matriz_fase):
+        # Gera apenas o trecho referente ao último checkpoint
         if j in range(checkpoint['inicio'], checkpoint['fim']):
             for i, value in enumerate(coluna):
+                # Identifica qual é o elemento 
+                # Cria o objeto e adiciona ele ao referente grupo
                 
                 if value != "0":
                     posx = SIZE*j - checkpoint['parede'] - checkpoint['inicio']*SIZE
@@ -104,19 +132,23 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
 
     return groups
 
+# Verifica se a colisão é 'válida', evita que o player escale a parede
 def colisao_minima(player, bloco):
     minimo = SIZE/4
+    # Parte da frente do rect do player está em cima do bloco
     if player.rect.right > bloco.rect.left > player.rect.left:
         if (player.rect.right - bloco.rect.left) > minimo:
             return True
+    # Parte de trás do rect do player está em cima do bloco
     elif player.rect.right > bloco.rect.right > player.rect.left:
         if (bloco.rect.right - player.rect.left) > minimo:
             return True
+    # O centro do rect do player está em cima do bloco
     elif player.rect.centerx > bloco.rect.left and player.rect.centerx < bloco.rect.right:
         return True
     return False
 
-
+# desenha as informações de vidas, score e barra do dash
 def draw_infos(window, assets, player):
     # Desenhando o score
     score = assets['score_font'].render(f"{player.points:08d}", True, COLORS['yellow'])
@@ -131,16 +163,22 @@ def draw_infos(window, assets, player):
     window.blit(score, score_rect) # score
     window.blit(lifes, lifes_rect) # vidas
 
+    # Se o player já tem o diamante verde, desenha a barra do dash
+    # A barra do dash indica se já se passou o tempo necessário
+    # para o player utilizar o dash novamente
     if 'green' in player.colors:
         border = 3
         now = pygame.time.get_ticks()
         elapsed_ticks = now - player.last_dash
+        # O tamanho da barra amarela é proporcional ao tempo decorrido
+        # entre o momento atual e o último dash
         width = (elapsed_ticks)*(100/player.dash_delay) if elapsed_ticks < player.dash_delay else 100
 
         window.fill(COLORS['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
         window.fill(COLORS['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
         window.fill(COLORS['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)
-    
+
+# função para salvar os dados do player (pontuações e cores coletadas)
 def save(DATA):
     data = json.dumps(DATA)
     with io.open('assets/save.json', "w", encoding='utf8"') as file:
