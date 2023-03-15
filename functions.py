@@ -116,10 +116,10 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
                             groups['all_sprites'].add(element)
                 
                     elif value == "b":
-                        element = Flag(assets, posx, posy, "bandeira animada")
+                        element = Flag(assets, posx, posy, "bandeira")
                         groups['all_sprites'].add(element)
 
-                        element = Collectable(assets, posx, posy, "bandeira", index=[i,j])
+                        element = Collectable(assets, posx, posy, "checkpoint", index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)

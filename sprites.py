@@ -1,28 +1,59 @@
 import pygame
 from config import *
 
-# Classe do player
-class Character(pygame.sprite.Sprite):
-    def __init__(self, assets, colors):
+class Entity(pygame.sprite.Sprite):
+    def __init__(self, assets, name, position, animation=False):
+        # "animation" recebe a quantidade de frames por segundo que a amação possui
+
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
+        self.name = name
 
-        # Imagens
-        self.stopped_image = assets['personagem']
-        self.moviment_anim = assets['movimento personagem']
-        self.image = self.stopped_image
+        # Imagem
+        self.image = assets[name]
+        
+        self.animated = False
+        if animation:
+            self.animated = True
+            self.animation = assets[f"animacao {name}"]
+            # Variáveis usadas na animação
+            self.last_update = pygame.time.get_ticks()
+            self.frame_ticks = second/animation
+            self.frame = 0 
+
+        # Mascara
         self.mask = pygame.mask.from_surface(self.image)
 
         # Rect
         self.rect = self.image.get_rect()
-        self.rect.left = SIZE*7
-        self.rect.bottom = HEIGHT - SIZE*2
+        self.rect.left, self.rect.top = position
 
-        # Variáveis da animação do movimento
-        self.last_update = pygame.time.get_ticks()
-        self.frame_ticks = second/4
-        self.frame = 0 
-        self.last_frame_image = self.stopped_image
+    def update(self):
+        pass
+
+    def update_animation(self):
+        # Realiza a animação
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - self.last_update
+        if elapsed_ticks > self.frame_ticks: # Espera o tempo mínimo entre um frame e outro
+            self.last_update = now
+            self.frame = self.frame+1 if self.frame < len(self.animation)-1 else 0 # Atualiza o frame
+        frame_image = self.animation[self.frame] # Altera a imagem exibida
+        return frame_image
+    
+    def update_color(self, assets):
+        self.image = assets[self.name]
+        if self.animated:
+            self.animation = assets[f'animacao {self.name}']
+
+# Classe do player
+class Character(Entity):
+    def __init__(self, assets, colors):
+        # Inicializando entidade do personagem
+        Entity.__init__(self, assets, 'personagem', (SIZE*7, SIZE*8-SIZE*1.5), animation=4)
+
+        # Imagens
+        self.stopped_image = self.image
 
         # Variáveis do Movimento
         self.speedx = 0
@@ -66,20 +97,10 @@ class Character(pygame.sprite.Sprite):
             self.direction = 'left'
         
         # Animação do personagem em movimento, atualiza a imagem
-        frame_image = self.last_frame_image
         if self.in_moviment:
-            now = pygame.time.get_ticks()
-            elapsed_ticks = now - self.last_update
-            if elapsed_ticks > self.frame_ticks:
-                self.last_update = now
-                frame_image = self.moviment_anim[self.frame]
-                self.frame = self.frame+1 if self.frame < len(self.moviment_anim)-1 else 0
-
-        # Atualiza a imagem do player parado
-        # Utiliza a direção para onde ele estava se movendo
+            frame_image = self.update_animation()
         else:
-            frame_image = self.stopped_image
-        self.last_frame_image = frame_image
+            frame_image = self.stopped_image # Atualiza a imagem do player parado
 
         if self.direction == 'right':
             self.image = frame_image
@@ -88,9 +109,10 @@ class Character(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
 
     # Atualiza a imagem do player com base nas cores coletadas
+    # Override
     def update_color(self, assets):
-        self.stopped_image = assets['personagem']
-        self.moviment_anim = assets['movimento personagem']
+        super().update_color(assets)
+        self.stopped_image = self.image
 
     # Atira bola de fogo
     def shoot (self, img, groups):
@@ -133,42 +155,22 @@ class Button(pygame.sprite.Sprite):
         self.rect = pygame.Rect(rect)
         self.value = value
         
-class Block(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome):
-        # Construtor da classe(Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        self.name = nome
-
-        # Imagem e rect
-        self.image = assets[nome]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.left = posx
-        self.rect.top = posy
+class Block(Entity):
+    def __init__(self, assets, posx, posy, name):
+        # Inicializando entidade
+        Entity.__init__(self, assets, name, (posx, posy))
 
         self.speedx = 0
 
     # Atualiza a posição do bloco
-    def update(self,player):
+    def update(self, player):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
-    
-    # Atualiza a cor do bloco se o player coletar um novo diamante
-    def update_color(self, assets):
-        self.image = assets[self.name]
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome, moviment):
-        # Construtor da classe mãe (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        self.name = nome
-
-        # Imagem e rect
-        self.image = assets[nome]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.left = posx
-        self.rect.top = posy + 20
+class Enemy(Entity):
+    def __init__(self, assets, posx, posy, name, moviment):
+        # Inicializando entidade
+        Entity.__init__(self, assets, name, (posx, posy+20))
 
         # Guarda a direção de movimento
         # A direção de movimento é alterada se o inimigo colidir com um bloco
@@ -189,56 +191,31 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.bottom = HEIGHT
                 self.speed = -self.speed
         self.rect.x -= player.speedx 
-    
-    # Atualiza cor se o player coletar um novo diamante
-    def update_color(self, assets):
-        self.image = assets[self.name]
 
-class FireBall(pygame.sprite.Sprite):
+class FireBall(Entity):
     def __init__(self, assets, posx, posy, direction):
-        # Construtor da classe(Sprite).
-        pygame.sprite.Sprite.__init__(self)
-
-        # Imagem e rect
-        image = assets['bola de fogo']
-        self.mask = pygame.mask.from_surface(image)
-        self.rect = image.get_rect()
-        self.rect.centerx = posx 
-        self.rect.centery = posy - 60
+        # Inicializando entidade
+        Entity.__init__(self, assets, 'bola de fogo', (posx, posy-SIZE*1.25))
         
         # Determina a velocidade e imagem da bola de fogo, elas dependem 
         # da direção para a qual o player está se movendo
         if direction == 'right':
             self.speedx = moviment_fireball
-            self.image = image
         elif direction == 'left':
             self.speedx = -moviment_fireball
-            self.image = pygame.transform.flip(image, True, False)
+            self.image = pygame.transform.flip(self.image, True, False)
 
     # Atualiza posição 
     def update(self, player):
         self.rect.x += self.speedx -player.speedx        
 
-class Collectable(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome, **kargs):
-        # Construtor da classe(Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        self.name = nome
+class Collectable(Entity):
+    def __init__(self, assets, posx, posy, name, index, prism=False):
+        # Inicializando entidade
+        Entity.__init__(self, assets, name, (posx, posy))
 
-        self.index = kargs.get('index') # Coleta o index do coletável
-        self.color = kargs.get('prism') # coleta a cor (caso for um prisma)
-        
-        if 'prisma' in nome: # Se for um prisma, define a imagem de acordo com a cor
-            img = pygame.image.load(f'assets/img/{nome}.png')
-            self.image = pygame.transform.scale(img, (50, 50))
-            # diamantes são um pouco menores que o normal
-        else:
-            self.image = assets[nome] # Define a imagem
-        self.mask = pygame.mask.from_surface(self.image) # Cria a mascara de colisão
-        # posiciona o sprite
-        self.rect = self.image.get_rect()
-        self.rect.left = posx if self.color == None else posx+10
-        self.rect.top = posy if self.color == None else posy+10
+        self.index = index # Coleta o index do coletável
+        self.color = prism # coleta a cor (caso for um prisma)
 
         self.speedx = 0
 
@@ -247,27 +224,10 @@ class Collectable(pygame.sprite.Sprite):
         self.speedx = -player.speedx
         self.rect.x += self.speedx
     
-    def update_color(self, assets):
-        if self.name == 'moeda': # Se for moeda, atualiza a cor
-            self.image = assets[self.name]
-    
-class Flag(pygame.sprite.Sprite):
-    def __init__(self, assets, posx, posy, nome):
-        # Construtor da classe mãe (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        self.name = nome
-
-        self.flag_anim = assets[nome] # Extrai as imagens da animação
-        self.image = self.flag_anim[0] # Seleciona a primeira imagem da animação para começar
-        # Posiciona o sprite
-        self.rect = self.image.get_rect()
-        self.rect.left = posx
-        self.rect.top = posy
-
-        # Variáveis usadas na animação
-        self.last_update = pygame.time.get_ticks()
-        self.frame_ticks = second/4
-        self.frame = 0 
+class Flag(Entity):
+    def __init__(self, assets, posx, posy, name):
+        # Inicializando entidade
+        Entity.__init__(self, assets, name, (posx, posy), animation=4)
 
     def update(self, player):
         # Movimenta o sprite junto com o cenário
@@ -275,57 +235,27 @@ class Flag(pygame.sprite.Sprite):
         self.rect.x += self.speedx    
 
         # Realiza a animação
-        now = pygame.time.get_ticks()
-        elapsed_ticks = now - self.last_update
-        if elapsed_ticks > self.frame_ticks: # Espera o tempo mínimo entre um frame e outro
-            self.last_update = now
-            self.frame = self.frame+1 if self.frame < len(self.flag_anim)-1 else 0
-            self.image = self.flag_anim[self.frame] # Altera a imagem exibida
-    
-    def update_color(self, assets):
-        pass # Essa classe não muda de cor
+        self.image = self.update_animation() # Altera a imagem exibida
 
 # Classe da animação da explosão
-class Explosion(pygame.sprite.Sprite):
+class Explosion(Entity):
     def __init__(self, posx, posy, assets):
-        # Construtor da classe mãe (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-
-        self.explosion_anim = assets['explosao'] # Extrai as imagens da animação
-        self.image = self.explosion_anim[0] # Seleciona a primeira imagem da animação para começar
-        # Posiciona o centro da sprite
-        self.rect = self.image.get_rect()
-        self.rect.centerx = posx  
-        self.rect.centery = posy
-
-        # Variáveis usadas na animação
-        self.last_update = pygame.time.get_ticks()
-        self.frame_ticks = 50
-        self.frame = 0 
+        # Inicializando entidade
+        Entity.__init__(self, assets, 'explosao', (posx-SIZE/2, posy-SIZE/2), animation=20)
 
     def update(self, player):
         # Movimenta o sprite junto com o cenário
         self.speedx = -player.speedx
         self.rect.x += self.speedx    
 
-        # Realiza a animação
-        now = pygame.time.get_ticks()
-        elapsed_ticks = now - self.last_update
-        if elapsed_ticks > self.frame_ticks: # Espera o tempo mínimo entre um frame e outro
-            self.last_update = now
-            self.frame += 1
-
-            # Verifica se já chegou no final da animação.
-            if self.frame == len(self.explosion_anim):
-                self.kill() # Termina a animação
-            else:
+        # Verifica se já chegou no final da animação.
+        if self.frame == len(self.animation)-1:
+            self.kill() # Termina a animação
+        else:
                 # Continua a animação
                 centerx = self.rect.centerx
                 centery = self.rect.centery
-                self.image = self.explosion_anim[self.frame]  # Altera a imagem exibida
+                self.image = self.update_animation() # Altera a imagem exibida
                 self.rect = self.image.get_rect()
                 self.rect.centerx = centerx - player.speedx
                 self.rect.centery = centery
-
-    def update_color(self, assets):
-        pass # Essa classe não muda de cor

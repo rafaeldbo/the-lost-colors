@@ -51,20 +51,33 @@ def load_assets(fase, corrent_colors):
     
     botao_img = pygame.image.load(f'assets/img/botao.png')
     botao_img = pygame.transform.scale(botao_img, (40, 40))
+
+    prisma_green = pygame.image.load(f'assets/img/prisma_green.png')
+    prisma_green = pygame.transform.scale(prisma_green, (SIZE*(5/7), SIZE*(5/7)))
+
+    prisma_blue = pygame.image.load(f'assets/img/prisma_blue.png')
+    prisma_blue = pygame.transform.scale(prisma_blue, (SIZE*(5/7), SIZE*(5/7)))
+
+    prisma_red = pygame.image.load(f'assets/img/prisma_red.png')
+    prisma_red = pygame.transform.scale(prisma_red, (SIZE*(5/7), SIZE*(5/7)))
     
     # carrega a fonte de texto usada no jogo
     score_font = pygame.font.Font((f'assets/font/base.ttf'), 28)
 
     # Carrega e organiza as imagens da animação da bandeira
+    bandeira_img = pygame.image.load(f'assets/img/bandeira.png')
+    bandeira_img = pygame.transform.scale(bandeira_img, (SIZE, SIZE*2))
     bandeira_anim = []
     for i in range(4):
         img = pygame.image.load(f'assets/img/bandeira/{i}.png')
-        img = pygame.transform.scale(img, (SIZE, 2*SIZE))
+        img = pygame.transform.scale(img, (SIZE, SIZE*2))
         bandeira_anim.append(img)
-    bandeira_img = pygame.image.load(f'assets/img/bandeira.png')
-    bandeira_img = pygame.transform.scale(bandeira_img, (SIZE, 2*SIZE))
+    checkpoint_img = pygame.image.load(f'assets/img/checkpoint.png')
+    checkpoint_img = pygame.transform.scale(checkpoint_img, (SIZE, SIZE*2))
 
     # Carrega e organiza as imagens da animação da explosão
+    explosion_img = pygame.image.load(f'assets/img/explosao.png')
+    explosion_img = pygame.transform.scale(explosion_img, (SIZE, SIZE))
     explosion_anim = []
     for i in range(9):
         # Os arquivos de animação são numerados de 00 a 08
@@ -76,7 +89,7 @@ def load_assets(fase, corrent_colors):
     assets = {
         'background': background_img,
         'personagem': personagem_img,
-        'movimento personagem': personagem_anim,
+        'animacao personagem': personagem_anim,
         'chao': chao_img,
         'parede': parede_img,
         'inimigo chao': inimigo_img,
@@ -84,10 +97,15 @@ def load_assets(fase, corrent_colors):
         'bola de fogo': foguinho_img,
         'moeda': moeda_img,
         "caixa" : caixa_img,
-        "bandeira animada": bandeira_anim,
         "bandeira": bandeira_img,
-        "explosao": explosion_anim,
+        "animacao bandeira": bandeira_anim,
+        "checkpoint": checkpoint_img,
+        "explosao": explosion_img,
+        "animacao explosao": explosion_anim,
         "botao": botao_img,
+        "prisma_green": prisma_green,
+        "prisma_blue": prisma_blue,
+        "prisma_red": prisma_red,
 
         "score_font" : score_font,
 
