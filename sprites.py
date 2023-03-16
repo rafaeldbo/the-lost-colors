@@ -197,7 +197,8 @@ class Enemy(Entity):
 class FireBall(Entity):
     def __init__(self, assets, posx, posy, direction):
         # Inicializando entidade
-        Entity.__init__(self, assets, 'bola de fogo', (posx, posy-SIZE*1.25))
+        adjust_x = -SIZE if direction == 'left' else 0
+        Entity.__init__(self, assets, 'bola de fogo', (posx+adjust_x, posy-SIZE*1.25))
         
         # Determina a velocidade e imagem da bola de fogo, elas dependem 
         # da direção para a qual o player está se movendo
