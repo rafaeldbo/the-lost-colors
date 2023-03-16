@@ -13,12 +13,11 @@ def fase_screen(window, DATA, fase):
         # Verifica se o jogador tem as cores necessárias para entrar na fase
         running = True
 
-        checkpoint = 0
-
         assets = load_assets(fase, init_colors) # Carrega os arquivos iniciais
-        groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
-         # Gera o mapa no primeiro checkpoint
         player = Character(assets, init_colors) # Cria o Personagem
+
+        # Gera o mapa no primeiro checkpoint
+        groups = load_map(assets, fase, player)
         pause_button = Button((15, 15, 40, 40), 'PAUSE', image=assets['botao']) # Botão de pause
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
@@ -122,8 +121,8 @@ def fase_screen(window, DATA, fase):
                 player.lifes -= 1
                 assets["hit som"].play()
                 # Recarrega o mapa enviando o player para o checkpoint
-                groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
-                player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
+                groups = load_map(assets, fase, player)
+                player.rect.bottom = GAME[fase]['checkpoints'][player.checkpoint]['chao']
             
             # Colisões dos monstros com os blocos (vertical e horizontal)
             collision_monster_blocks = pygame.sprite.groupcollide(groups['all_monsters'], groups['all_blocks'], False, False)
@@ -183,12 +182,12 @@ def fase_screen(window, DATA, fase):
                 
                 if issubclass(type(collected), Checkpoint): # Verifica se é um checkpoint
                     # Recarrega o mapa segundo o novo checkpoint
-                    checkpoint = checkpoint+1 if checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
-                    groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
-                    player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
+                    player.checkpoint = player.checkpoint+1 if player.checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
+                    groups = load_map(assets, fase, player)
+                    player.rect.bottom = GAME[fase]['checkpoints'][player.checkpoint]['chao']
 
             # verifica se o jogador ganhou o jogo
-            if checkpoint == len(GAME[fase]['checkpoints'])-1:
+            if player.checkpoint == len(GAME[fase]['checkpoints'])-1:
                 # Armazena os prismas/cores coletadas
                 DATA['cores'] = player.colors
                 # Armazena a pontuação

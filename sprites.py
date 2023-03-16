@@ -68,6 +68,7 @@ class Character(Entity):
         self.colors = colors
         self.points = 0
         self.collected = []
+        self.checkpoint = 0
 
         # Variáveis do Shoot
         self.last_shoot = pygame.time.get_ticks()
