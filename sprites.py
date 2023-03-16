@@ -1,5 +1,6 @@
 import pygame
 from config import *
+from assets import load_assets
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, assets, name, position, animation=False):
@@ -210,33 +211,50 @@ class FireBall(Entity):
         self.rect.x += self.speedx -player.speedx        
 
 class Collectable(Entity):
-    def __init__(self, assets, posx, posy, name, index, prism=False):
+    def __init__(self, assets, posx, posy, name, index, animation=False):
         # Inicializando entidade
-        Entity.__init__(self, assets, name, (posx, posy))
+        Entity.__init__(self, assets, name, (posx, posy), animation=animation)
 
         self.index = index # Coleta o index do coletável
-        self.color = prism # coleta a cor (caso for um prisma)
-
         self.speedx = 0
 
     def update(self, player):
         # Movimenta o sprite junto com o cenário
         self.speedx = -player.speedx
         self.rect.x += self.speedx
-    
-class Flag(Entity):
-    def __init__(self, assets, posx, posy, name):
+
+class Coin(Collectable):
+    def __init__(self, assets, posx, posy, name, index):
         # Inicializando entidade
-        Entity.__init__(self, assets, name, (posx, posy), animation=4)
+        Collectable.__init__(self, assets, posx, posy, name, index)
 
-    def update(self, player):
-        # Movimenta o sprite junto com o cenário
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx    
+class Checkpoint(Collectable):
+    def __init__(self, assets, posx, posy, name, index, animation=False):
+        # Inicializando entidade
+        Collectable.__init__(self, assets, posx, posy, name, index, animation=animation)
 
+class Flag(Checkpoint):
+    def __init__(self, assets, posx, posy, name, index):
+        # Inicializando entidade
+        Checkpoint.__init__(self, assets, posx, posy, name, index, animation=4)
         # Realiza a animação
+    def update(self, player):
+        super().update(player)
         self.image = self.update_animation() # Altera a imagem exibida
 
+class Prism(Checkpoint):
+    def __init__(self, assets, posx, posy, name, color, index, animation=False):
+        # Inicializando entidade
+        Checkpoint.__init__(self, assets, posx, posy, name, index, animation=animation)
+        self.color = color
+    
+    def update_map_color(self, assets, fase, player, groups):
+        assets = load_assets(fase, player.colors)
+        player.update_color(assets)
+        for entity in groups['all_sprites']:
+            entity.update_color(assets)
+
+        return assets, player, groups
 # Classe da animação da explosão
 class Explosion(Entity):
     def __init__(self, posx, posy, assets):

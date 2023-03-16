@@ -110,22 +110,21 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
                         groups['all_sprites'].add(element)
                 
                     elif value == "m":
-                        element = Collectable(assets, posx, posy, "moeda", index=[i,j])
+                        element = Coin(assets, posx, posy, "moeda", index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
                 
                     elif value == "b":
-                        element = Flag(assets, posx, posy, "bandeira")
+                        element = Flag(assets, posx, posy, "bandeira", index=[i,j])
                         groups['all_sprites'].add(element)
 
-                        element = Collectable(assets, posx, posy, "checkpoint", index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
 
                     elif value in ["green", "blue", "red"] and value not in current_colors:
-                        element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value, index=[i,j])
+                        element = Prism(assets, posx, posy, f"prisma_{value}", value, index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)

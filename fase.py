@@ -167,19 +167,14 @@ def fase_screen(window, DATA, fase):
             for collected in collision_player_collectibles:
                 player.collected.append(collected.index)
 
-                if collected.name == 'moeda': # Verifica se é uma moeda
+                if type(collected) == Coin: # Verifica se é uma moeda
                     player.points += 100
                     if player.points%2000 == 0 and player.lifes < 3:
                         player.lifes += 1
                     assets["moeda som"].play()
 
-                elif 'prisma' in collected.name: # Verifica se é um diamante
+                elif type(collected) == Prism: # Verifica se é um diamante
                     player.colors.append(collected.color) # Coleta a cor
-
-                    # Recarrega o mapa segundo o novo checkpoint
-                    checkpoint = checkpoint+1 if checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
-                    groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
-                    player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
 
                     # Atualiza as cores do jogo
                     assets = load_assets(fase, player.colors)
@@ -187,7 +182,7 @@ def fase_screen(window, DATA, fase):
                     for entity in groups['all_sprites']:
                         entity.update_color(assets)
                 
-                elif collected.name == 'bandeira': # Verifica se é um checkpoint
+                if issubclass(type(collected), Checkpoint): # Verifica se é um checkpoint
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint = checkpoint+1 if checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
                     groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
