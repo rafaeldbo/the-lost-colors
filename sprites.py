@@ -262,15 +262,10 @@ class Explosion(Entity):
         # Inicializando entidade
         Entity.__init__(self, assets, 'explosao', (posx-SIZE/2, posy-SIZE/2), animation=20)
 
+    # Finalizando a animação
+    # Override
     def update(self, player):
+        super().update(player)
         # Verifica se já chegou no final da animação.
         if self.frame == len(self.animation)-1:
             self.kill() # Termina a animação
-        else:
-                # Continua a animação
-                centerx = self.rect.centerx
-                centery = self.rect.centery
-                self.image = self.update_animation() # Altera a imagem exibida
-                self.rect = self.image.get_rect()
-                self.rect.centerx = centerx - player.speedx
-                self.rect.centery = centery
