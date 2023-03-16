@@ -245,15 +245,17 @@ class Prism(Checkpoint):
     def __init__(self, assets, posx, posy, name, color, index, animation=False):
         # Inicializando entidade
         Checkpoint.__init__(self, assets, posx, posy, name, index, animation=animation)
-        self.color = color
+                
+        self.color = color # Cor do prisma
     
-    def update_map_color(self, assets, fase, player, groups):
+    # Atualiza os assets com a nova cor
+    def update_assets_color(self, assets, fase, player):
+        player.colors.append(self.color)
         assets = load_assets(fase, player.colors)
         player.update_color(assets)
-        for entity in groups['all_sprites']:
-            entity.update_color(assets)
 
-        return assets, player, groups
+        return assets, player
+    
 # Classe da animação da explosão
 class Explosion(Entity):
     def __init__(self, posx, posy, assets):

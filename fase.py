@@ -172,13 +172,7 @@ def fase_screen(window, DATA, fase):
                     assets["moeda som"].play()
 
                 elif type(collected) == Prism: # Verifica se é um diamante
-                    player.colors.append(collected.color) # Coleta a cor
-
-                    # Atualiza as cores do jogo
-                    assets = load_assets(fase, player.colors)
-                    player.update_color(assets)
-                    for entity in groups['all_sprites']:
-                        entity.update_color(assets)
+                    assets, player = collected.update_assets_color(assets, fase, player)
                 
                 if issubclass(type(collected), Checkpoint): # Verifica se é um checkpoint
                     # Recarrega o mapa segundo o novo checkpoint
