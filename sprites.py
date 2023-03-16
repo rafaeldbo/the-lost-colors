@@ -4,7 +4,7 @@ from assets import load_assets
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, assets, name, position, animation=False):
-        # "animation" recebe a quantidade de frames por segundo que a amação possui
+        # "animation" recebe a quantidade de frames por segundo que a animação possui
 
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
@@ -29,8 +29,17 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = position
 
-    def update(self):
-        pass
+        # Variaveis de Movimento
+        self.speedx = 0
+
+    def update(self, player):
+        # Movimenta o sprite junto com o cenário (movimento relativo ao player)
+        self.speedx = -player.speedx
+        self.rect.x += self.speedx
+
+        # Atualiza a animação
+        if self.animated:
+            self.image = self.update_animation() # Altera a imagem exibida
 
     def update_animation(self):
         # Realiza a animação
@@ -80,6 +89,8 @@ class Character(Entity):
         self.dash_delay = 4000
         self.dash_duration = frame*3
      
+    # Realiza movimento e animação
+    # Override
     def update(self):
         # Verifica a velocidade no eixo y
         self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
@@ -162,13 +173,6 @@ class Block(Entity):
         # Inicializando entidade
         Entity.__init__(self, assets, name, (posx, posy))
 
-        self.speedx = 0
-
-    # Atualiza a posição do bloco
-    def update(self, player):
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx
-
 class Enemy(Entity):
     def __init__(self, assets, posx, posy, name, moviment):
         # Inicializando entidade
@@ -179,8 +183,10 @@ class Enemy(Entity):
         self.direction = moviment
         self.speed = moviment_enemy
 
-    # Atualiza posição 
+    # Realiza movimento
+    # Override 
     def update(self, player):
+        super().update(player)
         if self.direction == "horizontal":
             self.rect.x += self.speed
         if self.direction == "vertical":
@@ -192,7 +198,6 @@ class Enemy(Entity):
             if self.rect.bottom > HEIGHT:
                 self.rect.bottom = HEIGHT
                 self.speed = -self.speed
-        self.rect.x -= player.speedx 
 
 class FireBall(Entity):
     def __init__(self, assets, posx, posy, direction):
@@ -203,14 +208,16 @@ class FireBall(Entity):
         # Determina a velocidade e imagem da bola de fogo, elas dependem 
         # da direção para a qual o player está se movendo
         if direction == 'right':
-            self.speedx = moviment_fireball
+            self.speed = moviment_fireball
         elif direction == 'left':
-            self.speedx = -moviment_fireball
+            self.speed = -moviment_fireball
             self.image = pygame.transform.flip(self.image, True, False)
 
-    # Atualiza posição 
+    # Realiza movimento
+    # Override
     def update(self, player):
-        self.rect.x += self.speedx -player.speedx        
+        super().update(player)
+        self.rect.x += self.speed       
 
 class Collectable(Entity):
     def __init__(self, assets, posx, posy, name, index, animation=False):
@@ -218,12 +225,6 @@ class Collectable(Entity):
         Entity.__init__(self, assets, name, (posx, posy), animation=animation)
 
         self.index = index # Coleta o index do coletável
-        self.speedx = 0
-
-    def update(self, player):
-        # Movimenta o sprite junto com o cenário
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx
 
 class Coin(Collectable):
     def __init__(self, assets, posx, posy, name, index):
@@ -239,10 +240,6 @@ class Flag(Checkpoint):
     def __init__(self, assets, posx, posy, name, index):
         # Inicializando entidade
         Checkpoint.__init__(self, assets, posx, posy, name, index, animation=4)
-        # Realiza a animação
-    def update(self, player):
-        super().update(player)
-        self.image = self.update_animation() # Altera a imagem exibida
 
 class Prism(Checkpoint):
     def __init__(self, assets, posx, posy, name, color, index, animation=False):
@@ -264,10 +261,6 @@ class Explosion(Entity):
         Entity.__init__(self, assets, 'explosao', (posx-SIZE/2, posy-SIZE/2), animation=20)
 
     def update(self, player):
-        # Movimenta o sprite junto com o cenário
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx    
-
         # Verifica se já chegou no final da animação.
         if self.frame == len(self.animation)-1:
             self.kill() # Termina a animação
