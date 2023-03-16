@@ -46,8 +46,8 @@ def load_matriz(fase):
     
 """
 # Carrega o trecho da matriz referente ao último checkpoint
-def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
-
+def load_map(fase, assets, checkpoint, current_colors, **kargs):
+    matriz_fase = load_matriz(fase)
     # Cria os grupos
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}

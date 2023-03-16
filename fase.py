@@ -15,9 +15,8 @@ def fase_screen(window, DATA, fase):
 
         checkpoint = 0
 
-        matriz_fase = load_matriz(fase) # Carrega a matriz da fase
         assets = load_assets(fase, init_colors) # Carrega os arquivos iniciais
-        groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
+        groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], init_colors)
          # Gera o mapa no primeiro checkpoint
         player = Character(assets, init_colors) # Cria o Personagem
         pause_button = Button((15, 15, 40, 40), 'PAUSE', image=assets['botao']) # Botão de pause
@@ -123,7 +122,7 @@ def fase_screen(window, DATA, fase):
                 player.lifes -= 1
                 assets["hit som"].play()
                 # Recarrega o mapa enviando o player para o checkpoint
-                groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
+                groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
                 player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
             
             # Colisões dos monstros com os blocos (vertical e horizontal)
@@ -185,7 +184,7 @@ def fase_screen(window, DATA, fase):
                 if issubclass(type(collected), Checkpoint): # Verifica se é um checkpoint
                     # Recarrega o mapa segundo o novo checkpoint
                     checkpoint = checkpoint+1 if checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
-                    groups = load_map(matriz_fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
+                    groups = load_map(fase, assets, GAME[fase]['checkpoints'][checkpoint], player.colors, collected=player.collected)
                     player.rect.bottom = GAME[fase]['checkpoints'][checkpoint]['chao']
 
             # verifica se o jogador ganhou o jogo
