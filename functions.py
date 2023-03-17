@@ -46,8 +46,11 @@ def load_matriz(fase):
     
 """
 # Carrega o trecho da matriz referente ao último checkpoint
-def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
-
+def load_map(assets, fase, player):
+    matriz_fase = load_matriz(fase)
+    checkpoint = GAME[fase]['checkpoints'][player.checkpoint]
+    collected = player.collected
+    current_colors = player.colors
     # Cria os grupos
     groups = {
         'all_blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
@@ -58,9 +61,6 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
         'damagers': pygame.sprite.Group(), # Todas as Entidade que causam Dano
         'all_sprites': pygame.sprite.Group(), # Todas as Entidades
     }
-
-    # Verifica se o player já coletou algum prisma, moeda ou bandeira
-    collected = kargs.get('collected') if kargs.get('collected') != None else []
 
     # Lê a matriz gerada pela load_matriz
     for j, coluna in enumerate(matriz_fase):
@@ -110,22 +110,21 @@ def load_map(matriz_fase, assets, checkpoint, current_colors, **kargs):
                         groups['all_sprites'].add(element)
                 
                     elif value == "m":
-                        element = Collectable(assets, posx, posy, "moeda", index=[i,j])
+                        element = Coin(assets, posx, posy, "moeda", index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
                 
                     elif value == "b":
-                        element = Flag(assets, posx, posy, "bandeira animada")
+                        element = Flag(assets, posx, posy, "bandeira", index=[i,j])
                         groups['all_sprites'].add(element)
 
-                        element = Collectable(assets, posx, posy, "bandeira", index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
 
                     elif value in ["green", "blue", "red"] and value not in current_colors:
-                        element = Collectable(assets, posx, posy, f"prisma_{value}", prism=value, index=[i,j])
+                        element = Prism(assets, posx, posy, f"prisma_{value}", value, index=[i,j])
                         if element.index not in collected:
                             groups['collectibles'].add(element)
                             groups['all_sprites'].add(element)
