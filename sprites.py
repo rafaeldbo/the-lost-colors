@@ -17,7 +17,7 @@ class Entity(pygame.sprite.Sprite):
             self.animation = assets[f"animacao {name}"]
             # Variáveis usadas na animação
             self.last_update = pygame.time.get_ticks()
-            self.frame_ticks = second/animation
+            self.frame_ticks = SECOND/animation
             self.frame = 0 
 
         # Mascara
@@ -82,7 +82,7 @@ class Character(Entity):
         self.stopped_image = self.image
 
         # Variáveis do Movimento
-        self.speedy = gravidade
+        self.speedy = GRAVIDADE
         self.direction = 'right'
         self.in_moviment = True
         self.jump = 0
@@ -96,19 +96,16 @@ class Character(Entity):
 
         # Variáveis do Shoot
         self.last_shoot = pygame.time.get_ticks()
-        self.shoot_delay = 500
         
         # Variáveis do Dash
         self.in_dash= False
         self.last_dash = pygame.time.get_ticks()
-        self.dash_delay = 4000
-        self.dash_duration = frame*3
      
     # Realiza movimento e animação
     # Override
     def update(self):
         # Verifica a velocidade no eixo y
-        self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
+        self.speedy += 0 if self.speedy >= GRAVIDADE*4 else GRAVIDADE
         # Atualiza posição
         self.rect.y += self.speedy
 
@@ -145,10 +142,10 @@ class Character(Entity):
             # Dependendo do tempo decorrido desde o último dash
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_dash
-            if elapsed_ticks > self.dash_delay and not self.in_dash:
+            if elapsed_ticks > DASH_DELAY and not self.in_dash:
                 self.last_dash = now
                 # altera a velocidade do movimento em x   
-                self.speedx = +65 if self.direction == 'right' else -65 
+                self.speedx = +DASH_SPEED if self.direction == 'right' else -DASH_SPEED 
                 assets['dash som'].play()  
                 self.in_dash = True
 
@@ -160,7 +157,7 @@ class Character(Entity):
             # Dependendo do tempo decorrido desde o último tiro
             now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_shoot
-            if elapsed_ticks > self.shoot_delay:
+            if elapsed_ticks > SHOOT_DELAY:
                 self.last_shoot = now
                 # Cria a bola de fogo
                 fireball = FireBall(img, self.rect.centerx, self.rect.bottom, self.direction)
@@ -189,7 +186,7 @@ class Enemy(Entity):
         # Guarda a direção de movimento
         # A direção de movimento é alterada se o inimigo colidir com um bloco
         self.direction = moviment
-        self.speed = moviment_enemy
+        self.speed = ENEMY_SPEED
 
     # Realiza movimento
     # Override 
@@ -216,9 +213,9 @@ class FireBall(Entity):
         # Determina a velocidade e imagem da bola de fogo, elas dependem 
         # da direção para a qual o player está se movendo
         if direction == 'right':
-            self.speed = moviment_fireball
+            self.speed = FIREBALL_SPEED
         elif direction == 'left':
-            self.speed = -moviment_fireball
+            self.speed = -FIREBALL_SPEED
             self.image = pygame.transform.flip(self.image, True, False)
 
     # Realiza movimento

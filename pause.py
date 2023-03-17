@@ -17,7 +17,7 @@ def pause_screen(window, fase):
     ]
     
     while running:
-        clock.tick(FPS)
+        CLOCK.tick(FPS)
 
     # ----- Trata eventos
         for event in pygame.event.get():

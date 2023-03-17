@@ -45,7 +45,7 @@ def end_screen(window, DATA, screen, fase):
     pygame.mixer.music.play(loops=-1)
 
     while running:
-        clock.tick(FPS)
+        CLOCK.tick(FPS)
 
         # ----- Trata eventos
         for event in pygame.event.get():

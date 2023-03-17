@@ -4,7 +4,7 @@ import pygame
 from config import *
 from functions import save
 from init import init_screen
-from fase import fase_screen
+from fase import fase_screen 
 from end import end_screen
 
 pygame.init()

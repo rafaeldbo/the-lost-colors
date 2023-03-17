@@ -53,9 +53,9 @@ def load_map(assets, fase, player):
     current_colors = player.colors
     # Cria os grupos
     groups = {
-        'all_blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
-        'all_monsters': pygame.sprite.Group(), # Todas os Monstros (possuem movimento)
-        'all_fireballs': pygame.sprite.Group(), # Tadas as Bolas de fogo (destruem entidades)
+        'blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
+        'enemys': pygame.sprite.Group(), # Todas os Monstros (possuem movimento)
+        'fireballs': pygame.sprite.Group(), # Tadas as Bolas de fogo (destruem entidades)
         'collectibles': pygame.sprite.Group(), # Todas as Entidades Coletaveis
         'breakables': pygame.sprite.Group(), # Todas as Entidades Quebraveis com Bola de Fogo
         'damagers': pygame.sprite.Group(), # Todas as Entidade que causam Dano
@@ -76,24 +76,24 @@ def load_map(assets, fase, player):
 
                     if value == "c":
                         element = Block(assets, posx, posy, "chao")
-                        groups['all_blocks'].add(element)
+                        groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif value == "p":
                         element = Block(assets, posx, posy, "parede")
-                        groups['all_blocks'].add(element)
+                        groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif value == "i1":
-                        element = Enemy(assets, posx, posy, "inimigo chao", "horizontal")
-                        groups['all_monsters'].add(element)
+                        element = Enemy(assets, posx, posy, "inimigo", "horizontal")
+                        groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif value == "i2":
-                        element = Enemy(assets, posx, posy, "inimigo chao", "vertical")
-                        groups['all_monsters'].add(element)
+                        element = Enemy(assets, posx, posy, "inimigo", "vertical")
+                        groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
@@ -105,7 +105,7 @@ def load_map(assets, fase, player):
                 
                     elif value == "q":
                         element = Block(assets, posx, posy, "caixa")
-                        groups['all_blocks'].add(element)
+                        groups['blocks'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
                 
@@ -171,7 +171,7 @@ def draw_infos(window, assets, player):
         elapsed_ticks = now - player.last_dash
         # O tamanho da barra amarela é proporcional ao tempo decorrido
         # entre o momento atual e o último dash
-        width = (elapsed_ticks)*(100/player.dash_delay) if elapsed_ticks < player.dash_delay else 100
+        width = (elapsed_ticks)*(100/DASH_DELAY) if elapsed_ticks < DASH_DELAY else 100
 
         window.fill(COLORS['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
         window.fill(COLORS['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)

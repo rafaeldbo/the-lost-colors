@@ -26,7 +26,7 @@ def fase_screen(window, DATA, fase):
         # Toca musica da fase
 
         while running:
-            clock.tick(FPS)
+            CLOCK.tick(FPS)
                 
             # ----- Trata eventos
             for event in pygame.event.get():
@@ -39,7 +39,7 @@ def fase_screen(window, DATA, fase):
                     if (event.key == pygame.K_UP) and (player.jump != 0) and (player.speedy >= 0): 
                         # Pulo
                         player.jump -= 1
-                        player.speedy = -moviment_player_y
+                        player.speedy = -PLAYER_SPEED_JUMP
                         assets['pulo som'].play()
 
                     if event.key == pygame.K_SPACE: # Atirar bola de fogo
@@ -69,7 +69,7 @@ def fase_screen(window, DATA, fase):
             if player.in_dash:
                 now = pygame.time.get_ticks()
                 elapsed_ticks = now - player.last_dash
-                if elapsed_ticks >= player.dash_duration:
+                if elapsed_ticks >= DASH_DURATION:
                 # Controla o tempo do dash
                     player.speedx = 0
                     player.in_dash = False
@@ -79,7 +79,7 @@ def fase_screen(window, DATA, fase):
             groups['all_sprites'].update(player)
 
             # Colisões entre o player e os blocos
-            collision_player_blocks = pygame.sprite.spritecollide(player, groups['all_blocks'], False)
+            collision_player_blocks = pygame.sprite.spritecollide(player, groups['blocks'], False)
             for bloco in collision_player_blocks:
                 
                 # Colisão com o teto
@@ -110,9 +110,9 @@ def fase_screen(window, DATA, fase):
             # Movimenta na horizontal
             pressed_keys = pygame.key.get_pressed()
             if pressed_keys[pygame.K_RIGHT] and not player.in_dash:
-                player.speedx = +moviment_player_x 
+                player.speedx = +PLAYER_SPEED 
             elif pressed_keys[pygame.K_LEFT] and not player.in_dash:
-                player.speedx = -moviment_player_x
+                player.speedx = -PLAYER_SPEED
             
             # Colisão entre Personagem e "causadores de dano"
             hits = pygame.sprite.spritecollide(player, groups['damagers'], False, pygame.sprite.collide_mask)
@@ -125,7 +125,7 @@ def fase_screen(window, DATA, fase):
                 player.rect.bottom = GAME[fase]['checkpoints'][player.checkpoint]['chao']
             
             # Colisões dos monstros com os blocos (vertical e horizontal)
-            collision_monster_blocks = pygame.sprite.groupcollide(groups['all_monsters'], groups['all_blocks'], False, False)
+            collision_monster_blocks = pygame.sprite.groupcollide(groups['enemys'], groups['blocks'], False, False)
             for monstro, blocos in collision_monster_blocks.items():
                 bloco = blocos[0]
                 # Se o montro se movimenta na horizontal
@@ -152,12 +152,12 @@ def fase_screen(window, DATA, fase):
 
             # Colisões da bola de fogo com os breakables
             # Quando o monstro ou a caixa é atingida gera a explosão
-            collision_breakables_fireballs = pygame.sprite.groupcollide(groups['breakables'], groups['all_fireballs'], True, True, pygame.sprite.collide_mask)
+            collision_breakables_fireballs = pygame.sprite.groupcollide(groups['breakables'], groups['fireballs'], True, True, pygame.sprite.collide_mask)
             for element in collision_breakables_fireballs:
                 assets['explode som'].play()
                 explosao = Explosion(element.rect.centerx, element.rect.centery, assets)
                 groups['all_sprites'].add(explosao)
-            pygame.sprite.groupcollide(groups['all_blocks'], groups['all_fireballs'], False, True)
+            pygame.sprite.groupcollide(groups['blocks'], groups['fireballs'], False, True)
 
 
             # Colisões com as moedas e prismas (coletáveis)

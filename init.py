@@ -11,7 +11,7 @@ def init_screen(window):
 
     # Declaração da imagens e das váriasvas da animação do menu
     telaInicial = pygame.image.load('assets/img/menu1.png')
-    time_frame = [0.2*second, 0.5*second, 0.2*second, 0.1*second, 0.05*second, 0.6*second, 10*second] # lista de duração de cada frame
+    time_frame = [0.2*SECOND, 0.5*SECOND, 0.2*SECOND, 0.1*SECOND, 0.05*SECOND, 0.6*SECOND, 10*SECOND] # lista de duração de cada frame
     last_update = 0
     frame = 0
 
@@ -22,7 +22,7 @@ def init_screen(window):
     ]
     
     while running:
-        clock.tick(FPS)
+        CLOCK.tick(FPS)
 
     # ----- Trata eventos
         for event in pygame.event.get():

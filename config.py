@@ -1,13 +1,13 @@
 import pygame, io, json
 
 # Tempo
-clock = pygame.time.Clock()
+CLOCK = pygame.time.Clock()
 FPS = 30 # frames por segundo
-second = 1000 # segundo
-frame = second/FPS # tempo de 1 frame
+SECOND = 1000 # segundo
+FRAME = SECOND/FPS # tempo de 1 frame
 
 # Gravidade do jogo
-gravidade = 8 
+GRAVIDADE = 8 
 
 # Tamanhos
 SIZE = 70 # Tamanho padrão de um bloco
@@ -17,18 +17,24 @@ HEIGHT = SIZE*10 # Altura da Janela do jogo
 # Cores
 COLORS = {'black': (0,0,0), 'white': (255,255,255), 'yellow': (255,255,0), 'red': (255,0,0)} 
 
-# Movimentos
-moviment_player_x = 12 # velocidade base do player na horizontal
-moviment_player_y = 55 # Velocidade base do player na vertical
+# Variaveis globais do player
+PLAYER_SPEED = 12 # Velocidade base do player na horizontal
+PLAYER_SPEED_JUMP = 55 # Velocidade base do player na vertical
 
-moviment_enemy = 5 # Velocidade base dos inimigos (horizontal e vertical)
+DASH_DELAY = 4000 # Delay do Dash do player
+DASH_SPEED = 65 # Velocidade do uso do Dash do player
+DASH_DURATION = FRAME*3 # Duração do Dash do player
 
-moviment_fireball = 15 # Velocidade base da bola de fogo
+SHOOT_DELAY = 500 # Delay do uso da bola de fogo
+FIREBALL_SPEED = 15 # Velocidade da bola de fogo
+
+# Outras variaiveis globais
+ENEMY_SPEED = 5 # Velocidade base dos inimigos (horizontal e vertical)
 
 # Dados das Fases
 GAME = {
     'FASE1': {
-        'assets': ['floresta', 'grama', 'terra'], # Nome dos blocos do cenário
+        'nome': 'floresta', # Nome da Fase
         'required colors': [], # Cores requeridas para começar a fase
         'pontuacao total': 9300, # pontuação máxima da fase (coletando todas as moedas)
         'checkpoints': [ # Lista de checkpoints da fase
@@ -40,7 +46,7 @@ GAME = {
         ]
     },
     'FASE2': {
-        'assets': ['laboratorio', 'piso', 'parede'], # Nome dos blocos do cenário
+        'nome': 'laboratorio', # Nome da Fase
         'required colors': ['green', 'blue'], # Cores requeridas para começar a fase
         'pontuacao total': 7100, # pontuação máxima da fase (coletando todas as moedas)
         'checkpoints': [ # Lista de checkpoints da fase 
