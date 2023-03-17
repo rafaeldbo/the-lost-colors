@@ -66,7 +66,6 @@ class Character(Entity):
         self.stopped_image = self.image
 
         # Variáveis do Movimento
-        self.speedx = 0
         self.speedy = gravidade
         self.direction = 'right'
         self.in_moviment = True
@@ -93,7 +92,7 @@ class Character(Entity):
     # Override
     def update(self):
         # Verifica a velocidade no eixo y
-        self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
+        self.speedy = 0 if self.speedy >= gravidade*4 else gravidade
         # Atualiza posição
         self.rect.y += self.speedy
 
@@ -102,23 +101,18 @@ class Character(Entity):
             self.rect.y == 0
             self.speedy = 0
         
+        # Verifica se está em movimento
         self.in_moviment = (self.speedx != 0)
-        # Define a direção do personagem
-        if self.speedx > 0:
-            self.direction = 'right'
-        elif self.speedx < 0:
-            self.direction = 'left'
-        
-        # Animação do personagem em movimento, atualiza a imagem
-        if self.in_moviment:
-            frame_image = self.update_animation()
-        else:
-            frame_image = self.stopped_image # Atualiza a imagem do player parado
 
-        if self.direction == 'right':
-            self.image = frame_image
-        elif self.direction == 'left':
-            self.image = pygame.transform.flip(frame_image, True, False)
+        # Define a direção do personagem
+        if self.in_moviment:
+            self.direction = 'right' if self.speedx > 0 else "left"
+        
+        # Atualiza imagem do personagem: animação de movimento ou parado
+        frame_image = self.update_animation() if self.in_moviment else self.stopped_image
+        self.image = frame_image if self.direction == 'right' else pygame.transform.flip(frame_image, True, False)
+
+        # Atualiza a mascara do player
         self.mask = pygame.mask.from_surface(self.image)
 
     # Atualiza a imagem do player com base nas cores coletadas
@@ -127,12 +121,28 @@ class Character(Entity):
         super().update_color(assets)
         self.stopped_image = self.image
 
+    # Função do dash
+    def dash(self, assets):
+        # Só tem o poder do dash se tiver coletado o diamante verde
+        if "green" in self.colors:
+            # Controla se o player pode ou não dar dash
+            # Dependendo do tempo decorrido desde o último dash
+            now = pygame.time.get_ticks()
+            elapsed_ticks = now - self.last_dash
+            if elapsed_ticks > self.dash_delay and not self.in_dash:
+                self.last_dash = now
+                # altera a velocidade do movimento em x   
+                self.speedx = +65 if self.direction == 'right' else -65 
+                assets['dash som'].play()  
+                self.in_dash = True
+
     # Atira bola de fogo
     def shoot (self, img, groups):
+        # Só tem o poder do dash se tiver coletado o diamante vermelho
         if "red" in self.colors:
-            now = pygame.time.get_ticks()
             # Controla se o player pode ou não atirar 
             # Dependendo do tempo decorrido desde o último tiro
+            now = pygame.time.get_ticks()
             elapsed_ticks = now - self.last_shoot
             if elapsed_ticks > self.shoot_delay:
                 self.last_shoot = now
@@ -140,24 +150,6 @@ class Character(Entity):
                 fireball = FireBall(img, self.rect.centerx, self.rect.bottom, self.direction)
                 groups['all_fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
-
-    # Função do dash
-    def dash(self, assets):
-        # Só tem o poder do dash se tiver coletado o diamante verde
-        if "green" in self.colors:
-            now = pygame.time.get_ticks()
-            # Controla se o player pode ou não dar dash
-            # Dependendo do tempo decorrido desde o último dash
-            elapsed_ticks = now - self.last_dash
-            if elapsed_ticks > self.dash_delay and not self.in_dash:
-                assets['dash som'].play()
-                self.last_dash = now
-                # altera a velocidade do movimento em x
-                if self.direction == 'right':
-                    self.speedx = +65
-                elif self.direction == 'left':
-                    self.speedx = -65
-                self.in_dash = True      
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, rect, value, **kargs):
