@@ -3,19 +3,17 @@ from config import *
 from assets import load_assets
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, assets, name, position, animation=False):
-        # "animation" recebe a quantidade de frames por segundo que a animação possui
-
+    # "animation" recebe a quantidade de frames por segundo que a animação possui
+    def __init__(self, assets, name, position, speed=(0,0), animation=False):
         # Construtor da classe mãe (Sprite).
         pygame.sprite.Sprite.__init__(self)
         self.name = name
 
-        # Imagem
+        # Imagens
         self.image = assets[name]
         
-        self.animated = False
-        if animation:
-            self.animated = True
+        self.animated = bool(animation)
+        if self.animated:
             self.animation = assets[f"animacao {name}"]
             # Variáveis usadas na animação
             self.last_update = pygame.time.get_ticks()
@@ -30,12 +28,30 @@ class Entity(pygame.sprite.Sprite):
         self.rect.left, self.rect.top = position
 
         # Variaveis de Movimento
-        self.speedx = 0
+        self.speedx, self.speedy = speed
+    
+    def delay(self, delay, last):
+        # Verifica se terminou o delay da ação
+        now = pygame.time.get_ticks()
+        elapsed_ticks = now - last
+        if elapsed_ticks > delay:
+            return True, now
+        
+    def moviment(self):
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        
+        # Mantém a entidade dentro da tela
+        if self.rect.top < 0 or self.rect.bottom > HEIGHT:
+            self.speedy = -self.speedy
+            
+            self.rect.top = 0 if self.rect.top < 0 else self.rect.top
+            self.rect.bottom = 0 if self.rect.bottom > HEIGHT else self.rect.bottom
 
     def update(self, player):
         # Movimenta o sprite junto com o cenário (movimento relativo ao player)
-        self.speedx = -player.speedx
-        self.rect.x += self.speedx
+        self.rect.x += -player.speedx
+        self.moviment()
 
         # Atualiza a animação
         if self.animated:
@@ -92,7 +108,7 @@ class Character(Entity):
     # Override
     def update(self):
         # Verifica a velocidade no eixo y
-        self.speedy = 0 if self.speedy >= gravidade*4 else gravidade
+        self.speedy += 0 if self.speedy >= gravidade*4 else gravidade
         # Atualiza posição
         self.rect.y += self.speedy
 
