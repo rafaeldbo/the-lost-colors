@@ -17,7 +17,7 @@ def fase_screen(window, DATA, fase):
         player = Character(assets, init_colors) # Cria o Personagem
 
         # Gera o mapa no primeiro checkpoint
-        groups = load_map(assets, fase, player)
+        groups = load_map(assets, player, fase)
         pause_button = Button((15, 15, 40, 40), 'PAUSE', image=assets['botao']) # Botão de pause
 
         pygame.mixer.music.load(f'assets/sounds/{fase}.mp3')
@@ -67,10 +67,8 @@ def fase_screen(window, DATA, fase):
 
             # Controle do Dash
             if player.in_dash:
-                now = pygame.time.get_ticks()
-                elapsed_ticks = now - player.last_dash
-                if elapsed_ticks >= DASH_DURATION:
-                # Controla o tempo do dash
+                dash, last = player.delay(DASH_DURATION, player.last_dash)
+                if dash:
                     player.speedx = 0
                     player.in_dash = False
 
@@ -121,44 +119,41 @@ def fase_screen(window, DATA, fase):
                 player.lifes -= 1
                 assets["hit som"].play()
                 # Recarrega o mapa enviando o player para o checkpoint
-                groups = load_map(assets, fase, player)
+                groups = load_map(assets, player, fase)
                 player.rect.bottom = GAME[fase]['checkpoints'][player.checkpoint]['chao']
             
             # Colisões dos monstros com os blocos (vertical e horizontal)
             collision_monster_blocks = pygame.sprite.groupcollide(groups['enemys'], groups['blocks'], False, False)
-            for monstro, blocos in collision_monster_blocks.items():
+            for enemy, blocos in collision_monster_blocks.items():
                 bloco = blocos[0]
-                # Se o montro se movimenta na horizontal
-                if monstro.direction == "horizontal":
-                    # Se houve colisão reposiciona o monstro, impede que ele atravesse o bloco
-                    # Inverte a direção da velocidade
-                    if bloco.rect.right > monstro.rect.right > bloco.rect.left:
-                        monstro.rect.right = bloco.rect.left
-                        monstro.speed = -monstro.speed
-                    elif bloco.rect.left < monstro.rect.left < bloco.rect.right:
-                        monstro.rect.left = bloco.rect.right
-                        monstro.speed = -monstro.speed
 
-                # Se o monstro se movimenta na vertical
-                if monstro.direction == "vertical":
-                    # Se houve colisão reposiciona o monstro, impede que ele atravesse o bloco
+                # Se o montro se movimenta na horizontal
+                if enemy.speedx != 0:
+                    # Se houve colisão reposiciona o enemy, impede que ele atravesse o bloco
                     # Inverte a direção da velocidade
-                    if bloco.rect.top < monstro.rect.top < bloco.rect.bottom:
-                        monstro.rect.top = bloco.rect.bottom 
-                        monstro.speed = -monstro.speed          
-                    elif bloco.rect.bottom > monstro.rect.bottom > bloco.rect.top:
-                        monstro.rect.bottom = bloco.rect.top 
-                        monstro.speed = -monstro.speed
+                    if bloco.rect.right > enemy.rect.right > bloco.rect.left:
+                        enemy.rect.right = bloco.rect.left
+                    elif bloco.rect.left < enemy.rect.left < bloco.rect.right:
+                        enemy.rect.left = bloco.rect.right
+                    enemy.speedx = -enemy.speedx
+
+                # Se o enemy se movimenta na vertical
+                if enemy.speedy != 0:
+                    # Se houve colisão reposiciona o enemy, impede que ele atravesse o bloco
+                    # Inverte a direção da velocidade
+                    if bloco.rect.top < enemy.rect.top < bloco.rect.bottom:
+                        enemy.rect.top = bloco.rect.bottom
+                    elif bloco.rect.bottom > enemy.rect.bottom > bloco.rect.top:
+                        enemy.rect.bottom = bloco.rect.top 
+                    enemy.speedy = -enemy.speedy
 
             # Colisões da bola de fogo com os breakables
-            # Quando o monstro ou a caixa é atingida gera a explosão
+            # Quando o enemy ou a caixa é atingida gera a explosão
             collision_breakables_fireballs = pygame.sprite.groupcollide(groups['breakables'], groups['fireballs'], True, True, pygame.sprite.collide_mask)
             for element in collision_breakables_fireballs:
-                assets['explode som'].play()
-                explosao = Explosion(element.rect.centerx, element.rect.centery, assets)
+                explosao = Explosion(assets, element.rect.centerx, element.rect.centery)
                 groups['all_sprites'].add(explosao)
             pygame.sprite.groupcollide(groups['blocks'], groups['fireballs'], False, True)
-
 
             # Colisões com as moedas e prismas (coletáveis)
             collision_player_collectibles = pygame.sprite.spritecollide(player, groups['collectibles'], True, pygame.sprite.collide_mask)
@@ -172,12 +167,12 @@ def fase_screen(window, DATA, fase):
                     assets["moeda som"].play()
 
                 elif type(collected) == Prism: # Verifica se é um diamante
-                    assets, player = collected.update_assets_color(assets, fase, player)
+                    assets, player = collected.update_assets_color(assets, player, fase)
                 
                 if issubclass(type(collected), Checkpoint): # Verifica se é um checkpoint
                     # Recarrega o mapa segundo o novo checkpoint
                     player.checkpoint = player.checkpoint+1 if player.checkpoint < len(GAME[fase]['checkpoints'])-1 else 0
-                    groups = load_map(assets, fase, player)
+                    groups = load_map(assets, player, fase)
                     player.rect.bottom = GAME[fase]['checkpoints'][player.checkpoint]['chao']
 
             # verifica se o jogador ganhou o jogo

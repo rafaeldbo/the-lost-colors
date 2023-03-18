@@ -46,11 +46,13 @@ def load_matriz(fase):
     
 """
 # Carrega o trecho da matriz referente ao último checkpoint
-def load_map(assets, fase, player):
+def load_map(assets, player, fase):
+    
     matriz_fase = load_matriz(fase)
     checkpoint = GAME[fase]['checkpoints'][player.checkpoint]
     collected = player.collected
     current_colors = player.colors
+
     # Cria os grupos
     groups = {
         'blocks': pygame.sprite.Group(), # Todos os Blocos {possuem colisão}
@@ -71,63 +73,59 @@ def load_map(assets, fase, player):
                 # Cria o objeto e adiciona ele ao referente grupo
                 
                 if value != "0":
-                    posx = SIZE*j - checkpoint['parede'] - checkpoint['inicio']*SIZE
-                    posy = SIZE*i
+                    position = (SIZE*(j-checkpoint['inicio'])-checkpoint['parede'], SIZE*i)
+                    index = f"{i}-{j}"
 
-                    if value == "c":
-                        element = Block(assets, posx, posy, "chao")
+                    if (value == "c"):
+                        element = Block(assets, "chao", position)
                         groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
 
-                    elif value == "p":
-                        element = Block(assets, posx, posy, "parede")
+                    elif (value == "p"):
+                        element = Block(assets, "parede", position)
                         groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
+                    
+                    elif (value == "q"):
+                        element = Block(assets, "caixa", position)
+                        groups['blocks'].add(element)
+                        groups['breakables'].add(element)
+                        groups['all_sprites'].add(element)
+                    
+                    elif (value == "e"):
+                        element = Block(assets, "espinhos", position)
+                        groups['damagers'].add(element)
+                        groups['all_sprites'].add(element)
 
-                    elif value == "i1":
-                        element = Enemy(assets, posx, posy, "inimigo", "horizontal")
+                    elif (value == "i1"):
+                        element = Enemy(assets, "inimigo", position, (ENEMY_SPEED, 0))
                         groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
-                    elif value == "i2":
-                        element = Enemy(assets, posx, posy, "inimigo", "vertical")
+                    elif (value == "i2"):
+                        element = Enemy(assets, "inimigo", position, (0, ENEMY_SPEED))
                         groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
-                    elif value == "e":
-                        element = Block(assets, posx, posy, "espinhos")
-                        groups['damagers'].add(element)
-                        groups['all_sprites'].add(element)
-                
-                    elif value == "q":
-                        element = Block(assets, posx, posy, "caixa")
-                        groups['blocks'].add(element)
-                        groups['breakables'].add(element)
-                        groups['all_sprites'].add(element)
-                
-                    elif value == "m":
-                        element = Coin(assets, posx, posy, "moeda", index=[i,j])
-                        if element.index not in collected:
+                    elif (value == "b"):
+                        element = Flag(assets, "bandeira", position, index)
+                        if index not in collected:
                             groups['collectibles'].add(element)
-                            groups['all_sprites'].add(element)
-                
-                    elif value == "b":
-                        element = Flag(assets, posx, posy, "bandeira", index=[i,j])
                         groups['all_sprites'].add(element)
 
-                        if element.index not in collected:
-                            groups['collectibles'].add(element)
-                            groups['all_sprites'].add(element)
-
-                    elif value in ["green", "blue", "red"] and value not in current_colors:
-                        element = Prism(assets, posx, posy, f"prisma_{value}", value, index=[i,j])
-                        if element.index not in collected:
-                            groups['collectibles'].add(element)
-                            groups['all_sprites'].add(element)
+                    elif (value in ["green", "blue", "red"]) and (value not in current_colors) and (index not in collected):
+                        element = Prism(assets, f"prisma_{value}", position, index, value)
+                        groups['collectibles'].add(element)
+                        groups['all_sprites'].add(element)
+                    
+                    elif (value == "m") and (index not in collected):
+                        element = Coin(assets, "moeda", position, index)
+                        groups['collectibles'].add(element)
+                        groups['all_sprites'].add(element)
 
     return groups
 
@@ -166,13 +164,13 @@ def draw_infos(window, assets, player):
     # A barra do dash indica se já se passou o tempo necessário
     # para o player utilizar o dash novamente
     if 'green' in player.colors:
-        border = 3
         now = pygame.time.get_ticks()
         elapsed_ticks = now - player.last_dash
         # O tamanho da barra amarela é proporcional ao tempo decorrido
         # entre o momento atual e o último dash
-        width = (elapsed_ticks)*(100/DASH_DELAY) if elapsed_ticks < DASH_DELAY else 100
-
+        width = (elapsed_ticks*100)/DASH_DELAY if elapsed_ticks < DASH_DELAY else 100
+        border = 3
+        
         window.fill(COLORS['black'], (10, HEIGHT-SIZE, 100+2*border, 25)) # retângulo preto (borda)
         window.fill(COLORS['white'], (10+border, HEIGHT-SIZE+border, 100, 25-2*border)) # retângulo branco (fundo)
         window.fill(COLORS['yellow'], (10+border, HEIGHT-SIZE+border, width, 25-2*border)) # retangulo amarelo (energia do dash)

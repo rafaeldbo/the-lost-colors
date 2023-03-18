@@ -31,6 +31,12 @@ FIREBALL_SPEED = 15 # Velocidade da bola de fogo
 # Outras variaiveis globais
 ENEMY_SPEED = 5 # Velocidade base dos inimigos (horizontal e vertical)
 
+# Conversor de direção
+DIRECTION = {
+    'right': +1,
+    'left': -1
+}
+
 # Dados das Fases
 GAME = {
     'FASE1': {

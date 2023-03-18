@@ -2,6 +2,16 @@ import pygame
 from config import *
 from assets import load_assets
 
+class Button(pygame.sprite.Sprite):
+    def __init__(self, rect, value, image=None):
+        # Construtor da classe(Sprite).
+        pygame.sprite.Sprite.__init__(self)
+
+        self.image = image
+        self.rect = pygame.Rect(rect)
+
+        self.value = value
+
 class Entity(pygame.sprite.Sprite):
     # "animation" recebe a quantidade de frames por segundo que a animação possui
     def __init__(self, assets, name, position, speed=(0,0), animation=False):
@@ -36,6 +46,7 @@ class Entity(pygame.sprite.Sprite):
         elapsed_ticks = now - last
         if elapsed_ticks > delay:
             return True, now
+        return False, last
         
     def moviment(self):
         self.rect.x += self.speedx
@@ -75,14 +86,13 @@ class Entity(pygame.sprite.Sprite):
 # Classe do player
 class Character(Entity):
     def __init__(self, assets, colors):
-        # Inicializando entidade do personagem
+        # Inicializando classe mãe
         Entity.__init__(self, assets, 'personagem', (SIZE*7, SIZE*8-SIZE*1.5), animation=4)
 
         # Imagens
         self.stopped_image = self.image
 
         # Variáveis do Movimento
-        self.speedy = GRAVIDADE
         self.direction = 'right'
         self.in_moviment = True
         self.jump = 0
@@ -104,15 +114,9 @@ class Character(Entity):
     # Realiza movimento e animação
     # Override
     def update(self):
-        # Verifica a velocidade no eixo y
+        # Movimento em y do player pela gravidade
         self.speedy += 0 if self.speedy >= GRAVIDADE*4 else GRAVIDADE
-        # Atualiza posição
         self.rect.y += self.speedy
-
-        # Colisão com o teto do jogo, coloca o player dentro da tela
-        if self.rect.y < 0:
-            self.rect.y == 0
-            self.speedy = 0
         
         # Verifica se está em movimento
         self.in_moviment = (self.speedx != 0)
@@ -140,12 +144,10 @@ class Character(Entity):
         if "green" in self.colors:
             # Controla se o player pode ou não dar dash
             # Dependendo do tempo decorrido desde o último dash
-            now = pygame.time.get_ticks()
-            elapsed_ticks = now - self.last_dash
-            if elapsed_ticks > DASH_DELAY and not self.in_dash:
-                self.last_dash = now
-                # altera a velocidade do movimento em x   
-                self.speedx = +DASH_SPEED if self.direction == 'right' else -DASH_SPEED 
+            dash, self.last_dash = self.delay(DASH_DELAY, self.last_dash)
+            if dash:
+                # altera a velocidade do movimento em x
+                self.speedx = DASH_SPEED*DIRECTION[self.direction]
                 assets['dash som'].play()  
                 self.in_dash = True
 
@@ -155,106 +157,62 @@ class Character(Entity):
         if "red" in self.colors:
             # Controla se o player pode ou não atirar 
             # Dependendo do tempo decorrido desde o último tiro
-            now = pygame.time.get_ticks()
-            elapsed_ticks = now - self.last_shoot
-            if elapsed_ticks > SHOOT_DELAY:
-                self.last_shoot = now
+            shoot, self.last_shoot = self.delay(SHOOT_DELAY, self.last_shoot)
+            if shoot:
                 # Cria a bola de fogo
-                fireball = FireBall(img, self.rect.centerx, self.rect.bottom, self.direction)
-                groups['all_fireballs'].add(fireball)
+                fireball = FireBall(img, self.rect.centerx, self.rect.centery, self.direction)
+                groups['fireballs'].add(fireball)
                 groups['all_sprites'].add(fireball)
-
-class Button(pygame.sprite.Sprite):
-    def __init__(self, rect, value, **kargs):
-        # Construtor da classe(Sprite).
-        pygame.sprite.Sprite.__init__(self)
-
-        self.image = kargs.get('image')
-        self.rect = pygame.Rect(rect)
-        self.value = value
         
 class Block(Entity):
-    def __init__(self, assets, posx, posy, name):
-        # Inicializando entidade
-        Entity.__init__(self, assets, name, (posx, posy))
+    def __init__(self, assets, name, position):
+        # Inicializando classe mãe
+        Entity.__init__(self, assets, name, position)
 
 class Enemy(Entity):
-    def __init__(self, assets, posx, posy, name, moviment):
-        # Inicializando entidade
-        Entity.__init__(self, assets, name, (posx, posy+20))
-
-        # Guarda a direção de movimento
-        # A direção de movimento é alterada se o inimigo colidir com um bloco
-        self.direction = moviment
-        self.speed = ENEMY_SPEED
-
-    # Realiza movimento
-    # Override 
-    def update(self, player):
-        super().update(player)
-        if self.direction == "horizontal":
-            self.rect.x += self.speed
-        if self.direction == "vertical":
-            self.rect.y += self.speed
-            # Mantém o robô dentro da tela
-            if self.rect.top < 0:
-                self.rect.top = 0
-                self.speed = -self.speed
-            if self.rect.bottom > HEIGHT:
-                self.rect.bottom = HEIGHT
-                self.speed = -self.speed
+    def __init__(self, assets, name, position, speed):
+        # Inicializando classe mãe
+        Entity.__init__(self, assets, name, position, speed)
 
 class FireBall(Entity):
     def __init__(self, assets, posx, posy, direction):
-        # Inicializando entidade
-        adjust_x = -SIZE if direction == 'left' else 0
-        Entity.__init__(self, assets, 'bola de fogo', (posx+adjust_x, posy-SIZE*1.25))
-        
-        # Determina a velocidade e imagem da bola de fogo, elas dependem 
-        # da direção para a qual o player está se movendo
-        if direction == 'right':
-            self.speed = FIREBALL_SPEED
-        elif direction == 'left':
-            self.speed = -FIREBALL_SPEED
-            self.image = pygame.transform.flip(self.image, True, False)
-
-    # Realiza movimento
-    # Override
-    def update(self, player):
-        super().update(player)
-        self.rect.x += self.speed       
+        # Inicializando classe mãe
+        Entity.__init__(self, assets, 'bola de fogo', (posx+(SIZE*DIRECTION[direction])/2, posy-SIZE/4), (FIREBALL_SPEED*DIRECTION[direction], 0))
+  
+        if direction == 'left':
+            self.image = pygame.transform.flip(self.image, True, False)   
 
 class Collectable(Entity):
-    def __init__(self, assets, posx, posy, name, index, animation=False):
-        # Inicializando entidade
-        Entity.__init__(self, assets, name, (posx, posy), animation=animation)
+    def __init__(self, assets, name, position, index, animation=False):
+        # Inicializando classe mãe
+        Entity.__init__(self, assets, name, position, animation=animation)
 
         self.index = index # Coleta o index do coletável
 
 class Coin(Collectable):
-    def __init__(self, assets, posx, posy, name, index):
-        # Inicializando entidade
-        Collectable.__init__(self, assets, posx, posy, name, index)
+    def __init__(self, assets, name, position, index):
+        # Inicializando classe mãe
+        Collectable.__init__(self, assets, name, position, index)
 
 class Checkpoint(Collectable):
-    def __init__(self, assets, posx, posy, name, index, animation=False):
-        # Inicializando entidade
-        Collectable.__init__(self, assets, posx, posy, name, index, animation=animation)
+    def __init__(self, assets, name, position, index, animation=False):
+        # Inicializando classe mãe
+        Collectable.__init__(self, assets, name, position, index, animation=animation)
 
 class Flag(Checkpoint):
-    def __init__(self, assets, posx, posy, name, index):
-        # Inicializando entidade
-        Checkpoint.__init__(self, assets, posx, posy, name, index, animation=4)
+    def __init__(self, assets, name, position, index):
+        # Inicializando classe mãe
+        Checkpoint.__init__(self, assets, name, position, index, animation=4)
 
 class Prism(Checkpoint):
-    def __init__(self, assets, posx, posy, name, color, index, animation=False):
-        # Inicializando entidade
-        Checkpoint.__init__(self, assets, posx, posy, name, index, animation=animation)
+    def __init__(self, assets, name, position, index, color):
+        # Inicializando classe mãe
+        Checkpoint.__init__(self, assets, name, position, index)
                 
         self.color = color # Cor do prisma
     
     # Atualiza os assets com a nova cor
-    def update_assets_color(self, assets, fase, player):
+    def update_assets_color(self, assets, player, fase):
         player.colors.append(self.color)
         assets = load_assets(fase, player.colors)
         player.update_color(assets)
@@ -263,9 +221,11 @@ class Prism(Checkpoint):
     
 # Classe da animação da explosão
 class Explosion(Entity):
-    def __init__(self, posx, posy, assets):
-        # Inicializando entidade
+    def __init__(self, assets, posx, posy):
+        # Inicializando classe mãe
         Entity.__init__(self, assets, 'explosao', (posx-SIZE/2, posy-SIZE/2), animation=20)
+
+        assets['explode som'].play()
 
     # Finalizando a animação
     # Override
