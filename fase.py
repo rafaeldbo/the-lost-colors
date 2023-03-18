@@ -161,10 +161,7 @@ def fase_screen(window, DATA, fase):
                 player.collected.append(collected.index)
 
                 if type(collected) == Coin: # Verifica se é uma moeda
-                    player.points += 100
-                    if player.points%2000 == 0 and player.lifes < 3:
-                        player.lifes += 1
-                    assets["moeda som"].play()
+                    player = collected.points(assets, player)
 
                 elif type(collected) == Prism: # Verifica se é um diamante
                     assets, player = collected.update_assets_color(assets, player, fase)

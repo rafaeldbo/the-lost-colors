@@ -198,6 +198,14 @@ class Coin(Collectable):
     def __init__(self, assets, name, position, index):
         # Inicializando classe mãe
         Collectable.__init__(self, assets, name, position, index)
+        
+    # Dá pontos pro usuário
+    def points(self, assets, player):
+        player.points += COIN_POINTS
+        if player.points%NEW_LIFE_POINTS == 0 and player.lifes < MAX_LIFES:
+            player.lifes += 1
+        assets["moeda som"].play()
+        return player
 
 class Checkpoint(Collectable):
     def __init__(self, assets, name, position, index, animation=False):
