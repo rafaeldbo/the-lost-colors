@@ -73,57 +73,58 @@ def load_map(assets, player, fase):
                 # Cria o objeto e adiciona ele ao referente grupo
                 
                 if value != "0":
-                    position = (SIZE*(j-checkpoint['inicio'])-checkpoint['parede'], SIZE*i)
+                    posx = SIZE*(j-checkpoint['inicio'])-checkpoint['parede']
+                    posy = SIZE*i
                     index = f"{i}-{j}"
 
                     if (value == "c"):
-                        element = Block(assets, "chao", position)
+                        element = Block(assets, "chao", (posx, posy))
                         groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif (value == "p"):
-                        element = Block(assets, "parede", position)
+                        element = Block(assets, "parede", (posx, posy))
                         groups['blocks'].add(element)
                         groups['all_sprites'].add(element)
                     
                     elif (value == "q"):
-                        element = Block(assets, "caixa", position)
+                        element = Block(assets, "caixa", (posx, posy))
                         groups['blocks'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
                     
                     elif (value == "e"):
-                        element = Block(assets, "espinhos", position)
+                        element = Block(assets, "espinhos", (posx, posy))
                         groups['damagers'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif (value == "i1"):
-                        element = Enemy(assets, "inimigo", position, (ENEMY_SPEED, 0))
+                        element = Enemy(assets, "inimigo", (posx, posy+SIZE*(1/7)), (ENEMY_SPEED, 0))
                         groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif (value == "i2"):
-                        element = Enemy(assets, "inimigo", position, (0, ENEMY_SPEED))
+                        element = Enemy(assets, "inimigo", (posx, posy+SIZE*(1/7)), (0, ENEMY_SPEED))
                         groups['enemys'].add(element)
                         groups['damagers'].add(element)
                         groups['breakables'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif (value == "b"):
-                        element = Flag(assets, "bandeira", position, index)
+                        element = Flag(assets, "bandeira", (posx, posy), index)
                         if index not in collected:
                             groups['collectibles'].add(element)
                         groups['all_sprites'].add(element)
 
                     elif (value in ["green", "blue", "red"]) and (value not in current_colors) and (index not in collected):
-                        element = Prism(assets, f"prisma_{value}", position, index, value)
+                        element = Prism(assets, f"prisma_{value}", (posx, posy), index, value)
                         groups['collectibles'].add(element)
                         groups['all_sprites'].add(element)
                     
                     elif (value == "m") and (index not in collected):
-                        element = Coin(assets, "moeda", position, index)
+                        element = Coin(assets, "moeda", (posx, posy), index)
                         groups['collectibles'].add(element)
                         groups['all_sprites'].add(element)
 

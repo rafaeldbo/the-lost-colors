@@ -18,6 +18,8 @@ HEIGHT = SIZE*10 # Altura da Janela do jogo
 COLORS = {'black': (0,0,0), 'white': (255,255,255), 'yellow': (255,255,0), 'red': (255,0,0)} 
 
 # Variaveis globais do player
+MAX_LIFES = 3 # Quantidade máxima de vidas do player
+
 PLAYER_SPEED = 12 # Velocidade base do player na horizontal
 PLAYER_SPEED_JUMP = 55 # Velocidade base do player na vertical
 
@@ -30,6 +32,8 @@ FIREBALL_SPEED = 15 # Velocidade da bola de fogo
 
 # Outras variaiveis globais
 ENEMY_SPEED = 5 # Velocidade base dos inimigos (horizontal e vertical)
+COIN_POINTS = 100 # Quantidade de pontos de uma moeda
+NEW_LIFE_POINTS = 2000 # QUantidade de pontos necessários para ganhar uma vida
 
 # Conversor de direção
 DIRECTION = {

@@ -117,6 +117,11 @@ class Character(Entity):
         # Movimento em y do player pela gravidade
         self.speedy += 0 if self.speedy >= GRAVIDADE*4 else GRAVIDADE
         self.rect.y += self.speedy
+
+        # Impede o player de atravessar o teto
+        if self.rect.y < 0:
+            self.rect.y = 0
+            self.speedy = 0
         
         # Verifica se está em movimento
         self.in_moviment = (self.speedx != 0)
@@ -177,7 +182,7 @@ class Enemy(Entity):
 class FireBall(Entity):
     def __init__(self, assets, posx, posy, direction):
         # Inicializando classe mãe
-        Entity.__init__(self, assets, 'bola de fogo', (posx+(SIZE*DIRECTION[direction])/2, posy-SIZE/4), (FIREBALL_SPEED*DIRECTION[direction], 0))
+        Entity.__init__(self, assets, 'bola de fogo', (posx+(SIZE*DIRECTION[direction])/2, posy-SIZE/2), (FIREBALL_SPEED*DIRECTION[direction], 0))
   
         if direction == 'left':
             self.image = pygame.transform.flip(self.image, True, False)   
